@@ -84,8 +84,8 @@ class Output
 
     protected function stringWidth($input, $width = 3)
     {
-        $multipler = $width - strlen($input);
-        return str_repeat(' ', $multipler > 0 ? $multipler : 0) . $input;
+        $multiplier = $width - strlen($input);
+        return str_repeat(' ', $multiplier > 0 ? $multiplier : 0) . $input;
     }
 }
 
