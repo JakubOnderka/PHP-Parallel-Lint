@@ -193,8 +193,8 @@ class Manager
     protected function getCmdLine(Settings $settings)
     {
         $cmdLine = escapeshellarg($settings->phpExecutable);
-        $cmdLine .= ' -d asp_tags=' . $settings->aspTags ? 'On' : 'Off';
-        $cmdLine .= ' -d short_open_tag=' . $settings->shortTag ? 'On' : 'Off';
+        $cmdLine .= ' -d asp_tags=' . ($settings->aspTags ? 'On' : 'Off');
+        $cmdLine .= ' -d short_open_tag=' . ($settings->shortTag ? 'On' : 'Off');
         return $cmdLine . ' -n -l ';
     }
 
