@@ -30,6 +30,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
+require_once __DIR__ . '/exceptions.php';
+require_once __DIR__ . '/Settings.php';
+require_once __DIR__ . '/Process.php';
+require_once __DIR__ . '/Output.php';
+
+
 class ArrayIterator extends \ArrayIterator
 {
     public function getNext()
@@ -113,7 +119,7 @@ class Manager
         $cmdLine = $this->getCmdLine($settings);
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions);
 
-        $output = $output ?: new Output(new ConsoleWriter);
+        $output = $this->output ?: new Output(new ConsoleWriter);
         $output->setTotalFileCount(count($files));
 
         /** @var LintProcess[] $running */
