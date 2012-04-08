@@ -158,7 +158,8 @@ class Manager
         if ($filesWithSyntaxError === 0) {
             $message .= "no syntax error found";
         } else {
-            $message .= "syntax error found in $filesWithSyntaxError files";
+            $message .= "syntax error found in $filesWithSyntaxError ";
+            $message .= ($filesWithSyntaxError === 1 ? 'file' : 'files');
         }
 
         $output->writeLine($message);

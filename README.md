@@ -11,7 +11,7 @@ Example output
 a03-0524a:PHP-Parallel-Lint jakubonderka$ php run.php test.php test2.php
 .X
 
-Checked 2 files, syntax error found in 1 files
+Checked 2 files, syntax error found in 1 file
 
 ----------------------------------------------------------------------
 Parse error: test2.php:40
