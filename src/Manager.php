@@ -34,6 +34,7 @@ require_once __DIR__ . '/exceptions.php';
 require_once __DIR__ . '/Settings.php';
 require_once __DIR__ . '/Process.php';
 require_once __DIR__ . '/Output.php';
+require_once __DIR__ . '/Error.php';
 
 
 class ArrayIterator extends \ArrayIterator
@@ -139,7 +140,7 @@ class Manager
 
                     $checkedFiles++;
                     if ($process->hasSyntaxError()) {
-                        $errors[$file] = $process->getSyntaxError();
+                        $errors[] = new Error($file, $process->getSyntaxError());
                         $filesWithSyntaxError++;
                         $output->error();
                     } else {
@@ -165,7 +166,8 @@ class Manager
         if (!empty($errors)) {
             $output->writeNewLine();
 
-            foreach ($errors as $file => $errorMessage) {
+            foreach ($errors as $errorMessage) {
+                $output->writeLine('----------------------------------------------------------------------');
                 $output->writeLine($errorMessage);
             }
 
