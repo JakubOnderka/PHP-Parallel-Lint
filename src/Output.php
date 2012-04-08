@@ -69,6 +69,11 @@ class Output
         $this->writer->write($line . PHP_EOL);
     }
 
+    public function writeNewLine($count = 1)
+    {
+        $this->writer->write(str_repeat(PHP_EOL, $count));
+    }
+
     public function setTotalFileCount($count)
     {
         $this->totalFileCount = $count;

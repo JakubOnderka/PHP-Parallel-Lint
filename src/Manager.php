@@ -155,8 +155,7 @@ class Manager
             }
         }
 
-        $output->writeLine();
-        $output->writeLine();
+        $output->writeNewLine(2);
 
         $message = "Checked $checkedFiles files, ";
         if ($filesWithSyntaxError === 0) {
@@ -168,7 +167,7 @@ class Manager
         $output->writeLine($message);
 
         if (!empty($errors)) {
-            $output->writeLine();
+            $output->writeNewLine();
 
             foreach ($errors as $file => $errorMessage)
             {
@@ -181,6 +180,9 @@ class Manager
         return true;
     }
 
+    /**
+     * @param Output $output
+     */
     public function setOutput(Output $output)
     {
         $this->output = $output;
