@@ -27,7 +27,7 @@ Using in ANT
 ---------------
 ```xml
 <target name="lint" description="Check syntax errors in PHP files">
-    <exec executable="php">
+    <exec executable="php" failonerror="true">
         <arg line="${basedir}/tests/lint/run.php" />
         <arg line="${basedir}/private/" />
     </exec>
