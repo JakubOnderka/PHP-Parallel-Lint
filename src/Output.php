@@ -94,7 +94,8 @@ class Output
     }
 }
 
-interface IWriter {
+interface IWriter
+{
     public function write($string);
 }
 

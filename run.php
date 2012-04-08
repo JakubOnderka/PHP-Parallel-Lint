@@ -7,7 +7,8 @@ const SUCCESS = 0,
     WITH_ERRORS = 1,
     FAILED = 255;
 
-function showOptions() {
+function showOptions()
+{
 ?>
 Options:
     -p <php>    Specify PHP-CGI executable to run.

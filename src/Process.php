@@ -44,10 +44,10 @@ class Process
     public function __construct($cmdLine, $blocking = false)
     {
         $descriptors = array(
-			array('pipe', 'r'),
-			array('pipe', 'w'),
-			array('pipe', 'w'),
-		);
+            array('pipe', 'r'),
+            array('pipe', 'w'),
+            array('pipe', 'w'),
+        );
 
         $this->process = proc_open($cmdLine, $descriptors, $pipes, null, null, array('bypass_shell' => true));
 

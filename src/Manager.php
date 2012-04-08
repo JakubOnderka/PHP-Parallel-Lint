@@ -110,11 +110,7 @@ class Manager
     {
         $settings = $settings ?: new Settings;
 
-        exec(escapeshellarg($settings->phpExecutable) . ' -v', $output, $result);
-
-        if ($result !== self::CODE_OK && $result !== self::CODE_ERROR) {
-            throw new \Exception("Unable to execute '{$settings->phpExecutable} -v'");
-        }
+        $this->checkPhpExecutableExists($settings->phpExecutable);
 
         $cmdLine = $this->getCmdLine($settings);
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions);
@@ -134,8 +130,8 @@ class Manager
             }
 
             if (count($running) > 1) {
-				usleep(50000); // stream_select() doesn't work with proc_open()
-			}
+                usleep(50000); // stream_select() doesn't work with proc_open()
+            }
 
             foreach ($running as $file => $process) {
                 if ($process->isReady()) {
@@ -169,8 +165,7 @@ class Manager
         if (!empty($errors)) {
             $output->writeNewLine();
 
-            foreach ($errors as $file => $errorMessage)
-            {
+            foreach ($errors as $file => $errorMessage) {
                 $output->writeLine($errorMessage);
             }
 
@@ -186,6 +181,19 @@ class Manager
     public function setOutput(Output $output)
     {
         $this->output = $output;
+    }
+
+    /**
+     * @param string $phpExecutable
+     * @throws \Exception
+     */
+    protected function checkPhpExecutableExists($phpExecutable)
+    {
+        exec(escapeshellarg($phpExecutable) . ' -v', $nothing, $result);
+
+        if ($result !== self::CODE_OK && $result !== self::CODE_ERROR) {
+            throw new \Exception("Unable to execute '{$phpExecutable} -v'");
+        }
     }
 
     /**
