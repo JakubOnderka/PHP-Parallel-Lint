@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="CSSTidy">
+<ruleset name="PHP-Parallel-Lint">
     <description>PHP Parallel Lint coding standard.</description>
 
     <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
