@@ -10,22 +10,21 @@ const SUCCESS = 0,
 function showOptions() {
 ?>
 Options:
-	-p <php>    Specify PHP-CGI executable to run.
-	-log <path> Write log to file <path>.
-    -short      Set short_open_tag to On
-    -asp        Set asp_tags to On
-    -e <ext>    Check file with extension separated by space (default: php, php3, phtml)
-	-j <num>    Run <num> jobs in parallel.
+    -p <php>    Specify PHP-CGI executable to run.
+    -short      Set short_open_tag to On (default Off)
+    -asp        Set asp_tags to On (default Off)
+    -e <ext>    Check only files with selected extension separated by space (default: php,php3,phtml)
+    -j <num>    Run <num> jobs in parallel (default 10)
+    -h, --help  Print this help.
 <?php
 }
 
 /**
  * Help
  */
-if (!isset($_SERVER['argv'][1])) { ?>
+if (!isset($_SERVER['argv'][1]) || in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) { ?>
 PHP Parallel Lint version 0.1
 ---------------------------
-
 Usage:
 	php run.php [options] [files or directories separated by space]
 <?php
@@ -45,6 +44,6 @@ try {
     showOptions();
     die(FAILED);
 } catch (Exception $e) {
-    echo $e->getMessage();
+    echo $e->getMessage(), PHP_EOL;
     die(FAILED);
 }
