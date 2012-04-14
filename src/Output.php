@@ -33,7 +33,7 @@ either expressed or implied, of the FreeBSD Project.
 class Output
 {
     /** @var int */
-    public $filesPerLine = 40;
+    public $filesPerLine = 60;
 
     /** @var int */
     protected $checkedFiles;
