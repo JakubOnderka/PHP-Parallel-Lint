@@ -96,16 +96,18 @@ class Error
     {
         $lines = file($this->filePath);
 
-        $string = '';
+        $snippet = '';
         $lineStrlen = strlen($line + 2);
+        $line -= 1; // because $lines array is indexed from zero
+
         for ($i = $line - 2; $i <= $line + 2; $i++) {
             if (isset($lines[$i])) {
-                $string .= ($line === $i ? '  > ' : '    ');
-                $string .= $this->stringWidth($i, $lineStrlen) . '| ' . $lines[$i];
+                $snippet .= ($line === $i ? '  > ' : '    ');
+                $snippet .= $this->stringWidth($i + 1, $lineStrlen) . '| ' . rtrim($lines[$i]) . PHP_EOL;
             }
         }
 
-        return $string;
+        return $snippet;
     }
 
     /**
