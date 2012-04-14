@@ -32,6 +32,13 @@ either expressed or implied, of the FreeBSD Project.
 
 class Process
 {
+    const STDIN = 0,
+        STDOUT = 1,
+        STDERR = 2;
+
+    const READ = 'r',
+        WRITE = 'w';
+
     /** @var resource */
     protected $process;
 
@@ -39,41 +46,74 @@ class Process
     protected $stdout;
 
     /** @var string */
-    protected $output;
+    private $output;
 
+    /** @var int */
+    private $statusCode;
+
+    /**
+     * @param string $cmdLine
+     * @param bool $blocking
+     */
     public function __construct($cmdLine, $blocking = false)
     {
         $descriptors = array(
-            array('pipe', 'r'),
-            array('pipe', 'w'),
-            array('pipe', 'w'),
+            self::STDIN  => array('pipe', self::READ),
+            self::STDOUT => array('pipe', self::WRITE),
+            self::STDERR => array('pipe', self::WRITE),
         );
 
         $this->process = proc_open($cmdLine, $descriptors, $pipes, null, null, array('bypass_shell' => true));
 
         list($stdin, $this->stdout, $stderr) = $pipes;
         fclose($stdin);
-        //stream_set_blocking($this->stdout, $blocking ? 1 : 0);
+        stream_set_blocking($this->stdout, $blocking ? 1 : 0);
         fclose($stderr);
     }
 
-    public function isReady()
+    /**
+     * @return bool
+     */
+    public function isFinished()
     {
         $status = proc_get_status($this->process);
         return !$status['running'];
     }
 
-    public function getResults()
-    {
-        $this->output = stream_get_contents($this->stdout);
-        fclose($this->stdout);
-
-        return proc_close($this->process);
-    }
-
+    /**
+     * @return string
+     */
     public function getOutput()
     {
+        $this->terminateAndReadOutput();
         return $this->output;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        $this->terminateAndReadOutput();
+        return $this->statusCode;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function terminateAndReadOutput()
+    {
+        if ($this->process !== null) {
+            if (!$this->isFinished()) {
+                throw new \Exception("Cannot terminate running process");
+            }
+
+            $this->output = stream_get_contents($this->stdout);
+            fclose($this->stdout);
+
+            $this->statusCode = proc_close($this->process);
+            $this->process = null;
+        }
     }
 }
 
@@ -84,7 +124,7 @@ class LintProcess extends Process
      */
     public function hasSyntaxError()
     {
-        return strpos($this->output, 'No syntax errors detected') === false;
+        return strpos($this->getOutput(), 'No syntax errors detected') === false;
     }
 
     /**
@@ -93,7 +133,7 @@ class LintProcess extends Process
     public function getSyntaxError()
     {
         if ($this->hasSyntaxError()) {
-            list(, $out) = explode("\n", $this->output);
+            list(, $out) = explode("\n", $this->getOutput());
             return $out;
         }
 

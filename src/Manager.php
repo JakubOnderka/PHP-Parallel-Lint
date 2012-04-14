@@ -135,9 +135,7 @@ class Manager
             }
 
             foreach ($running as $file => $process) {
-                if ($process->isReady()) {
-                    $process->getResults();
-
+                if ($process->isFinished()) {
                     $checkedFiles++;
                     if ($process->hasSyntaxError()) {
                         $errors[] = new Error($file, $process->getSyntaxError());
