@@ -14,7 +14,7 @@ Options:
     -p <php>    Specify PHP-CGI executable to run.
     -short      Set short_open_tag to On (default Off)
     -asp        Set asp_tags to On (default Off)
-    -e <ext>    Check only files with selected extension separated by comma (default: php,php3,phtml)
+    -e <ext>    Check only files with selected extension separated by comma (default: php,php3,php4,php5,phtml)
     -j <num>    Run <num> jobs in parallel (default 10)
     -h, --help  Print this help.
 <?php
