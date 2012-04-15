@@ -123,36 +123,44 @@ class Manager
         $running = $errors = array();
         $checkedFiles = $filesWithSyntaxError = 0;
 
+        $startTime = microtime(true);
+
         while ($files || $running) {
             for ($i = count($running); $files && $i < $settings->parallelJobs; $i++) {
                 $file = array_shift($files);
-                $parallel = ($settings->parallelJobs > 1) && (count($running) + count($files) > 1);
-                $running[$file] = new LintProcess($cmdLine . escapeshellarg($file), !$parallel);
+                $running[$file] = new LintProcess($cmdLine . escapeshellarg($file));
             }
 
             if (count($running) > 1) {
-                usleep(50000); // stream_select() doesn't work with proc_open()
+                usleep(20000);
             }
 
             foreach ($running as $file => $process) {
                 if ($process->isFinished()) {
-                    $checkedFiles++;
-                    if ($process->hasSyntaxError()) {
-                        $errors[] = new Error($file, $process->getSyntaxError());
-                        $filesWithSyntaxError++;
-                        $output->error();
-                    } else {
-                        $output->ok();
-                    }
-
                     unset($running[$file]);
+
+                    if ($process->isFail()) {
+                        $output->fail();
+                        $errors[] = new Error($file, $process->getErrorOutput());
+                    } else {
+                        $checkedFiles++;
+                        if ($process->hasSyntaxError()) {
+                            $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                            $filesWithSyntaxError++;
+                            $output->error();
+                        } else {
+                            $output->ok();
+                        }
+                    }
                 }
             }
         }
 
+        $testTime = round(microtime(true) - $startTime, 1);
+
         $output->writeNewLine(2);
 
-        $message = "Checked $checkedFiles files, ";
+        $message = "Checked $checkedFiles files in $testTime second, ";
         if ($filesWithSyntaxError === 0) {
             $message .= "no syntax error found";
         } else {
@@ -217,6 +225,7 @@ class Manager
      */
     protected function getFilesFromPaths(array $paths, array $extensions)
     {
+        $extensions = array_flip($extensions);
         $files = array();
 
         foreach ($paths as $path) {
@@ -226,7 +235,7 @@ class Manager
                 $directoryFiles = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
                 foreach ($directoryFiles as $directoryFile) {
                     $directoryFile = (string) $directoryFile;
-                    if (in_array(pathinfo($directoryFile, PATHINFO_EXTENSION), $extensions)) {
+                    if (isset($extensions[pathinfo($directoryFile, PATHINFO_EXTENSION)])) {
                         $files[] = $directoryFile;
                     }
                 }

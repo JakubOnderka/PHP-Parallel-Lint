@@ -45,17 +45,23 @@ class Process
     /** @var resource */
     protected $stdout;
 
+    /** @var resource */
+    protected $stderr;
+
     /** @var string */
     private $output;
+
+    /** @var string */
+    private $errorOutput;
 
     /** @var int */
     private $statusCode;
 
     /**
      * @param string $cmdLine
-     * @param bool $blocking
+     * @throws \RuntimeException
      */
-    public function __construct($cmdLine, $blocking = false)
+    public function __construct($cmdLine)
     {
         $descriptors = array(
             self::STDIN  => array('pipe', self::READ),
@@ -65,10 +71,12 @@ class Process
 
         $this->process = proc_open($cmdLine, $descriptors, $pipes, null, null, array('bypass_shell' => true));
 
-        list($stdin, $this->stdout, $stderr) = $pipes;
+        if ($this->process === false) {
+            throw new \RuntimeException("Cannot create new process");
+        }
+
+        list($stdin, $this->stdout, $this->stderr) = $pipes;
         fclose($stdin);
-        stream_set_blocking($this->stdout, $blocking ? 1 : 0);
-        fclose($stderr);
     }
 
     /**
@@ -77,7 +85,14 @@ class Process
     public function isFinished()
     {
         $status = proc_get_status($this->process);
-        return !$status['running'];
+
+        if ($status['running']) {
+            return false;
+        } else if ($this->statusCode === null) {
+            $this->statusCode = (int) $status['exitcode'];
+        }
+
+        return true;
     }
 
     /**
@@ -90,6 +105,15 @@ class Process
     }
 
     /**
+     * @return string
+     */
+    public function getErrorOutput()
+    {
+        $this->terminateAndReadOutput();
+        return $this->errorOutput;
+    }
+
+    /**
      * @return int
      */
     public function getStatusCode()
@@ -99,19 +123,35 @@ class Process
     }
 
     /**
+     * @return bool
+     */
+    public function isFail()
+    {
+        return $this->getStatusCode() === -1;
+    }
+
+    /**
      * @throws \Exception
      */
     protected function terminateAndReadOutput()
     {
         if ($this->process !== null) {
             if (!$this->isFinished()) {
-                throw new \Exception("Cannot terminate running process");
+                throw new \RuntimeException("Cannot terminate running process");
             }
 
             $this->output = stream_get_contents($this->stdout);
             fclose($this->stdout);
 
-            $this->statusCode = proc_close($this->process);
+            $this->errorOutput = stream_get_contents($this->stderr);
+            fclose($this->stderr);
+
+            $statusCode = proc_close($this->process);
+
+            if ($this->statusCode === null) {
+                $this->statusCode = $statusCode;
+            }
+
             $this->process = null;
         }
     }

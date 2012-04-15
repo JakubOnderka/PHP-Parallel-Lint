@@ -49,6 +49,17 @@ class Error
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->message;
+    }
+}
+
+class SyntaxError extends Error
+{
+    /**
      * @param bool $withCodeSnipped
      * @return string
      */
@@ -67,7 +78,7 @@ class Error
             }
         }
 
-        $string .= $this->normalizeMessage($this->message);
+        $string .= $this->translateToken($this->normalizeMessage($this->message));
 
         return $string;
     }
@@ -78,14 +89,6 @@ class Error
     public function __toString()
     {
         return $this->getString();
-    }
-
-    /**
-     * @return string
-     */
-    protected function getShortFilePath()
-    {
-        return str_replace(getcwd(), '', $this->filePath);
     }
 
     /**
@@ -122,6 +125,52 @@ class Error
     }
 
     /**
+     * @param string $message
+     * @return string
+     */
+    protected function translateToken($message)
+    {
+        static $translateTokens = array(
+            'T_FILE' => '__FILE__',
+            'T_FUNC_C' => '__FUNCTION__',
+            'T_HALT_COMPILER' => '__halt_compiler()',
+            'T_INC' => '++',
+            'T_IS_EQUAL' => '==',
+            'T_IS_GREATER_OR_EQUAL' => '>=',
+            'T_IS_IDENTICAL' => '===',
+            'T_IS_NOT_IDENTICAL' => '!==',
+            'T_IS_SMALLER_OR_EQUAL' => '<=',
+            'T_LINE' => '__LINE__',
+            'T_METHOD_C' => '__METHOD__',
+            'T_MINUS_EQUAL' => '-=',
+            'T_MOD_EQUAL' => '%=',
+            'T_MUL_EQUAL' => '*=',
+            'T_NS_C' => '__NAMESPACE__',
+            'T_NS_SEPARATOR' => '\\',
+            'T_OBJECT_OPERATOR' => '->',
+            'T_OR_EQUAL' => '|=',
+            'T_PAAMAYIM_NEKUDOTAYIM' => '::',
+            'T_PLUS_EQUAL' => '+=',
+            'T_SL' => '<<',
+            'T_SL_EQUAL' => '<<=',
+            'T_SR' => '>>',
+            'T_SR_EQUAL' => '>>=',
+            'T_START_HEREDOC' => '<<<',
+            'T_XOR_EQUAL' => '^=',
+        );
+
+        return preg_replace_callback('~T_([A-Z_]*)~',  function($matches) use($translateTokens) {
+            list($tokenName) = $matches;
+            if (isset($translateTokens[$tokenName])) {
+                $operator = $translateTokens[$tokenName];
+                return "$tokenName ($operator)";
+            }
+
+            return $tokenName;
+        }, $message);
+    }
+
+    /**
      * @param string $input
      * @param int $width
      * @return string
@@ -130,5 +179,13 @@ class Error
     {
         $multiplier = $width - strlen($input);
         return str_repeat(' ', $multiplier > 0 ? $multiplier : 0) . $input;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getShortFilePath()
+    {
+        return str_replace(getcwd(), '', $this->filePath);
     }
 }
