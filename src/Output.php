@@ -64,16 +64,31 @@ class Output
         $this->progress();
     }
 
+    public function fail()
+    {
+        $this->writer->write('-');
+        $this->progress();
+    }
+
+    /**
+     * @param string|null $line
+     */
     public function writeLine($line = null)
     {
         $this->writer->write($line . PHP_EOL);
     }
 
+    /**
+     * @param int $count
+     */
     public function writeNewLine($count = 1)
     {
         $this->writer->write(str_repeat(PHP_EOL, $count));
     }
 
+    /**
+     * @param int $count
+     */
     public function setTotalFileCount($count)
     {
         $this->totalFileCount = $count;
@@ -83,10 +98,16 @@ class Output
     {
         if (++$this->checkedFiles % $this->filesPerLine === 0) {
             $percent = round($this->checkedFiles/$this->totalFileCount * 100);
-            $this->writer->write(" {$this->stringWidth($this->checkedFiles)}/$this->totalFileCount ($percent %)" . PHP_EOL);
+            $current = $this->stringWidth($this->checkedFiles, strlen($this->totalFileCount));
+            $this->writeLine(" $current/$this->totalFileCount ($percent %)");
         }
     }
 
+    /**
+     * @param string $input
+     * @param int $width
+     * @return string
+     */
     protected function stringWidth($input, $width = 3)
     {
         $multiplier = $width - strlen($input);
