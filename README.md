@@ -8,19 +8,19 @@ Running parallel jobs in PHP inspired by Nette framework tests.
 Example output
 ---------------
 ```
-a03-0524a:PHP-Parallel-Lint jakubonderka$ php run.php test.php test2.php
-.X
+a03-0524a:PHP-Parallel-Lint jakubonderka$ php run.php .
+X.......
 
-Checked 2 files, syntax error found in 1 file
+Checked 8 files in 0.1 second, syntax error found in 1 file
 
 ----------------------------------------------------------------------
-Parse error: test2.php:40
-    38|     $manager = new ParallelLint\Manager;
-    39|     $setting = 2$manager->parseArguments($_SERVER['argv']);
-  > 40|     $result = $manager->run($setting);
-    41|     die($result ? SUCCESS : WITH_ERRORS);
-    42| } catch (ParallelLint\InvalidArgumentException $e) {
-Unexpected T_VARIABLE
+Parse error: ./error.php:40
+    38| try {
+    39|     $manager = new ParallelLint\Manager;
+  > 40|     $setting = $manager->->parseArguments($_SERVER['argv']);
+    41|     $result = $manager->run($setting);
+    42|     die($result ? SUCCESS : WITH_ERRORS);
+Unexpected T_OBJECT_OPERATOR (->), expecting T_STRING or T_VARIABLE or '{' or '$'
 ```
 
 Using in ANT
