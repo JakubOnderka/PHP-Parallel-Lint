@@ -1,4 +1,6 @@
 <?php
+use JakubOnderka\PhpParallelLint;
+
 if (PHP_VERSION < '5.3') {
     die("PHP Parallel Lint require PHP 5.3 and newer");
 }
@@ -36,11 +38,11 @@ Usage:
 require_once __DIR__ . '/src/Manager.php';
 
 try {
-    $manager = new ParallelLint\Manager;
+    $manager = new PhpParallelLint\Manager;
     $setting = $manager->parseArguments($_SERVER['argv']);
     $result = $manager->run($setting);
     die($result ? SUCCESS : WITH_ERRORS);
-} catch (ParallelLint\InvalidArgumentException $e) {
+} catch (PhpParallelLint\InvalidArgumentException $e) {
     echo "Invalid option {$e->getArgument()}" . PHP_EOL . PHP_EOL;
     showOptions();
     die(FAILED);

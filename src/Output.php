@@ -1,5 +1,5 @@
 <?php
-namespace ParallelLint;
+namespace JakubOnderka\PhpParallelLint;
 
 /*
 Copyright (c) 2012, Jakub Onderka
