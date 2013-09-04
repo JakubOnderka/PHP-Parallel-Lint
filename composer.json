@@ -1,0 +1,17 @@
+{
+    "name": "JakubOnderka/PHP-Parallel-Lint",
+    "description": "This tool check syntax of PHP files about 20x faster than serial check.",
+    "homepage": "https://github.com/JakubOnderka/PHP-Parallel-Lint",
+    "license": "BSD",
+    "authors": [
+        {
+            "name": "Jakub Onderka",
+            "email": "jakub.onderka@gmail.com"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "./"
+        ]
+    }
+}
