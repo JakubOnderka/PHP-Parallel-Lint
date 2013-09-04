@@ -1,5 +1,5 @@
 {
-    "name": "JakubOnderka/PHP-Parallel-Lint",
+    "name": "jakub-onderka/php-parallel-lint",
     "description": "This tool check syntax of PHP files about 20x faster than serial check.",
     "homepage": "https://github.com/JakubOnderka/PHP-Parallel-Lint",
     "license": "BSD",
