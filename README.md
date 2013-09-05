@@ -5,6 +5,21 @@ This tool check syntax of PHP files about 20x faster then serial check.
 
 Running parallel jobs in PHP inspired by Nette framework tests.
 
+
+Install
+-------
+
+Just create a `composer.json` file and run the `php composer.phar install` command to install it:
+
+```
+{
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "dev-master"
+    }
+}
+```
+
+
 Example output
 ---------------
 ```
@@ -23,6 +38,7 @@ Parse error: ./error.php:40
 Unexpected T_OBJECT_OPERATOR (->), expecting T_STRING or T_VARIABLE or '{' or '$'
 ```
 
+
 Using in ANT
 ---------------
 ```xml
@@ -33,4 +49,3 @@ Using in ANT
     </exec>
 </target>
 ```
-
