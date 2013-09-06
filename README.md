@@ -23,7 +23,7 @@ Just create a `composer.json` file and run the `php composer.phar install` comma
 Example output
 ---------------
 ```
-a03-0524a:PHP-Parallel-Lint jakubonderka$ php run.php .
+$ php run.php .
 X.......
 
 Checked 8 files in 0.1 second, syntax error found in 1 file
