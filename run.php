@@ -1,8 +1,8 @@
 <?php
 use JakubOnderka\PhpParallelLint;
 
-if (PHP_VERSION < '5.3') {
-    die("PHP Parallel Lint require PHP 5.3 and newer");
+if (PHP_VERSION < '5.3.2') {
+    die("PHP Parallel Lint require PHP 5.3.2 or newer.");
 }
 
 const SUCCESS = 0,
@@ -26,7 +26,7 @@ Options:
  * Help
  */
 if (!isset($_SERVER['argv'][1]) || in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) { ?>
-PHP Parallel Lint version 0.1
+PHP Parallel Lint version 0.2
 ---------------------------
 Usage:
 	php run.php [options] [files or directories separated by space]
