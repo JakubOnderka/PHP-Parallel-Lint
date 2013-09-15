@@ -14,5 +14,5 @@
             "./"
         ]
     },
-    "bin": ["run"]
+    "bin": ["parallel-lint"]
 }
