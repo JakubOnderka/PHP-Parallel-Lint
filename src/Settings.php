@@ -67,4 +67,10 @@ class Settings
      * @var array
      */
     public $paths = array();
+
+    /**
+     * Dont't check files or directories
+     * @var array
+     */
+    public $excluded = array();
 }

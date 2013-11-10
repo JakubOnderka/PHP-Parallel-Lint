@@ -30,7 +30,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-class InvalidArgumentException extends \Exception
+class Exception extends \Exception
+{
+
+}
+
+class InvalidArgumentException extends Exception
 {
     protected $argument;
 
@@ -46,7 +51,7 @@ class InvalidArgumentException extends \Exception
     }
 }
 
-class NotExistsPathException extends \Exception
+class NotExistsPathException extends Exception
 {
     protected $path;
 

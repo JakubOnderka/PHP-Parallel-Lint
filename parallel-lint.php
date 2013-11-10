@@ -14,9 +14,12 @@ function showOptions()
 ?>
 Options:
     -p <php>    Specify PHP-CGI executable to run.
-    -short      Set short_open_tag to On (default Off)
-    -asp        Set asp_tags to On (default Off)
-    -e <ext>    Check only files with selected extension separated by comma (default: php,php3,php4,php5,phtml)
+    -s, --short Set short_open_tag to On (default Off)
+    -a, -asp    Set asp_tags to On (default Off)
+    -e <ext>    Check only files with selected extensions separated by comma
+                (default: php,php3,php4,php5,phtml)
+    --exclude   Exclude directory. If you want exclude multiple directory, use
+                multiple exclude parameters.
     -j <num>    Run <num> jobs in parallel (default 10)
     -h, --help  Print this help.
 <?php
@@ -26,10 +29,10 @@ Options:
  * Help
  */
 if (!isset($_SERVER['argv'][1]) || in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) { ?>
-PHP Parallel Lint version 0.2
+PHP Parallel Lint version 0.3
 ---------------------------
 Usage:
-	parallel-lint [options] [files or directories separated by space]
+    parallel-lint [sa] [-p php] [-e ext] [-j num] [--exclude dir] [files or directories]
 <?php
     showOptions();
     exit;

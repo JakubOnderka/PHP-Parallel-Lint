@@ -123,6 +123,17 @@ interface IWriter
     public function write($string);
 }
 
+class NullWriter implements IWriter
+{
+    /**
+     * @param string $string
+     */
+    public function write($string)
+    {
+
+    }
+}
+
 class ConsoleWriter implements IWriter
 {
     /**

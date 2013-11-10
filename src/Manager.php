@@ -30,21 +30,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
+
 require_once __DIR__ . '/exceptions.php';
 require_once __DIR__ . '/Settings.php';
 require_once __DIR__ . '/Process.php';
 require_once __DIR__ . '/Output.php';
 require_once __DIR__ . '/Error.php';
-
-
-class ArrayIterator extends \ArrayIterator
-{
-    public function getNext()
-    {
-        $this->next();
-        return $this->current();
-    }
-}
 
 class Manager
 {
@@ -58,6 +49,7 @@ class Manager
      * @param array $arguments
      * @return Settings
      * @throws InvalidArgumentException
+     * @throws Exception
      */
     public function parseArguments(array $arguments)
     {
@@ -68,24 +60,30 @@ class Manager
             if ($argument{0} !== '-') {
                 $setting->paths[] = $argument;
             } else {
-                switch (substr($argument, 1)) {
-                    case 'p':
+                switch ($argument) {
+                    case '-p':
                         $setting->phpExecutable = $arguments->getNext();
                         break;
 
-                    case 'short':
+                    case '-s':
+                    case '--short':
                         $setting->shortTag = true;
                         break;
 
-                    case 'asp':
+                    case '-a':
+                    case '--asp':
                         $setting->aspTags = true;
                         break;
 
-                    case 'e':
+                    case '--exclude':
+                        $setting->excluded[] = $arguments->getNext();
+                        break;
+
+                    case '-e':
                         $setting->extensions = array_map('trim', explode(',', $arguments->getNext()));
                         break;
 
-                    case 'j':
+                    case '-j':
                         $setting->parallelJobs = max((int) $arguments->getNext(), 1);
                         break;
 
@@ -93,6 +91,10 @@ class Manager
                         throw new InvalidArgumentException($argument);
                 }
             }
+        }
+
+        if (empty($setting->paths)) {
+            throw new Exception('No path set.');
         }
 
         return $setting;
@@ -106,13 +108,17 @@ class Manager
     public function run(Settings $settings = null)
     {
         $settings = $settings ?: new Settings;
+        $output = $this->output ?: new Output(new ConsoleWriter);
 
         $this->checkPhpExecutableExists($settings->phpExecutable);
 
         $cmdLine = $this->getCmdLine($settings);
-        $files = $this->getFilesFromPaths($settings->paths, $settings->extensions);
+        $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
 
-        $output = $this->output ?: new Output(new ConsoleWriter);
+        if (empty($files)) {
+            throw new Exception('No file found to check.');
+        }
+
         $output->setTotalFileCount(count($files));
 
         /** @var LintProcess[] $running */
@@ -216,10 +222,11 @@ class Manager
     /**
      * @param array $paths
      * @param array $extensions
+     * @param array $excluded
      * @return array
      * @throws NotExistsPathException
      */
-    protected function getFilesFromPaths(array $paths, array $extensions)
+    protected function getFilesFromPaths(array $paths, array $extensions, array $excluded = array())
     {
         $extensions = array_flip($extensions);
         $files = array();
@@ -228,11 +235,17 @@ class Manager
             if (is_file($path)) {
                 $files[] = $path;
             } else if (is_dir($path)) {
-                $directoryFiles = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-                foreach ($directoryFiles as $directoryFile) {
-                    $directoryFile = (string) $directoryFile;
-                    if (isset($extensions[pathinfo($directoryFile, PATHINFO_EXTENSION)])) {
-                        $files[] = $directoryFile;
+
+                $iterator = new \RecursiveDirectoryIterator($path);
+                if (!empty($excluded)) {
+                    $iterator = new ExcludeRecursiveDirectoryIterator($iterator, $excluded);
+                }
+                $iterator = new \RecursiveIteratorIterator($iterator);
+
+                /** @var \SplFileInfo[] $iterator */
+                foreach ($iterator as $directoryFile) {
+                    if (isset($extensions[$directoryFile->getExtension()])) {
+                        $files[] = (string) $directoryFile;
                     }
                 }
             } else {
@@ -241,5 +254,146 @@ class Manager
         }
 
         return $files;
+    }
+}
+
+class ArrayIterator extends \ArrayIterator
+{
+    public function getNext()
+    {
+        $this->next();
+        return $this->current();
+    }
+}
+
+class ExcludeRecursiveDirectoryIterator implements \RecursiveIterator
+{
+    /** @var array */
+    private $excluded = array();
+
+    /** @var \RecursiveDirectoryIterator */
+    private $iterator;
+
+    /**
+     * @param array $excluded
+     * @param \RecursiveDirectoryIterator $iterator
+     */
+    public function __construct(\RecursiveDirectoryIterator $iterator, array $excluded)
+    {
+        $this->iterator = $iterator;
+        $this->excluded = array_map(array($this, 'normalizePath'), $excluded);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Return the current element
+     * @link http://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
+     */
+    public function current()
+    {
+        return $this->iterator->current();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Move forward to next element
+     * @link http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     */
+    public function next()
+    {
+        $this->iterator->next();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Return the key of the current element
+     * @link http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     */
+    public function key()
+    {
+        return $this->iterator->key();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     * Returns true on success or false on failure.
+     */
+    public function valid()
+    {
+        return $this->iterator->valid();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Rewind the Iterator to the first element
+     * @link http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     */
+    public function rewind()
+    {
+        $this->iterator->rewind();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Returns if an iterator can be created for the current entry.
+     * @link http://php.net/manual/en/recursiveiterator.haschildren.php
+     * @return bool true if the current entry can be iterated over, otherwise returns false.
+     */
+    public function hasChildren()
+    {
+        $path = $this->normalizePath($this->iterator->getPathname());
+        foreach ($this->excluded as $exc) {
+            if (strpos($path, $exc) === 0) {
+                return false;
+            }
+        }
+
+        return $this->iterator->hasChildren();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Returns an iterator for the current entry.
+     * @link http://php.net/manual/en/recursiveiterator.getchildren.php
+     * @return \RecursiveIterator An iterator for the current entry.
+     */
+    public function getChildren()
+    {
+        return new self($this->iterator->getChildren(), $this->excluded);
+    }
+
+
+    /**
+     * Source: http://stackoverflow.com/questions/4774116/c-realpath-without-resolving-symlinks
+     * @param string $path
+     * @return string
+     */
+    private function normalizePath($path)
+    {
+        if (!isset($path[0]) || $path[0] !== DIRECTORY_SEPARATOR) {
+            $result = explode(DIRECTORY_SEPARATOR, getcwd());
+        } else {
+            $result = array('');
+        }
+
+        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        foreach($parts as $part) {
+            if ($part === '' || $part === '.') {
+                continue;
+            } if ($part === '..') {
+                array_pop($result);
+            } else {
+                $result[] = $part;
+            }
+        }
+
+        return implode(DIRECTORY_SEPARATOR, $result);
     }
 }
