@@ -73,10 +73,6 @@ class Manager
                         $setting->phpExecutable = $arguments->getNext();
                         break;
 
-                    case 'log':
-                        $setting->logFile = $arguments->getNext();
-                        break;
-
                     case 'short':
                         $setting->shortTag = true;
                         break;

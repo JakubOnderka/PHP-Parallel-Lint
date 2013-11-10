@@ -51,12 +51,6 @@ class Settings
     public $aspTags = false;
 
     /**
-     * Path to log file. If null, no log file is created
-     * @var string
-     */
-    public $logFile;
-
-    /**
      * Number of jobs running in same time
      * @var int
      */
