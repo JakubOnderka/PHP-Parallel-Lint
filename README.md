@@ -24,7 +24,7 @@ Example output
 --------------
 
 ```
-$ php run.php .
+$ ./parallel-lint .
 X.......
 
 Checked 8 files in 0.1 second, syntax error found in 1 file
