@@ -29,7 +29,7 @@ if (!isset($_SERVER['argv'][1]) || in_array('-h', $_SERVER['argv']) || in_array(
 PHP Parallel Lint version 0.2
 ---------------------------
 Usage:
-	php run.php [options] [files or directories separated by space]
+	parallel-lint [options] [files or directories separated by space]
 <?php
     showOptions();
     exit;

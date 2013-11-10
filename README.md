@@ -1,5 +1,5 @@
 PHP Parallel Lint
-=============
+=================
 
 This tool check syntax of PHP files about 20x faster then serial check.
 
@@ -11,7 +11,7 @@ Install
 
 Just create a `composer.json` file and run the `php composer.phar install` command to install it:
 
-```
+```json
 {
     "require-dev": {
         "jakub-onderka/php-parallel-lint": "dev-master"
@@ -21,9 +21,10 @@ Just create a `composer.json` file and run the `php composer.phar install` comma
 
 
 Example output
----------------
+--------------
+
 ```
-$ php run.php .
+$ ./parallel-lint .
 X.......
 
 Checked 8 files in 0.1 second, syntax error found in 1 file
@@ -40,7 +41,8 @@ Unexpected T_OBJECT_OPERATOR (->), expecting T_STRING or T_VARIABLE or '{' or '$
 
 
 Using in ANT
----------------
+------------
+
 ```xml
 <target name="lint" description="Check syntax errors in PHP files">
     <exec executable="php" failonerror="true">
