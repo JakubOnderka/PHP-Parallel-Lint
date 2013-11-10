@@ -117,11 +117,17 @@ class Output
 
 interface IWriter
 {
+    /**
+     * @param string $string
+     */
     public function write($string);
 }
 
-class ConsoleWriter implements  IWriter
+class ConsoleWriter implements IWriter
 {
+    /**
+     * @param string $string
+     */
     public function write($string)
     {
         echo $string;
