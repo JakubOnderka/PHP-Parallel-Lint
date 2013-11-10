@@ -1,7 +1,7 @@
 PHP Parallel Lint
 =================
 
-This tool check syntax of PHP files about 20x faster then serial check.
+This tool check syntax of PHP files faster then serial check with fancier output.
 
 Running parallel jobs in PHP inspired by Nette framework tests.
 
@@ -39,6 +39,11 @@ Parse error: ./error.php:40
 Unexpected T_OBJECT_OPERATOR (->), expecting T_STRING or T_VARIABLE or '{' or '$'
 ```
 
+Recommended setting for usage with Symfony framework
+--------------
+```
+$ ./bin/parallel-lint --exclude .git --exclude app --exclude vendor .
+```
 
 Using in ANT
 ------------
