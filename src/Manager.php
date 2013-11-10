@@ -133,9 +133,7 @@ class Manager
                 $running[$file] = new LintProcess($cmdLine . escapeshellarg($file));
             }
 
-            if (count($running) > 1) {
-                usleep(20000);
-            }
+            usleep(100);
 
             foreach ($running as $file => $process) {
                 if ($process->isFinished()) {
