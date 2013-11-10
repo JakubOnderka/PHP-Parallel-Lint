@@ -41,18 +41,26 @@ Unexpected T_OBJECT_OPERATOR (->), expecting T_STRING or T_VARIABLE or '{' or '$
 
 Recommended setting for usage with Symfony framework
 --------------
+
+For run from command line:
+
 ```
 $ ./bin/parallel-lint --exclude .git --exclude app --exclude vendor .
 ```
 
-Using in ANT
-------------
+or setting for ANT:
 
 ```xml
-<target name="lint" description="Check syntax errors in PHP files">
-    <exec executable="php" failonerror="true">
-        <arg line="${basedir}/tests/lint/run.php" />
-        <arg line="${basedir}/private/" />
+<condition property="parallel-lint" value="${basedir}/bin/parallel-lint.bat" else="${basedir}/bin/parallel-lint">
+    <os family="windows"/>
+</condition>
+
+<target name="parallel-lint" description="Run PHP parallel lint">
+    <exec executable="${parallel-lint}">
+        <arg line='--exclude ${basedir}/.git/' />
+        <arg line='--exclude ${basedir}/app/' />
+        <arg line='--exclude ${basedir}/vendor/' />
+        <arg line='${basedir}' />
     </exec>
 </target>
 ```
