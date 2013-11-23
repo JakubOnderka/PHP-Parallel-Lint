@@ -30,7 +30,7 @@ Options:
  * Help
  */
 if (!isset($_SERVER['argv'][1]) || in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) { ?>
-PHP Parallel Lint version 0.3
+PHP Parallel Lint version 0.4
 ---------------------------
 Usage:
     parallel-lint [sa] [-p php] [-e ext] [-j num] [--exclude dir] [files or directories]
