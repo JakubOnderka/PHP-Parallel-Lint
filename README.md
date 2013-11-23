@@ -19,6 +19,8 @@ Just create a `composer.json` file and run the `php composer.phar install` comma
 }
 ```
 
+For colored output install suggested package `jakub-onderka/php-console-highlighter`.
+
 
 Example output
 --------------
