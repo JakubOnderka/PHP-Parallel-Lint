@@ -303,7 +303,8 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      * @link http://php.net/manual/en/recursivefilteriterator.haschildren.php
      * @return bool true if the inner iterator has children, otherwise false
      */
-    public function hasChildren() {
+    public function hasChildren()
+    {
         return $this->iterator->hasChildren();
     }
 
@@ -314,7 +315,8 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      * @link http://php.net/manual/en/recursivefilteriterator.getchildren.php
      * @return \RecursiveFilterIterator containing the inner iterator's children.
      */
-    public function getChildren() {
+    public function getChildren()
+    {
         return new self($this->iterator->getChildren(), array());
     }
 
@@ -322,7 +324,8 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      * @param string $excluded
      * @return string
      */
-    private function getPathname($excluded) {
+    private function getPathname($excluded)
+    {
         if (DIRECTORY_SEPARATOR !== $excluded[0]) {
             $excluded = $this->iterator->getPath() . DIRECTORY_SEPARATOR . $excluded;
         }
