@@ -21,6 +21,7 @@ Options:
     --exclude   Exclude directory. If you want exclude multiple directory, use
                 multiple exclude parameters.
     -j <num>    Run <num> jobs in parallel (default 10)
+    --no-colors Disable colors in console output.
     -h, --help  Print this help.
 <?php
 }
@@ -38,7 +39,7 @@ Usage:
     exit;
 }
 
-require_once __DIR__ . '/src/Manager.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 try {
     $manager = new PhpParallelLint\Manager;

@@ -6,6 +6,9 @@
     "require": {
         "php": ">=5.3.2"
     },
+    "suggest": {
+        "jakub-onderka/php-console-highlighter": "Highlight syntax in code snippet"
+    },
     "authors": [
         {
             "name": "Jakub Onderka",

@@ -30,13 +30,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-
-require_once __DIR__ . '/exceptions.php';
-require_once __DIR__ . '/Settings.php';
-require_once __DIR__ . '/Process.php';
-require_once __DIR__ . '/Output.php';
-require_once __DIR__ . '/Error.php';
-
 class Manager
 {
     const CODE_OK = 0,
@@ -87,6 +80,10 @@ class Manager
                         $setting->parallelJobs = max((int) $arguments->getNext(), 1);
                         break;
 
+                    case '--no-colors':
+                        $setting->colors = false;
+                        break;
+
                     default:
                         throw new InvalidArgumentException($argument);
                 }
@@ -108,7 +105,7 @@ class Manager
     public function run(Settings $settings = null)
     {
         $settings = $settings ?: new Settings;
-        $output = $this->output ?: new Output(new ConsoleWriter);
+        $output = $this->output ?: ($settings->colors ? new OutputColored(new ConsoleWriter) : new Output(new ConsoleWriter));
 
         $this->checkPhpExecutableExists($settings->phpExecutable);
 
@@ -145,7 +142,12 @@ class Manager
                     } else {
                         $checkedFiles++;
                         if ($process->hasSyntaxError()) {
-                            $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                            if ($settings->colors) {
+                                $errors[] = new SyntaxErrorColored($file, $process->getSyntaxError());
+                            } else {
+                                $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                            }
+
                             $filesWithSyntaxError++;
                             $output->error();
                         } else {
@@ -174,7 +176,7 @@ class Manager
             $output->writeNewLine();
 
             foreach ($errors as $errorMessage) {
-                $output->writeLine('----------------------------------------------------------------------');
+                $output->writeLine(str_repeat('-', 60));
                 $output->writeLine($errorMessage);
             }
 

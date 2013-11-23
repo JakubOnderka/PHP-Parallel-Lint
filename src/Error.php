@@ -30,6 +30,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
+use JakubOnderka\PhpConsoleHighlighter\Highlighter;
+
 class Error
 {
     /** @var string */
@@ -92,22 +94,26 @@ class SyntaxError extends Error
     }
 
     /**
-     * @param int $line
+     * @param int $lineNumber
+     * @param int $linesBefore
+     * @param int $linesAfter
      * @return string
      */
-    protected function getCodeSnippet($line)
+    protected function getCodeSnippet($lineNumber, $linesBefore = 2, $linesAfter = 2)
     {
         $lines = file($this->filePath);
 
-        $snippet = '';
-        $lineStrlen = strlen($line + 2);
-        $line -= 1; // because $lines array is indexed from zero
+        $offset = $lineNumber - $linesBefore - 1;
+        $length = $linesAfter + $linesBefore + 1;
+        $lines = array_slice($lines, $offset, $length, $preserveKeys = true);
 
-        for ($i = $line - 2; $i <= $line + 2; $i++) {
-            if (isset($lines[$i])) {
-                $snippet .= ($line === $i ? '  > ' : '    ');
-                $snippet .= $this->stringWidth($i + 1, $lineStrlen) . '| ' . rtrim($lines[$i]) . PHP_EOL;
-            }
+        end($lines);
+        $lineStrlen = strlen(key($lines) + 1);
+
+        $snippet = '';
+        foreach ($lines as $i => $line) {
+            $snippet .= ($lineNumber === $i + 1 ? '  > ' : '    ');
+            $snippet .= str_pad($i + 1, $lineStrlen, ' ', STR_PAD_LEFT) . '| ' . rtrim($line) . PHP_EOL;
         }
 
         return $snippet;
@@ -187,5 +193,34 @@ class SyntaxError extends Error
     protected function getShortFilePath()
     {
         return str_replace(getcwd(), '', $this->filePath);
+    }
+}
+
+class SyntaxErrorColored extends SyntaxError
+{
+    /**
+     * @param int $lineNumber
+     * @param int $linesBefore
+     * @param int $linesAfter
+     * @return string
+     */
+    protected function getCodeSnippet($lineNumber, $linesBefore = 2, $linesAfter = 2)
+    {
+        if (!class_exists('\JakubOnderka\PhpConsoleHighlighter\Highlighter')) {
+            return parent::getCodeSnippet($lineNumber, $linesBefore, $linesAfter);
+        }
+
+        $colors = new \Colors\Color();
+        $colors->setTheme(array(
+            Highlighter::TOKEN_STRING => 'red',
+            Highlighter::TOKEN_COMMENT => 'yellow',
+            Highlighter::TOKEN_KEYWORD => 'green',
+            Highlighter::TOKEN_DEFAULT => 'white',
+            Highlighter::TOKEN_HTML => 'cyan'
+        ));
+        $highliger = new Highlighter($colors);
+
+        $fileContent = file_get_contents($this->filePath);
+        return $highliger->getCodeSnippet($fileContent, $lineNumber, $linesBefore, $linesAfter);
     }
 }

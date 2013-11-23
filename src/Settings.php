@@ -73,4 +73,10 @@ class Settings
      * @var array
      */
     public $excluded = array();
+
+    /**
+     * Print to console with colors
+     * @var bool
+     */
+    public $colors = true;
 }

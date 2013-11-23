@@ -115,6 +115,31 @@ class Output
     }
 }
 
+class OutputColored extends Output
+{
+    /** @var \Colors\Color */
+    private $colors;
+
+    public function __construct(IWriter $writer)
+    {
+        parent::__construct($writer);
+
+        if (class_exists('\Colors\Color')) {
+            $this->colors = new \Colors\Color();
+        }
+    }
+
+    public function error()
+    {
+        if ($this->colors) {
+            $this->writer->write($this->colors->apply('bg_red', 'X'));
+            $this->progress();
+        } else {
+             parent::error();
+        }
+    }
+}
+
 interface IWriter
 {
     /**
