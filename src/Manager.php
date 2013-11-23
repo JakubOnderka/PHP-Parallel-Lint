@@ -235,10 +235,9 @@ class Manager
             if (is_file($path)) {
                 $files[] = $path;
             } else if (is_dir($path)) {
-
                 $iterator = new \RecursiveDirectoryIterator($path);
                 if (!empty($excluded)) {
-                    $iterator = new ExcludeRecursiveDirectoryIterator($iterator, $excluded);
+                    $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded);
                 }
                 $iterator = new \RecursiveIteratorIterator($iterator);
 
@@ -266,134 +265,69 @@ class ArrayIterator extends \ArrayIterator
     }
 }
 
-class ExcludeRecursiveDirectoryIterator implements \RecursiveIterator
+class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
 {
-    /** @var array */
-    private $excluded = array();
-
     /** @var \RecursiveDirectoryIterator */
     private $iterator;
 
+    /** @var array */
+    private $excluded = array();
+
     /**
-     * @param array $excluded
      * @param \RecursiveDirectoryIterator $iterator
+     * @param array $excluded
      */
     public function __construct(\RecursiveDirectoryIterator $iterator, array $excluded)
     {
+        parent::__construct($iterator);
         $this->iterator = $iterator;
-        $this->excluded = array_map(array($this, 'normalizePath'), $excluded);
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
-     */
-    public function current()
-    {
-        return $this->iterator->current();
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
-     */
-    public function next()
-    {
-        $this->iterator->next();
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
-     */
-    public function key()
-    {
-        return $this->iterator->key();
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
-     */
-    public function valid()
-    {
-        return $this->iterator->valid();
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
-     */
-    public function rewind()
-    {
-        $this->iterator->rewind();
+        $this->excluded = array_map(array($this, 'getPathname'), $excluded);
     }
 
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
-     * Returns if an iterator can be created for the current entry.
-     * @link http://php.net/manual/en/recursiveiterator.haschildren.php
-     * @return bool true if the current entry can be iterated over, otherwise returns false.
+     * Check whether the current element of the iterator is acceptable
+     *
+     * @link http://php.net/manual/en/filteriterator.accept.php
+     * @return bool true if the current element is acceptable, otherwise false.
      */
-    public function hasChildren()
+    public function accept()
     {
-        $path = $this->normalizePath($this->iterator->getPathname());
-        foreach ($this->excluded as $exc) {
-            if (strpos($path, $exc) === 0) {
-                return false;
-            }
-        }
+        return !in_array($this->current()->getPathname(), $this->excluded);
+    }
 
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Check whether the inner iterator's current element has children
+     *
+     * @link http://php.net/manual/en/recursivefilteriterator.haschildren.php
+     * @return bool true if the inner iterator has children, otherwise false
+     */
+    public function hasChildren() {
         return $this->iterator->hasChildren();
     }
 
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
-     * Returns an iterator for the current entry.
-     * @link http://php.net/manual/en/recursiveiterator.getchildren.php
-     * @return \RecursiveIterator An iterator for the current entry.
+     * Return the inner iterator's children contained in a RecursiveFilterIterator
+     *
+     * @link http://php.net/manual/en/recursivefilteriterator.getchildren.php
+     * @return \RecursiveFilterIterator containing the inner iterator's children.
      */
-    public function getChildren()
-    {
-        return new self($this->iterator->getChildren(), $this->excluded);
+    public function getChildren() {
+        return new self($this->iterator->getChildren(), array());
     }
 
-
     /**
-     * Source: http://stackoverflow.com/questions/4774116/c-realpath-without-resolving-symlinks
-     * @param string $path
+     * @param string $excluded
      * @return string
      */
-    private function normalizePath($path)
-    {
-        if (!isset($path[0]) || $path[0] !== DIRECTORY_SEPARATOR) {
-            $result = explode(DIRECTORY_SEPARATOR, getcwd());
-        } else {
-            $result = array('');
+    private function getPathname($excluded) {
+        if (DIRECTORY_SEPARATOR !== $excluded[0]) {
+            $excluded = $this->iterator->getPath() . DIRECTORY_SEPARATOR . $excluded;
         }
 
-        $parts = explode(DIRECTORY_SEPARATOR, $path);
-        foreach($parts as $part) {
-            if ($part === '' || $part === '.') {
-                continue;
-            } if ($part === '..') {
-                array_pop($result);
-            } else {
-                $result[] = $part;
-            }
-        }
-
-        return implode(DIRECTORY_SEPARATOR, $result);
+        $directoryFile = new \SplFileInfo($excluded);
+        return $directoryFile->getPathname();
     }
 }
