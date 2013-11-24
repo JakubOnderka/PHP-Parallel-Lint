@@ -30,6 +30,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
+use Colors\Color;
 use JakubOnderka\PhpConsoleHighlighter\Highlighter;
 
 class Error
@@ -104,6 +105,7 @@ class SyntaxError extends Error
         $lines = file($this->filePath);
 
         $offset = $lineNumber - $linesBefore - 1;
+        $offset = max($offset, 0);
         $length = $linesAfter + $linesBefore + 1;
         $lines = array_slice($lines, $offset, $length, $preserveKeys = true);
 
@@ -210,17 +212,10 @@ class SyntaxErrorColored extends SyntaxError
             return parent::getCodeSnippet($lineNumber, $linesBefore, $linesAfter);
         }
 
-        $colors = new \Colors\Color();
-        $colors->setTheme(array(
-            Highlighter::TOKEN_STRING => 'red',
-            Highlighter::TOKEN_COMMENT => 'yellow',
-            Highlighter::TOKEN_KEYWORD => 'green',
-            Highlighter::TOKEN_DEFAULT => 'white',
-            Highlighter::TOKEN_HTML => 'cyan'
-        ));
-        $highliger = new Highlighter($colors);
+        $colors = new Color();
+        $highlighter = new Highlighter($colors);
 
         $fileContent = file_get_contents($this->filePath);
-        return $highliger->getCodeSnippet($fileContent, $lineNumber, $linesBefore, $linesAfter);
+        return $highlighter->getCodeSnippet($fileContent, $lineNumber, $linesBefore, $linesAfter);
     }
 }
