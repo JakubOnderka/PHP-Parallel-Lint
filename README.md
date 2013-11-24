@@ -47,7 +47,7 @@ Recommended setting for usage with Symfony framework
 For run from command line:
 
 ```
-$ ./bin/parallel-lint --exclude .git --exclude app --exclude vendor .
+$ ./bin/parallel-lint --exclude app --exclude vendor .
 ```
 
 or setting for ANT:
@@ -58,8 +58,7 @@ or setting for ANT:
 </condition>
 
 <target name="parallel-lint" description="Run PHP parallel lint">
-    <exec executable="${parallel-lint}">
-        <arg line='--exclude ${basedir}/.git/' />
+    <exec executable="${parallel-lint}" failonerror="true">
         <arg line='--exclude ${basedir}/app/' />
         <arg line='--exclude ${basedir}/vendor/' />
         <arg line='${basedir}' />
