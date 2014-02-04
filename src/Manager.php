@@ -170,6 +170,12 @@ class Manager
             $message .= ($filesWithSyntaxError === 1 ? 'file' : 'files');
         }
 
+        $colorReplace = array(
+            '#.+no syntax error found$#m' => "\033[42m\033[1;37m\\0\033[0m",
+            '#.+syntax error found in .+ file(s)*$#m' => "\033[1;41m\033[37m\\0\033[0m",
+        );
+        $message = preg_replace(array_keys($colorReplace), $colorReplace, $message);
+
         $output->writeLine($message);
 
         if (!empty($errors)) {
