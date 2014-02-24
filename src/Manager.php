@@ -243,7 +243,7 @@ class Manager
 
                 /** @var \SplFileInfo[] $iterator */
                 foreach ($iterator as $directoryFile) {
-                    if (isset($extensions[$directoryFile->getExtension()])) {
+                    if (isset($extensions[pathinfo($directoryFile->getFilename(), PATHINFO_EXTENSION)])) {
                         $files[] = (string) $directoryFile;
                     }
                 }
