@@ -213,6 +213,7 @@ class SyntaxErrorColored extends SyntaxError
         }
 
         $colors = new ConsoleColor();
+        $colors->setForceStyle(true);
         $highlighter = new Highlighter($colors);
 
         $fileContent = file_get_contents($this->filePath);
