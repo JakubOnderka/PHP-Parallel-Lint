@@ -41,14 +41,19 @@ class Error
     /** @var string */
     protected $message;
 
+    /** @var bool */
+    protected $translateTokens;
+
     /**
      * @param string $filePath
      * @param string $message
+     * @param bool $translateTokens
      */
-    public function __construct($filePath, $message)
+    public function __construct($filePath, $message, $translateTokens = false)
     {
         $this->filePath = $filePath;
         $this->message = $message;
+        $this->translateTokens = $translateTokens;
     }
 
     /**
@@ -81,7 +86,11 @@ class SyntaxError extends Error
             }
         }
 
-        $string .= $this->translateToken($this->normalizeMessage($this->message));
+        $message = $this->normalizeMessage($this->message);
+        if ($this->translateTokens) {
+            $message = $this->translateTokens($message);
+        }
+        $string .= $message;
 
         return $string;
     }
@@ -136,7 +145,7 @@ class SyntaxError extends Error
      * @param string $message
      * @return string
      */
-    protected function translateToken($message)
+    protected function translateTokens($message)
     {
         static $translateTokens = array(
             'T_FILE' => '__FILE__',
