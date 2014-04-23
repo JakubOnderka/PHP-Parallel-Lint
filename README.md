@@ -14,7 +14,7 @@ Just create a `composer.json` file and run the `php composer.phar install` comma
 ```json
 {
     "require-dev": {
-        "jakub-onderka/php-parallel-lint": "dev-master"
+        "jakub-onderka/php-parallel-lint": "0.*"
     }
 }
 ```
