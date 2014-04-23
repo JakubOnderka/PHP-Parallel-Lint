@@ -208,7 +208,10 @@ class SyntaxErrorColored extends SyntaxError
      */
     protected function getCodeSnippet($lineNumber, $linesBefore = 2, $linesAfter = 2)
     {
-        if (!class_exists('\JakubOnderka\PhpConsoleHighlighter\Highlighter')) {
+        if (
+            !class_exists('\JakubOnderka\PhpConsoleHighlighter\Highlighter') ||
+            !class_exists('\JakubOnderka\PhpConsoleColor\ConsoleColor')
+        ) {
             return parent::getCodeSnippet($lineNumber, $linesBefore, $linesAfter);
         }
 
