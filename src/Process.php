@@ -179,4 +179,16 @@ class LintProcess extends Process
 
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function isFail()
+    {
+        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
+           return $this->getStatusCode() === 1;
+        } else {
+            return parent::isFail();
+        }
+    }
 }
