@@ -30,7 +30,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-use Colors\Color;
+use JakubOnderka\PhpConsoleColor\ConsoleColor;
 use JakubOnderka\PhpConsoleHighlighter\Highlighter;
 
 class Error
@@ -212,7 +212,7 @@ class SyntaxErrorColored extends SyntaxError
             return parent::getCodeSnippet($lineNumber, $linesBefore, $linesAfter);
         }
 
-        $colors = new Color();
+        $colors = new ConsoleColor();
         $highlighter = new Highlighter($colors);
 
         $fileContent = file_get_contents($this->filePath);
