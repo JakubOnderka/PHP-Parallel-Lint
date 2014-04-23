@@ -126,6 +126,7 @@ class OutputColored extends Output
 
         if (class_exists('\JakubOnderka\PhpConsoleColor\ConsoleColor')) {
             $this->colors = new \JakubOnderka\PhpConsoleColor\ConsoleColor();
+            $this->colors->setForceStyle(true);
         }
     }
 
