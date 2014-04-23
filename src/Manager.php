@@ -107,7 +107,10 @@ class Manager
         $settings = $settings ?: new Settings;
         $output = $this->output ?: ($settings->colors ? new OutputColored(new ConsoleWriter) : new Output(new ConsoleWriter));
 
-        $this->checkPhpExecutableExists($settings->phpExecutable);
+        $version = $this->getPhpExecutableVersion($settings->phpExecutable);
+        $translateTokens = $version < 50400; // From PHP version 5.4 are tokens translated by default
+
+        $output->writeLine('PHP version ' . $this->phpVersionIdToString($version));
 
         $cmdLine = $this->getCmdLine($settings);
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
@@ -143,9 +146,9 @@ class Manager
                         $checkedFiles++;
                         if ($process->hasSyntaxError()) {
                             if ($settings->colors) {
-                                $errors[] = new SyntaxErrorColored($file, $process->getSyntaxError());
+                                $errors[] = new SyntaxErrorColored($file, $process->getSyntaxError(), $translateTokens);
                             } else {
-                                $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                                $errors[] = new SyntaxError($file, $process->getSyntaxError(), $translateTokens);
                             }
 
                             $filesWithSyntaxError++;
@@ -196,15 +199,31 @@ class Manager
 
     /**
      * @param string $phpExecutable
+     * @return int PHP version as PHP_VERSION_ID constant
      * @throws \Exception
      */
-    protected function checkPhpExecutableExists($phpExecutable)
+    protected function getPhpExecutableVersion($phpExecutable)
     {
-        exec(escapeshellarg($phpExecutable) . ' -v', $nothing, $result);
+        exec(escapeshellarg($phpExecutable) . ' -r "echo PHP_VERSION_ID;"', $output, $result);
 
         if ($result !== self::CODE_OK && $result !== self::CODE_ERROR) {
-            throw new \Exception("Unable to execute '{$phpExecutable} -v'");
+            throw new \Exception("Unable to execute '{$phpExecutable}'.");
         }
+
+        return (int) $output[0];
+    }
+
+    /**
+     * @param int $phpVersionId
+     * @return string
+     */
+    protected function phpVersionIdToString($phpVersionId)
+    {
+        $releaseVersion = (int)substr($phpVersionId, -2, 2);
+        $minorVersion = (int)substr($phpVersionId, -4, 2);
+        $majorVersion = (int)substr($phpVersionId, 0, strlen($phpVersionId)-4);
+
+        return "$majorVersion.$minorVersion.$releaseVersion";
     }
 
     /**
