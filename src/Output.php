@@ -117,15 +117,15 @@ class Output
 
 class OutputColored extends Output
 {
-    /** @var \Colors\Color */
+    /** @var \JakubOnderka\PhpConsoleColor\ConsoleColor */
     private $colors;
 
     public function __construct(IWriter $writer)
     {
         parent::__construct($writer);
 
-        if (class_exists('\Colors\Color')) {
-            $this->colors = new \Colors\Color();
+        if (class_exists('\JakubOnderka\PhpConsoleColor\ConsoleColor')) {
+            $this->colors = new \JakubOnderka\PhpConsoleColor\ConsoleColor();
         }
     }
 
