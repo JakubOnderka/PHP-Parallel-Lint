@@ -235,6 +235,7 @@ class Manager
         $cmdLine = escapeshellarg($settings->phpExecutable);
         $cmdLine .= ' -d asp_tags=' . ($settings->aspTags ? 'On' : 'Off');
         $cmdLine .= ' -d short_open_tag=' . ($settings->shortTag ? 'On' : 'Off');
+        $cmdLine .= ' -d error_reporting=E_ALL';
         return $cmdLine . ' -n -l ';
     }
 
