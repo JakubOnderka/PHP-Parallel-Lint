@@ -297,11 +297,16 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      * @param \RecursiveDirectoryIterator $iterator
      * @param array $excluded
      */
-    public function __construct(\RecursiveDirectoryIterator $iterator, array $excluded)
+    public function __construct(\RecursiveDirectoryIterator $iterator, array $excluded, $excludedParsed = false)
     {
         parent::__construct($iterator);
         $this->iterator = $iterator;
-        $this->excluded = array_map(array($this, 'getPathname'), $excluded);
+
+        if(true) {
+            $this->excluded = array_map(array($this, 'getPathname'), $excluded);
+        } else {
+            $this->excluded = $excluded; 
+        }
     }
 
     /**
@@ -337,7 +342,7 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      */
     public function getChildren()
     {
-        return new self($this->iterator->getChildren(), array());
+        return new self($this->iterator->getChildren(), $this->excluded, true);
     }
 
     /**
@@ -346,7 +351,7 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      */
     private function getPathname($excluded)
     {
-        if (DIRECTORY_SEPARATOR !== $excluded[0]) {
+        if (".".DIRECTORY_SEPARATOR !== $excluded[0].$excluded[1]) {
             $excluded = $this->iterator->getPath() . DIRECTORY_SEPARATOR . $excluded;
         }
 
