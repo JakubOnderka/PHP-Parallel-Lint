@@ -110,7 +110,13 @@ class Manager
         $version = $this->getPhpExecutableVersion($settings->phpExecutable);
         $translateTokens = $version < 50400; // From PHP version 5.4 are tokens translated by default
 
-        $output->writeLine('PHP version ' . $this->phpVersionIdToString($version));
+        $output->write("PHP {$this->phpVersionIdToString($version)} | ");
+
+        if ($settings->parallelJobs === 1) {
+            $output->writeLine("1 job");
+        } else {
+            $output->writeLine("{$settings->parallelJobs} parallel jobs");
+        }
 
         $cmdLine = $this->getCmdLine($settings);
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
@@ -173,7 +179,11 @@ class Manager
             $message .= ($filesWithSyntaxError === 1 ? 'file' : 'files');
         }
 
-        $output->writeLine($message);
+        if ($filesWithSyntaxError === 0) {
+            $output->writeLine($message, Output::TYPE_OK);
+        } else {
+            $output->writeLine($message, Output::TYPE_ERROR);
+        }
 
         if (!empty($errors)) {
             $output->writeNewLine();

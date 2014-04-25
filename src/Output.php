@@ -32,6 +32,10 @@ either expressed or implied, of the FreeBSD Project.
 
 class Output
 {
+    const TYPE_DEFAULT = 'default',
+        TYPE_ERROR = 'error',
+        TYPE_OK = 'ok';
+
     /** @var int */
     public $filesPerLine = 60;
 
@@ -60,7 +64,7 @@ class Output
 
     public function error()
     {
-        $this->writer->write('X');
+        $this->write('X', self::TYPE_ERROR);
         $this->progress();
     }
 
@@ -71,11 +75,22 @@ class Output
     }
 
     /**
-     * @param string|null $line
+     * @param string $string
+     * @param string $type
      */
-    public function writeLine($line = null)
+    public function write($string, $type = self::TYPE_DEFAULT)
     {
-        $this->writer->write($line . PHP_EOL);
+        $this->writer->write($string);
+    }
+
+    /**
+     * @param string|null $line
+     * @param string $type
+     */
+    public function writeLine($line = null, $type = self::TYPE_DEFAULT)
+    {
+        $this->write($line, $type);
+        $this->writeNewLine();
     }
 
     /**
@@ -83,7 +98,7 @@ class Output
      */
     public function writeNewLine($count = 1)
     {
-        $this->writer->write(str_repeat(PHP_EOL, $count));
+        $this->write(str_repeat(PHP_EOL, $count));
     }
 
     /**
@@ -130,13 +145,28 @@ class OutputColored extends Output
         }
     }
 
-    public function error()
+    /**
+     * @param string $string
+     * @param string $type
+     * @throws \JakubOnderka\PhpConsoleColor\InvalidStyleException
+     */
+    public function write($string, $type = self::TYPE_DEFAULT)
     {
-        if ($this->colors) {
-            $this->writer->write($this->colors->apply('bg_red', 'X'));
-            $this->progress();
-        } else {
-             parent::error();
+        if (!$this->colors) {
+            parent::write($string, $type);
+        }
+
+        switch ($type) {
+            case self::TYPE_OK:
+                parent::write($this->colors->apply('bg_green', $string));
+                break;
+
+            case self::TYPE_ERROR:
+                parent::write($this->colors->apply('bg_red', $string));
+                break;
+
+            default:
+                parent::write($string);
         }
     }
 }
