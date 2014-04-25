@@ -214,13 +214,19 @@ class Manager
      */
     protected function getPhpExecutableVersion($phpExecutable)
     {
-        exec(escapeshellarg($phpExecutable) . ' -r "echo PHP_VERSION_ID;"', $output, $result);
+        exec(escapeshellarg($phpExecutable) . ' -v', $output, $result);
 
         if ($result !== self::CODE_OK && $result !== self::CODE_ERROR) {
             throw new \Exception("Unable to execute '{$phpExecutable}'.");
         }
 
-        return (int) $output[0];
+        if (!preg_match('~PHP ([0-9]*).([0-9]*).([0-9]*)~', $output[0], $matches)) {
+            throw new \Exception("'{$phpExecutable}' is not valid PHP binary.");
+        }
+
+        $phpVersionId = $matches[1] * 10000 + $matches[2] * 100 + $matches[3];
+
+        return $phpVersionId;
     }
 
     /**
