@@ -39,65 +39,6 @@ class Manager
     protected $output;
 
     /**
-     * @param array $arguments
-     * @return Settings
-     * @throws InvalidArgumentException
-     * @throws Exception
-     */
-    public function parseArguments(array $arguments)
-    {
-        $arguments = new ArrayIterator(array_slice($arguments, 1));
-        $setting = new Settings;
-
-        foreach ($arguments as $argument) {
-            if ($argument{0} !== '-') {
-                $setting->paths[] = $argument;
-            } else {
-                switch ($argument) {
-                    case '-p':
-                        $setting->phpExecutable = $arguments->getNext();
-                        break;
-
-                    case '-s':
-                    case '--short':
-                        $setting->shortTag = true;
-                        break;
-
-                    case '-a':
-                    case '--asp':
-                        $setting->aspTags = true;
-                        break;
-
-                    case '--exclude':
-                        $setting->excluded[] = $arguments->getNext();
-                        break;
-
-                    case '-e':
-                        $setting->extensions = array_map('trim', explode(',', $arguments->getNext()));
-                        break;
-
-                    case '-j':
-                        $setting->parallelJobs = max((int) $arguments->getNext(), 1);
-                        break;
-
-                    case '--no-colors':
-                        $setting->colors = false;
-                        break;
-
-                    default:
-                        throw new InvalidArgumentException($argument);
-                }
-            }
-        }
-
-        if (empty($setting->paths)) {
-            throw new Exception('No path set.');
-        }
-
-        return $setting;
-    }
-
-    /**
      * @param null|Settings $settings
      * @return bool
      * @throws \Exception
@@ -289,15 +230,6 @@ class Manager
         }
 
         return $files;
-    }
-}
-
-class ArrayIterator extends \ArrayIterator
-{
-    public function getNext()
-    {
-        $this->next();
-        return $this->current();
     }
 }
 

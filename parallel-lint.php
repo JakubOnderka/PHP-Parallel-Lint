@@ -62,9 +62,9 @@ if (!$autoloadFileFound) {
 }
 
 try {
+    $settings = PhpParallelLint\Settings::parseArguments($_SERVER['argv']);
     $manager = new PhpParallelLint\Manager;
-    $setting = $manager->parseArguments($_SERVER['argv']);
-    $result = $manager->run($setting);
+    $result = $manager->run($settings);
     die($result ? SUCCESS : WITH_ERRORS);
 } catch (PhpParallelLint\InvalidArgumentException $e) {
     echo "Invalid option {$e->getArgument()}" . PHP_EOL . PHP_EOL;
