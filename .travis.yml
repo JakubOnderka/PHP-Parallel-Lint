@@ -8,7 +8,7 @@ php:
 before_script:
   - composer self-update
   - composer install --no-interaction --prefer-source --dev
-  - composer require jakub-onderka/php-console-highlighter 0.*
+  - composer require jakub-onderka/php-console-highlighter 0.3
 
 script:
   - ./parallel-lint --exclude vendor --no-colors .
