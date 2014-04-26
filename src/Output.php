@@ -152,21 +152,21 @@ class OutputColored extends Output
      */
     public function write($string, $type = self::TYPE_DEFAULT)
     {
-        if (!$this->colors) {
+        if (!$this->colors instanceof \JakubOnderka\PhpConsoleColor\ConsoleColor) {
             parent::write($string, $type);
-        }
+        } else {
+            switch ($type) {
+                case self::TYPE_OK:
+                    parent::write($this->colors->apply('bg_green', $string));
+                    break;
 
-        switch ($type) {
-            case self::TYPE_OK:
-                parent::write($this->colors->apply('bg_green', $string));
-                break;
+                case self::TYPE_ERROR:
+                    parent::write($this->colors->apply('bg_red', $string));
+                    break;
 
-            case self::TYPE_ERROR:
-                parent::write($this->colors->apply('bg_red', $string));
-                break;
-
-            default:
-                parent::write($string);
+                default:
+                    parent::write($string);
+            }
         }
     }
 }
