@@ -7,6 +7,9 @@
     "require": {
         "php": ">=5.3.3"
     },
+    "require-dev": {
+        "nette/tester": "v1.1.0"
+    },
     "suggest": {
         "jakub-onderka/php-console-highlighter": "Highlight syntax in code snippet"
     },
