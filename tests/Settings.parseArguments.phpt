@@ -1,17 +1,14 @@
 <?php
 
 require __DIR__ . '/../vendor/nette/tester/Tester/bootstrap.php';
-require_once __DIR__ . '/../src/Manager.php';
 require_once __DIR__ . '/../src/Settings.php';
 
-use JakubOnderka\PhpParallelLint\Manager;
 use JakubOnderka\PhpParallelLint\Settings;
 use Tester\Assert;
 
 
 
 // test command line string "./parallel-lint ."
-$manager = new Manager();
 $commandLine = "./parallel-lint .";
 $argv = explode(" ", $commandLine);
 $settings = Settings::parseArguments($argv);
@@ -38,7 +35,6 @@ Assert::equal($expectedSettings->colors, $settings->colors);
 
 
 // test command line string "./parallel-lint --exclude vendor --no-colors ."
-$manager = new Manager();
 $commandLine = "./parallel-lint --exclude vendor --no-colors .";
 $argv = explode(" ", $commandLine);
 $settings = Settings::parseArguments($argv);
