@@ -12,5 +12,5 @@ before_script:
 
 script:
   - ./vendor/bin/tester tests
-  - ./parallel-lint --exclude vendor --no-colors .
-  - ./parallel-lint --exclude vendor .
+  - ./parallel-lint --exclude vendor --exclude tests --no-colors .
+  - ./parallel-lint --exclude vendor --exclude tests .
