@@ -11,5 +11,6 @@ before_script:
   - composer require jakub-onderka/php-console-highlighter 0.3
 
 script:
+  - ./vendor/bin/tester tests
   - ./parallel-lint --exclude vendor --no-colors .
   - ./parallel-lint --exclude vendor .
