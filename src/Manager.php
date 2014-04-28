@@ -292,13 +292,9 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      * @param string $excluded
      * @return string
      */
-    private function getPathname($excluded)
+    private function getPathname($file)
     {
-        if (".".DIRECTORY_SEPARATOR !== $excluded[0].$excluded[1]) {
-            $excluded = $this->iterator->getPath() . DIRECTORY_SEPARATOR . $excluded;
-        }
-
-        $directoryFile = new \SplFileInfo($excluded);
+        $directoryFile = new \SplFileInfo($file);
         return $directoryFile->getPathname();
     }
 }
