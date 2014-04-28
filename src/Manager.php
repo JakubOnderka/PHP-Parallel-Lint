@@ -39,65 +39,6 @@ class Manager
     protected $output;
 
     /**
-     * @param array $arguments
-     * @return Settings
-     * @throws InvalidArgumentException
-     * @throws Exception
-     */
-    public function parseArguments(array $arguments)
-    {
-        $arguments = new ArrayIterator(array_slice($arguments, 1));
-        $setting = new Settings;
-
-        foreach ($arguments as $argument) {
-            if ($argument{0} !== '-') {
-                $setting->paths[] = $argument;
-            } else {
-                switch ($argument) {
-                    case '-p':
-                        $setting->phpExecutable = $arguments->getNext();
-                        break;
-
-                    case '-s':
-                    case '--short':
-                        $setting->shortTag = true;
-                        break;
-
-                    case '-a':
-                    case '--asp':
-                        $setting->aspTags = true;
-                        break;
-
-                    case '--exclude':
-                        $setting->excluded[] = $arguments->getNext();
-                        break;
-
-                    case '-e':
-                        $setting->extensions = array_map('trim', explode(',', $arguments->getNext()));
-                        break;
-
-                    case '-j':
-                        $setting->parallelJobs = max((int) $arguments->getNext(), 1);
-                        break;
-
-                    case '--no-colors':
-                        $setting->colors = false;
-                        break;
-
-                    default:
-                        throw new InvalidArgumentException($argument);
-                }
-            }
-        }
-
-        if (empty($setting->paths)) {
-            throw new Exception('No path set.');
-        }
-
-        return $setting;
-    }
-
-    /**
      * @param null|Settings $settings
      * @return bool
      * @throws \Exception
@@ -110,7 +51,13 @@ class Manager
         $version = $this->getPhpExecutableVersion($settings->phpExecutable);
         $translateTokens = $version < 50400; // From PHP version 5.4 are tokens translated by default
 
-        $output->writeLine('PHP version ' . $this->phpVersionIdToString($version));
+        $output->write("PHP {$this->phpVersionIdToString($version)} | ");
+
+        if ($settings->parallelJobs === 1) {
+            $output->writeLine("1 job");
+        } else {
+            $output->writeLine("{$settings->parallelJobs} parallel jobs");
+        }
 
         $cmdLine = $this->getCmdLine($settings);
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
@@ -173,7 +120,11 @@ class Manager
             $message .= ($filesWithSyntaxError === 1 ? 'file' : 'files');
         }
 
-        $output->writeLine($message);
+        if ($filesWithSyntaxError === 0) {
+            $output->writeLine($message, Output::TYPE_OK);
+        } else {
+            $output->writeLine($message, Output::TYPE_ERROR);
+        }
 
         if (!empty($errors)) {
             $output->writeNewLine();
@@ -204,13 +155,19 @@ class Manager
      */
     protected function getPhpExecutableVersion($phpExecutable)
     {
-        exec(escapeshellarg($phpExecutable) . ' -r "echo PHP_VERSION_ID;"', $output, $result);
+        exec(escapeshellarg($phpExecutable) . ' -v', $output, $result);
 
         if ($result !== self::CODE_OK && $result !== self::CODE_ERROR) {
             throw new \Exception("Unable to execute '{$phpExecutable}'.");
         }
 
-        return (int) $output[0];
+        if (!preg_match('~PHP ([0-9]*).([0-9]*).([0-9]*)~', $output[0], $matches)) {
+            throw new \Exception("'{$phpExecutable}' is not valid PHP binary.");
+        }
+
+        $phpVersionId = $matches[1] * 10000 + $matches[2] * 100 + $matches[3];
+
+        return $phpVersionId;
     }
 
     /**
@@ -273,15 +230,6 @@ class Manager
         }
 
         return $files;
-    }
-}
-
-class ArrayIterator extends \ArrayIterator
-{
-    public function getNext()
-    {
-        $this->next();
-        return $this->current();
     }
 }
 

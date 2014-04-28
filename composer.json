@@ -2,10 +2,12 @@
     "name": "jakub-onderka/php-parallel-lint",
     "description": "This tool check syntax of PHP files about 20x faster than serial check.",
     "homepage": "https://github.com/JakubOnderka/PHP-Parallel-Lint",
-    "version": "0.5",
     "license": "BSD",
     "require": {
         "php": ">=5.3.3"
+    },
+    "require-dev": {
+        "nette/tester": "v1.1.0"
     },
     "suggest": {
         "jakub-onderka/php-console-highlighter": "Highlight syntax in code snippet"
