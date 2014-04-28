@@ -14,7 +14,7 @@ use Tester\Assert;
 $manager = new Manager();
 $commandLine = "./parallel-lint .";
 $argv = explode(" ", $commandLine);
-$settings = $manager->parseArguments($argv);
+$settings = Settings::parseArguments($argv);
 
 $expectedSettings = new Settings();
 $expectedSettings->phpExecutable = 'php';
@@ -41,7 +41,7 @@ Assert::equal($expectedSettings->colors, $settings->colors);
 $manager = new Manager();
 $commandLine = "./parallel-lint --exclude vendor --no-colors .";
 $argv = explode(" ", $commandLine);
-$settings = $manager->parseArguments($argv);
+$settings = Settings::parseArguments($argv);
 
 $expectedSettings = new Settings();
 $expectedSettings->phpExecutable = 'php';
