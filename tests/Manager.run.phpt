@@ -64,7 +64,7 @@ class ManagerRunTest extends Tester\TestCase
 
 
 
-    public function testExcludeSubdirectory()
+    public function testExcludeRelativeSubdirectory()
     {
         $settings = $this->prepareSettings();
         $settings->paths = array('examples/example-04/');
@@ -82,28 +82,29 @@ class ManagerRunTest extends Tester\TestCase
             $code = $manager->run($settings);
         ob_clean();
         Assert::true($code);
+    }
 
-
-        //Test absolute paths
+    function testExcludeAbsoluteSubdirectory() 
+    {
+        $settings = $this->prepareSettings();
         $cwd = getcwd();
         $settings->paths = array($cwd."/examples/example-04/");
         $settings->excluded = array();
+
         $manager = new Manager($settings);
         ob_start();
             $code = $manager->run($settings);
         ob_clean();
         Assert::false($code);
 
-        $settings->excluded = array($cwd.'/examples/example-04/dir1/dir2');
 
+        $settings->excluded = array($cwd.'/examples/example-04/dir1/dir2');
         $manager = new Manager($settings);
         ob_start();
             $code = $manager->run($settings);
         ob_clean();
         Assert::true($code);
     }
-
-
 
     /**
      * @return JakubOnderka\PhpParallelLint\Settings
