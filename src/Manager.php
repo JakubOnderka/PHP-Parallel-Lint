@@ -176,9 +176,9 @@ class Manager
      */
     protected function phpVersionIdToString($phpVersionId)
     {
-        $releaseVersion = (int)substr($phpVersionId, -2, 2);
-        $minorVersion = (int)substr($phpVersionId, -4, 2);
-        $majorVersion = (int)substr($phpVersionId, 0, strlen($phpVersionId)-4);
+        $releaseVersion = (int) substr($phpVersionId, -2, 2);
+        $minorVersion = (int) substr($phpVersionId, -4, 2);
+        $majorVersion = (int) substr($phpVersionId, 0, strlen($phpVersionId)-4);
 
         return "$majorVersion.$minorVersion.$releaseVersion";
     }
