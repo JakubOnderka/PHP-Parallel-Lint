@@ -9,6 +9,8 @@ require_once __DIR__ . '/../src/Settings.php';
 require_once __DIR__ . '/../src/exceptions.php';
 
 use JakubOnderka\PhpParallelLint\Manager;
+use JakubOnderka\PhpParallelLint\NullWriter;
+use JakubOnderka\PhpParallelLint\Output;
 use JakubOnderka\PhpParallelLint\Settings;
 use Tester\Assert;
 
@@ -24,8 +26,6 @@ class ManagerRunTest extends Tester\TestCase
         }, 'JakubOnderka\PhpParallelLint\NotExistsPathException');
     }
 
-
-
     public function testFilesNotFound()
     {
         $settings = $this->prepareSettings();
@@ -36,74 +36,69 @@ class ManagerRunTest extends Tester\TestCase
         }, 'JakubOnderka\PhpParallelLint\Exception', 'No file found to check.');
     }
 
-
-
     public function testSuccess()
     {
         $settings = $this->prepareSettings();
         $settings->paths = array('examples/example-02/');
-        $manager = new Manager($settings);
-        ob_start();
-            $code = $manager->run($settings);
-        ob_clean();
+
+        $manager = $this->getManager($settings);
+        $code = $manager->run($settings);
         Assert::true($code);
     }
-
-
 
     public function testError()
     {
         $settings = $this->prepareSettings();
         $settings->paths = array('examples/example-03/');
-        $manager = new Manager($settings);
-        ob_start();
-            $code = $manager->run($settings);
-        ob_clean();
+
+        $manager = $this->getManager($settings);
+        $code = $manager->run($settings);
         Assert::false($code);
     }
-
-
 
     public function testExcludeRelativeSubdirectory()
     {
         $settings = $this->prepareSettings();
         $settings->paths = array('examples/example-04/');
 
-        $manager = new Manager($settings);
-        ob_start();
-            $code = $manager->run($settings);
-        ob_clean();
+        $manager = $this->getManager($settings);
+        $code = $manager->run($settings);
         Assert::false($code);
 
         $settings->excluded = array('examples/example-04/dir1/dir2');
 
-        $manager = new Manager($settings);
-        ob_start();
-            $code = $manager->run($settings);
-        ob_clean();
+        $manager = $this->getManager($settings);
+        $code = $manager->run($settings);
         Assert::true($code);
     }
 
-    function testExcludeAbsoluteSubdirectory() 
+    public function testExcludeAbsoluteSubdirectory()
     {
         $settings = $this->prepareSettings();
         $cwd = getcwd();
-        $settings->paths = array($cwd."/examples/example-04/");
+        $settings->paths = array($cwd . '/examples/example-04/');
         $settings->excluded = array();
 
-        $manager = new Manager($settings);
-        ob_start();
-            $code = $manager->run($settings);
-        ob_clean();
+        $manager = $this->getManager($settings);
+        $code = $manager->run($settings);
         Assert::false($code);
 
+        $settings->excluded = array($cwd . '/examples/example-04/dir1/dir2');
 
-        $settings->excluded = array($cwd.'/examples/example-04/dir1/dir2');
-        $manager = new Manager($settings);
-        ob_start();
-            $code = $manager->run($settings);
-        ob_clean();
+        $manager = $this->getManager($settings);
+        $code = $manager->run($settings);
         Assert::true($code);
+    }
+
+    /**
+     * @param Settings $settings
+     * @return Manager
+     */
+    private function getManager(Settings $settings)
+    {
+        $manager = new Manager($settings);
+        $manager->setOutput(new Output(new NullWriter()));
+        return $manager;
     }
 
     /**

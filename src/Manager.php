@@ -263,8 +263,8 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
     {
         $current = $this->current()->getPathname();
 
-        if(".".DIRECTORY_SEPARATOR !== $current[0].$current[1]) {
-            $current = ".".DIRECTORY_SEPARATOR.$current;
+        if ('.' . DIRECTORY_SEPARATOR !== $current[0] . $current[1]) {
+            $current = '.' . DIRECTORY_SEPARATOR . $current;
         }
 
         return !in_array($current, $this->excluded);
@@ -295,15 +295,15 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
     }
 
     /**
-     * @param string $excluded
+     * @param string $file
      * @return string
      */
     private function getPathname($file)
     {
-        if(".".DIRECTORY_SEPARATOR !== $file[0].$file[1]) {
-            $file = ".".DIRECTORY_SEPARATOR.$file;
+        if ('.' . DIRECTORY_SEPARATOR !== $file[0] . $file[1]) {
+            $file = '.' . DIRECTORY_SEPARATOR . $file;
         }
-        
+
         $directoryFile = new \SplFileInfo($file);
         return $directoryFile->getPathname();
     }
