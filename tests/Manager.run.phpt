@@ -20,7 +20,7 @@ class ManagerRunTest extends Tester\TestCase
     {
         $settings = $this->prepareSettings();
         $settings->paths = array('path/for-not-found/');
-        $manager = new Manager($settings);
+        $manager = $this->getManager($settings);
         Assert::exception(function() use ($manager, $settings) {
             $manager->run($settings);
         }, 'JakubOnderka\PhpParallelLint\NotExistsPathException');
@@ -30,7 +30,7 @@ class ManagerRunTest extends Tester\TestCase
     {
         $settings = $this->prepareSettings();
         $settings->paths = array('examples/example-01/');
-        $manager = new Manager($settings);
+        $manager = $this->getManager($settings);
         Assert::exception(function() use ($manager, $settings) {
             $manager->run($settings);
         }, 'JakubOnderka\PhpParallelLint\Exception', 'No file found to check.');
