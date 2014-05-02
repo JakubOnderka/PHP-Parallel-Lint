@@ -59,7 +59,6 @@ class Manager
             $output->writeLine("{$settings->parallelJobs} parallel jobs");
         }
 
-        $cmdLine = $this->getCmdLine($settings);
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
 
         if (empty($files)) {
@@ -77,7 +76,7 @@ class Manager
         while ($files || $running) {
             for ($i = count($running); $files && $i < $settings->parallelJobs; $i++) {
                 $file = array_shift($files);
-                $running[$file] = new LintProcess($cmdLine . escapeshellarg($file));
+                $running[$file] = new LintProcess($settings->phpExecutable, $file, $settings->aspTags, $settings->shortTag);
             }
 
             usleep(100);
@@ -181,19 +180,6 @@ class Manager
         $majorVersion = (int) substr($phpVersionId, 0, strlen($phpVersionId)-4);
 
         return "$majorVersion.$minorVersion.$releaseVersion";
-    }
-
-    /**
-     * @param Settings $settings
-     * @return string
-     */
-    protected function getCmdLine(Settings $settings)
-    {
-        $cmdLine = escapeshellarg($settings->phpExecutable);
-        $cmdLine .= ' -d asp_tags=' . ($settings->aspTags ? 'On' : 'Off');
-        $cmdLine .= ' -d short_open_tag=' . ($settings->shortTag ? 'On' : 'Off');
-        $cmdLine .= ' -d error_reporting=E_ALL';
-        return $cmdLine . ' -n -l ';
     }
 
     /**

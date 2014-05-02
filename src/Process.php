@@ -160,6 +160,23 @@ class Process
 class LintProcess extends Process
 {
     /**
+     * @param string $phpExecutable
+     * @param string $fileToCheck Path to file to check
+     * @param bool $aspTags
+     * @param bool $shortTag
+     */
+    public function __construct($phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false)
+    {
+        $cmdLine = escapeshellarg($phpExecutable);
+        $cmdLine .= ' -d asp_tags=' . ($aspTags ? 'On' : 'Off');
+        $cmdLine .= ' -d short_open_tag=' . ($shortTag ? 'On' : 'Off');
+        $cmdLine .= ' -d error_reporting=E_ALL';
+        $cmdLine .= ' -n -l ' . escapeshellarg($fileToCheck);
+
+        parent::__construct($cmdLine);
+    }
+
+    /**
      * @return bool
      */
     public function hasSyntaxError()
