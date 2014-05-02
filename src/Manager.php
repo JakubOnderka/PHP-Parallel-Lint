@@ -264,6 +264,7 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
     public function accept()
     {
         $current = $this->current()->getPathname();
+        $current = $this->normalizeDirectorySeparator($current);
 
         if ('.' . DIRECTORY_SEPARATOR !== $current[0] . $current[1]) {
             $current = '.' . DIRECTORY_SEPARATOR . $current;
@@ -302,11 +303,22 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
      */
     private function getPathname($file)
     {
+        $file = $this->normalizeDirectorySeparator($file);
+
         if ('.' . DIRECTORY_SEPARATOR !== $file[0] . $file[1]) {
             $file = '.' . DIRECTORY_SEPARATOR . $file;
         }
 
         $directoryFile = new \SplFileInfo($file);
         return $directoryFile->getPathname();
+    }
+
+    /**
+     * @param string $file
+     * @return string
+     */
+    private function normalizeDirectorySeparator($file)
+    {
+        return str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $file);
     }
 }
