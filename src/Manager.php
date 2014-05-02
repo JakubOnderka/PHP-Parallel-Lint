@@ -229,6 +229,8 @@ class Manager
             }
         }
 
+        $files = array_unique($files);
+
         return $files;
     }
 }
