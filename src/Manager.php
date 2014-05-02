@@ -198,11 +198,15 @@ class Manager
             if (is_file($path)) {
                 $files[] = $path;
             } else if (is_dir($path)) {
-                $iterator = new \RecursiveDirectoryIterator($path);
+                $iterator = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
                 if (!empty($excluded)) {
                     $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded);
                 }
-                $iterator = new \RecursiveIteratorIterator($iterator);
+                $iterator = new \RecursiveIteratorIterator(
+                    $iterator,
+                    \RecursiveIteratorIterator::LEAVES_ONLY,
+                    \RecursiveIteratorIterator::CATCH_GET_CHILD
+                );
 
                 /** @var \SplFileInfo[] $iterator */
                 foreach ($iterator as $directoryFile) {
