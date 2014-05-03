@@ -65,3 +65,7 @@ or setting for ANT:
     </exec>
 </target>
 ```
+
+------
+
+[![Build Status](https://travis-ci.org/JakubOnderka/PHP-Parallel-Lint.svg?branch=master)](https://travis-ci.org/JakubOnderka/PHP-Parallel-Lint)
