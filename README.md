@@ -19,8 +19,16 @@ Just create a `composer.json` file and run the `php composer.phar install` comma
 }
 ```
 
-For colored output install suggested package `jakub-onderka/php-console-highlighter`.
+For colored output install suggested package `jakub-onderka/php-console-highlighter`. After a `composer.json` file include:
 
+```json
+{
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "0.*",
+        "jakub-onderka/php-console-highlighter": "0.*"
+    }
+}
+```
 
 Example output
 --------------
