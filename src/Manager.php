@@ -91,12 +91,7 @@ class Manager
                     } else {
                         $checkedFiles++;
                         if ($process->hasSyntaxError()) {
-                            if ($settings->colors) {
-                                $errors[] = new SyntaxErrorColored($file, $process->getSyntaxError(), $translateTokens);
-                            } else {
-                                $errors[] = new SyntaxError($file, $process->getSyntaxError(), $translateTokens);
-                            }
-
+                            $errors[] = new SyntaxError($file, $process->getSyntaxError());
                             $filesWithSyntaxError++;
                             $output->error();
                         } else {
@@ -126,11 +121,12 @@ class Manager
         }
 
         if (!empty($errors)) {
-            $output->writeNewLine();
+            $errorFormatter = new ErrorFormatter($settings->colors, $translateTokens);
 
-            foreach ($errors as $errorMessage) {
+            $output->writeNewLine();
+            foreach ($errors as $error) {
                 $output->writeLine(str_repeat('-', 60));
-                $output->writeLine($errorMessage);
+                $output->writeLine($errorFormatter->format($error));
             }
 
             return false;

@@ -30,9 +30,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-use JakubOnderka\PhpConsoleColor\ConsoleColor;
-use JakubOnderka\PhpConsoleHighlighter\Highlighter;
-
 class Error
 {
     /** @var string */
@@ -41,104 +38,73 @@ class Error
     /** @var string */
     protected $message;
 
-    /** @var bool */
-    protected $translateTokens;
-
     /**
      * @param string $filePath
      * @param string $message
-     * @param bool $translateTokens
      */
-    public function __construct($filePath, $message, $translateTokens = false)
+    public function __construct($filePath, $message)
     {
         $this->filePath = $filePath;
         $this->message = $message;
-        $this->translateTokens = $translateTokens;
     }
 
     /**
      * @return string
      */
-    public function __toString()
+    public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilePath()
+    {
+        return $this->filePath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortFilePath()
+    {
+        return str_replace(getcwd(), '', $this->filePath);
     }
 }
 
 class SyntaxError extends Error
 {
     /**
-     * @param bool $withCodeSnipped
-     * @return string
+     * @return int|null
      */
-    public function getString($withCodeSnipped = true)
+    public function getLine()
     {
-        $string = "Parse error: {$this->getShortFilePath()}";
-
         preg_match('~on line ([0-9]*)~', $this->message, $matches);
 
         if ($matches && isset($matches[1])) {
             $onLine = (int) $matches[1];
-            $string .= ":$onLine" . PHP_EOL;
-
-            if ($withCodeSnipped) {
-                $string .= $this->getCodeSnippet($onLine);
-            }
+            return $onLine;
         }
 
-        $message = $this->normalizeMessage($this->message);
-        if ($this->translateTokens) {
+        return null;
+    }
+
+    /**
+     * @param bool $translateTokens
+     * @return mixed|string
+     */
+    public function getNormalizedMessage($translateTokens = false)
+    {
+        $message = str_replace('Parse error: syntax error, ', '', $this->message);
+        $message = ucfirst($message);
+        $message = preg_replace('~ in (.*) on line [0-9]*~', '', $message);
+
+        if ($translateTokens) {
             $message = $this->translateTokens($message);
         }
-        $string .= $message;
 
-        return $string;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getString();
-    }
-
-    /**
-     * @param int $lineNumber
-     * @param int $linesBefore
-     * @param int $linesAfter
-     * @return string
-     */
-    protected function getCodeSnippet($lineNumber, $linesBefore = 2, $linesAfter = 2)
-    {
-        $lines = file($this->filePath);
-
-        $offset = $lineNumber - $linesBefore - 1;
-        $offset = max($offset, 0);
-        $length = $linesAfter + $linesBefore + 1;
-        $lines = array_slice($lines, $offset, $length, $preserveKeys = true);
-
-        end($lines);
-        $lineStrlen = strlen(key($lines) + 1);
-
-        $snippet = '';
-        foreach ($lines as $i => $line) {
-            $snippet .= ($lineNumber === $i + 1 ? '  > ' : '    ');
-            $snippet .= str_pad($i + 1, $lineStrlen, ' ', STR_PAD_LEFT) . '| ' . rtrim($line) . PHP_EOL;
-        }
-
-        return $snippet;
-    }
-
-    /**
-     * @param string $message
-     * @return string
-     */
-    protected function normalizeMessage($message)
-    {
-        $message = str_replace('Parse error: syntax error, ', '', $message);
-        $message = ucfirst($message);
-        return preg_replace('~ in (.*) on line [0-9]*~', '', $message);
+        return $message;
     }
 
     /**
@@ -185,50 +151,5 @@ class SyntaxError extends Error
 
             return $tokenName;
         }, $message);
-    }
-
-    /**
-     * @param string $input
-     * @param int $width
-     * @return string
-     */
-    protected function stringWidth($input, $width = 3)
-    {
-        $multiplier = $width - strlen($input);
-        return str_repeat(' ', $multiplier > 0 ? $multiplier : 0) . $input;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getShortFilePath()
-    {
-        return str_replace(getcwd(), '', $this->filePath);
-    }
-}
-
-class SyntaxErrorColored extends SyntaxError
-{
-    /**
-     * @param int $lineNumber
-     * @param int $linesBefore
-     * @param int $linesAfter
-     * @return string
-     */
-    protected function getCodeSnippet($lineNumber, $linesBefore = 2, $linesAfter = 2)
-    {
-        if (
-            !class_exists('\JakubOnderka\PhpConsoleHighlighter\Highlighter') ||
-            !class_exists('\JakubOnderka\PhpConsoleColor\ConsoleColor')
-        ) {
-            return parent::getCodeSnippet($lineNumber, $linesBefore, $linesAfter);
-        }
-
-        $colors = new ConsoleColor();
-        $colors->setForceStyle(true);
-        $highlighter = new Highlighter($colors);
-
-        $fileContent = file_get_contents($this->filePath);
-        return $highlighter->getCodeSnippet($fileContent, $lineNumber, $linesBefore, $linesAfter);
     }
 }
