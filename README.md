@@ -5,6 +5,7 @@ This tool check syntax of PHP files faster then serial check with fancier output
 
 Running parallel jobs in PHP inspired by Nette framework tests.
 
+![Alt text](/tests/examples/example-images/use-success.png?raw=true "Example use of tool")
 
 Install
 -------
@@ -19,27 +20,21 @@ Just create a `composer.json` file and run the `php composer.phar install` comma
 }
 ```
 
-For colored output install suggested package `jakub-onderka/php-console-highlighter`.
+For colored output install suggested package `jakub-onderka/php-console-highlighter`. After a `composer.json` file include:
 
+```json
+{
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "0.*",
+        "jakub-onderka/php-console-highlighter": "0.*"
+    }
+}
+```
 
 Example output
 --------------
 
-```
-$ ./parallel-lint .
-X.......
-
-Checked 8 files in 0.1 second, syntax error found in 1 file
-
-----------------------------------------------------------------------
-Parse error: ./error.php:40
-    38| try {
-    39|     $manager = new ParallelLint\Manager;
-  > 40|     $setting = $manager->->parseArguments($_SERVER['argv']);
-    41|     $result = $manager->run($setting);
-    42|     die($result ? SUCCESS : WITH_ERRORS);
-Unexpected T_OBJECT_OPERATOR (->), expecting T_STRING or T_VARIABLE or '{' or '$'
-```
+![Alt text](/tests/examples/example-images/use-error.png?raw=true "Example use of tool with error")
 
 Recommended setting for usage with Symfony framework
 --------------
@@ -65,3 +60,7 @@ or setting for ANT:
     </exec>
 </target>
 ```
+
+------
+
+[![Build Status](https://travis-ci.org/JakubOnderka/PHP-Parallel-Lint.svg?branch=master)](https://travis-ci.org/JakubOnderka/PHP-Parallel-Lint)
