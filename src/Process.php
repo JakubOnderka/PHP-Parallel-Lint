@@ -72,7 +72,7 @@ class Process
         $this->process = proc_open($cmdLine, $descriptors, $pipes, null, null, array('bypass_shell' => true));
 
         if ($this->process === false) {
-            throw new \RuntimeException("Cannot create new process");
+            throw new \RuntimeException("Cannot create new process $cmdLine");
         }
 
         list($stdin, $this->stdout, $this->stderr) = $pipes;
@@ -127,7 +127,7 @@ class Process
      */
     public function isFail()
     {
-        return $this->getStatusCode() === -1;
+        return $this->getStatusCode() === 1;
     }
 
     /**
@@ -167,6 +167,13 @@ class LintProcess extends Process
      */
     public function __construct($phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false)
     {
+        if (empty($phpExecutable)) {
+            throw new \InvalidArgumentException("PHP executable must be set.");
+        }
+        if (empty($fileToCheck)) {
+            throw new \InvalidArgumentException("File to check must be set.");
+        }
+
         $cmdLine = escapeshellarg($phpExecutable);
         $cmdLine .= ' -d asp_tags=' . ($aspTags ? 'On' : 'Off');
         $cmdLine .= ' -d short_open_tag=' . ($shortTag ? 'On' : 'Off');

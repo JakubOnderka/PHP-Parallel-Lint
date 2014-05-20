@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../vendor/nette/tester/Tester/bootstrap.php';
 require_once __DIR__ . '/../src/Error.php';
+require_once __DIR__ . '/../src/ErrorFormatter.php';
+require_once __DIR__ . '/../src/ParallelLint.php';
 require_once __DIR__ . '/../src/Manager.php';
 require_once __DIR__ . '/../src/Output.php';
 require_once __DIR__ . '/../src/Process.php';

@@ -67,64 +67,39 @@ class Manager
 
         $output->setTotalFileCount(count($files));
 
-        /** @var LintProcess[] $running */
-        $running = $errors = array();
-        $checkedFiles = $filesWithSyntaxError = 0;
+        $parallelLint = new ParallelLint($settings->phpExecutable, $settings->parallelJobs);
+        $parallelLint->setAspTagsEnabled($settings->aspTags);
+        $parallelLint->setShortTagEnabled($settings->shortTag);
+        $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
+           if ($status === ParallelLint::STATUS_OK) {
+               $output->ok();
+           } else if ($status === ParallelLint::STATUS_ERROR) {
+               $output->error();
+           } else {
+               $output->fail();
+           }
+        });
 
-        $startTime = microtime(true);
-
-        while ($files || $running) {
-            for ($i = count($running); $files && $i < $settings->parallelJobs; $i++) {
-                $file = array_shift($files);
-                $running[$file] = new LintProcess($settings->phpExecutable, $file, $settings->aspTags, $settings->shortTag);
-            }
-
-            usleep(100);
-
-            foreach ($running as $file => $process) {
-                if ($process->isFinished()) {
-                    unset($running[$file]);
-
-                    if ($process->isFail()) {
-                        $output->fail();
-                        $errors[] = new Error($file, $process->getErrorOutput());
-                    } else {
-                        $checkedFiles++;
-                        if ($process->hasSyntaxError()) {
-                            $errors[] = new SyntaxError($file, $process->getSyntaxError());
-                            $filesWithSyntaxError++;
-                            $output->error();
-                        } else {
-                            $output->ok();
-                        }
-                    }
-                }
-            }
-        }
-
-        $testTime = round(microtime(true) - $startTime, 1);
+        $result = $parallelLint->lint($files);
 
         $output->writeNewLine(2);
 
-        $message = "Checked $checkedFiles files in $testTime second, ";
-        if ($filesWithSyntaxError === 0) {
+        $testTime = round($result->testTime, 1);
+        $message = "Checked $result->checkedFiles files in $testTime second, ";
+        if ($result->filesWithSyntaxError === 0) {
             $message .= "no syntax error found";
         } else {
-            $message .= "syntax error found in $filesWithSyntaxError ";
-            $message .= ($filesWithSyntaxError === 1 ? 'file' : 'files');
+            $message .= "syntax error found in $result->filesWithSyntaxError ";
+            $message .= ($result->filesWithSyntaxError === 1 ? 'file' : 'files');
         }
 
-        if ($filesWithSyntaxError === 0) {
-            $output->writeLine($message, Output::TYPE_OK);
-        } else {
-            $output->writeLine($message, Output::TYPE_ERROR);
-        }
+        $output->writeLine($message, $result->filesWithSyntaxError === 0 ? Output::TYPE_OK : Output::TYPE_ERROR);
 
-        if (!empty($errors)) {
+        if (!empty($result->errors)) {
             $errorFormatter = new ErrorFormatter($settings->colors, $translateTokens);
 
             $output->writeNewLine();
-            foreach ($errors as $error) {
+            foreach ($result->errors as $error) {
                 $output->writeLine(str_repeat('-', 60));
                 $output->writeLine($errorFormatter->format($error));
             }
