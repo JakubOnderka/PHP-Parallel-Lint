@@ -40,9 +40,10 @@ class ParallelLintLintTest extends Tester\TestCase
         $parallelLint = new ParallelLint('php');
         $result = $parallelLint->lint(array());
 
-        Assert::equal(0, $result->checkedFiles);
-        Assert::equal(0, $result->filesWithSyntaxError);
-        Assert::equal(0, count($result->errors));
+        Assert::equal(0, $result->getCheckedFiles());
+        Assert::equal(0, $result->getFilesWithSyntaxError());
+        Assert::false($result->hasSyntaxError());
+        Assert::equal(0, count($result->getErrors()));
     }
 
     public function testNotExistsFile()
@@ -50,9 +51,10 @@ class ParallelLintLintTest extends Tester\TestCase
         $parallelLint = new ParallelLint('php');
         $result = $parallelLint->lint(array('path/for-not-found/'));
 
-        Assert::equal(0, $result->checkedFiles);
-        Assert::equal(0, $result->filesWithSyntaxError);
-        Assert::equal(1, count($result->errors));
+        Assert::equal(0, $result->getCheckedFiles());
+        Assert::equal(0, $result->getFilesWithSyntaxError());
+        Assert::false($result->hasSyntaxError());
+        Assert::equal(1, count($result->getErrors()));
     }
 
     public function testEmptyFile()
@@ -60,9 +62,10 @@ class ParallelLintLintTest extends Tester\TestCase
         $parallelLint = new ParallelLint('php');
         $result = $parallelLint->lint(array(__DIR__ . '/examples/example-01/empty-file'));
 
-        Assert::equal(1, $result->checkedFiles);
-        Assert::equal(0, $result->filesWithSyntaxError);
-        Assert::equal(0, count($result->errors));
+        Assert::equal(1, $result->getCheckedFiles());
+        Assert::equal(0, $result->getFilesWithSyntaxError());
+        Assert::false($result->hasSyntaxError());
+        Assert::equal(0, count($result->getErrors()));
     }
 
     public function testValidFile()
@@ -70,9 +73,9 @@ class ParallelLintLintTest extends Tester\TestCase
         $parallelLint = new ParallelLint('php');
         $result = $parallelLint->lint(array(__DIR__ . '/examples/example-02/example.php'));
 
-        Assert::equal(1, $result->checkedFiles);
-        Assert::equal(0, $result->filesWithSyntaxError);
-        Assert::equal(0, count($result->errors));
+        Assert::equal(1, $result->getCheckedFiles());
+        Assert::equal(0, $result->getFilesWithSyntaxError());
+        Assert::equal(0, count($result->getErrors()));
     }
 
     public function testInvalidFile()
@@ -80,9 +83,10 @@ class ParallelLintLintTest extends Tester\TestCase
         $parallelLint = new ParallelLint('php');
         $result = $parallelLint->lint(array(__DIR__ . '/examples/example-03/example.php'));
 
-        Assert::equal(1, $result->checkedFiles);
-        Assert::equal(1, $result->filesWithSyntaxError);
-        Assert::equal(1, count($result->errors));
+        Assert::equal(1, $result->getCheckedFiles());
+        Assert::equal(1, $result->getFilesWithSyntaxError());
+        Assert::true($result->hasSyntaxError());
+        Assert::equal(1, count($result->getErrors()));
     }
 
     public function testValidAndInvalidFiles()
@@ -93,9 +97,10 @@ class ParallelLintLintTest extends Tester\TestCase
             __DIR__ . '/examples/example-03/example.php',
         ));
 
-        Assert::equal(2, $result->checkedFiles);
-        Assert::equal(1, $result->filesWithSyntaxError);
-        Assert::equal(1, count($result->errors));
+        Assert::equal(2, $result->getCheckedFiles());
+        Assert::equal(1, $result->getFilesWithSyntaxError());
+        Assert::true($result->hasSyntaxError());
+        Assert::equal(1, count($result->getErrors()));
     }
 }
 

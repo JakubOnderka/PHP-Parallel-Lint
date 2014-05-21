@@ -70,6 +70,7 @@ class Manager
         $parallelLint = new ParallelLint($settings->phpExecutable, $settings->parallelJobs);
         $parallelLint->setAspTagsEnabled($settings->aspTags);
         $parallelLint->setShortTagEnabled($settings->shortTag);
+
         $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
            if ($status === ParallelLint::STATUS_OK) {
                $output->ok();
@@ -84,22 +85,22 @@ class Manager
 
         $output->writeNewLine(2);
 
-        $testTime = round($result->testTime, 1);
-        $message = "Checked $result->checkedFiles files in $testTime second, ";
-        if ($result->filesWithSyntaxError === 0) {
+        $testTime = round($result->getTestTime(), 1);
+        $message = "Checked {$result->getCheckedFiles()} files in $testTime second, ";
+        if ($result->hasSyntaxError()) {
             $message .= "no syntax error found";
         } else {
-            $message .= "syntax error found in $result->filesWithSyntaxError ";
-            $message .= ($result->filesWithSyntaxError === 1 ? 'file' : 'files');
+            $message .= "syntax error found in {$result->getFilesWithSyntaxError()} ";
+            $message .= ($result->getFilesWithSyntaxError() === 1 ? 'file' : 'files');
         }
 
-        $output->writeLine($message, $result->filesWithSyntaxError === 0 ? Output::TYPE_OK : Output::TYPE_ERROR);
+        $output->writeLine($message, $result->hasSyntaxError() === 0 ? Output::TYPE_OK : Output::TYPE_ERROR);
 
-        if (!empty($result->errors)) {
+        if ($result->hasError()) {
             $errorFormatter = new ErrorFormatter($settings->colors, $translateTokens);
 
             $output->writeNewLine();
-            foreach ($result->errors as $error) {
+            foreach ($result->getErrors() as $error) {
                 $output->writeLine(str_repeat('-', 60));
                 $output->writeLine($errorFormatter->format($error));
             }

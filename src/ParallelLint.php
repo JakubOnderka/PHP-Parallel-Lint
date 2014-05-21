@@ -32,13 +32,79 @@ either expressed or implied, of the FreeBSD Project.
 
 class Result
 {
-    public $errors;
+    /** @var array */
+    private $errors;
 
-    public $checkedFiles = 0;
+    /** @var int */
+    private $checkedFiles;
 
-    public $filesWithSyntaxError = 0;
+    /** @var int */
+    private $filesWithSyntaxError;
 
-    public $testTime;
+    /** @var float */
+    private $testTime;
+
+    /**
+     * @param array $errors
+     * @param int $checkedFiles
+     * @param int $filesWithSyntaxError
+     * @param float $testTime
+     */
+    public function __construct(array $errors, $checkedFiles, $filesWithSyntaxError, $testTime)
+    {
+        $this->errors = $errors;
+        $this->checkedFiles = $checkedFiles;
+        $this->filesWithSyntaxError = $filesWithSyntaxError;
+        $this->testTime = $testTime;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasError()
+    {
+        return !empty($this->errors);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCheckedFiles()
+    {
+        return $this->checkedFiles;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFilesWithSyntaxError()
+    {
+        return $this->filesWithSyntaxError;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSyntaxError()
+    {
+        return $this->filesWithSyntaxError !== 0;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTestTime()
+    {
+        return $this->testTime;
+    }
 }
 
 class ParallelLint
@@ -74,11 +140,13 @@ class ParallelLint
      */
     public function lint(array $files)
     {
-        $result = new Result();
         $processCallback = is_callable($this->processCallback) ? $this->processCallback : function() {};
 
         /** @var LintProcess[] $running */
         $running = array();
+        $errors = array();
+        $checkedFiles = 0;
+        $filesWithSyntaxError = 0;
 
         $startTime = microtime(true);
 
@@ -100,13 +168,13 @@ class ParallelLint
                     unset($running[$file]);
 
                     if ($process->isFail()) {
+                        $errors[] = new Error($file, $process->getErrorOutput());
                         $processCallback(self::STATUS_FAIL, $file);
-                        $result->errors[] = new Error($file, $process->getErrorOutput());
                     } else {
-                        $result->checkedFiles++;
+                        $checkedFiles++;
                         if ($process->hasSyntaxError()) {
-                            $result->errors[] = new SyntaxError($file, $process->getSyntaxError());
-                            $result->filesWithSyntaxError++;
+                            $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                            $filesWithSyntaxError++;
                             $processCallback(self::STATUS_ERROR, $file);
                         } else {
                             $processCallback(self::STATUS_OK, $file);
@@ -116,9 +184,9 @@ class ParallelLint
             }
         }
 
-        $result->testTime = microtime(true) - $startTime;
+        $testTime = microtime(true) - $startTime;
 
-        return $result;
+        return new Result($errors, $checkedFiles, $filesWithSyntaxError, $testTime);
     }
 
     /**
