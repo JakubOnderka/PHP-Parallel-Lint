@@ -87,14 +87,14 @@ class Manager
 
         $testTime = round($result->getTestTime(), 1);
         $message = "Checked {$result->getCheckedFiles()} files in $testTime second, ";
-        if ($result->hasSyntaxError()) {
+        if (!$result->hasSyntaxError()) {
             $message .= "no syntax error found";
         } else {
             $message .= "syntax error found in {$result->getFilesWithSyntaxError()} ";
             $message .= ($result->getFilesWithSyntaxError() === 1 ? 'file' : 'files');
         }
 
-        $output->writeLine($message, $result->hasSyntaxError() === 0 ? Output::TYPE_OK : Output::TYPE_ERROR);
+        $output->writeLine($message, $result->hasSyntaxError() ? Output::TYPE_ERROR : Output::TYPE_OK);
 
         if ($result->hasError()) {
             $errorFormatter = new ErrorFormatter($settings->colors, $translateTokens);
