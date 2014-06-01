@@ -33,6 +33,7 @@ either expressed or implied, of the FreeBSD Project.
 class Output
 {
     const TYPE_DEFAULT = 'default',
+        TYPE_SKIP = 'skip',
         TYPE_ERROR = 'error',
         TYPE_OK = 'ok';
 
@@ -59,6 +60,12 @@ class Output
     public function ok()
     {
         $this->writer->write('.');
+        $this->progress();
+    }
+
+    public function skip()
+    {
+        $this->write('S', self::TYPE_SKIP);
         $this->progress();
     }
 
@@ -158,6 +165,10 @@ class OutputColored extends Output
             switch ($type) {
                 case self::TYPE_OK:
                     parent::write($this->colors->apply('bg_green', $string));
+                    break;
+
+                case self::TYPE_SKIP:
+                    parent::write($this->colors->apply('bg_yellow', $string));
                     break;
 
                 case self::TYPE_ERROR:

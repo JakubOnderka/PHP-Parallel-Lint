@@ -84,11 +84,15 @@ class Process
      */
     public function isFinished()
     {
+        if ($this->statusCode !== null) {
+            return true;
+        }
+
         $status = proc_get_status($this->process);
 
         if ($status['running']) {
             return false;
-        } else if ($this->statusCode === null) {
+        } elseif ($this->statusCode === null) {
             $this->statusCode = (int) $status['exitcode'];
         }
 
@@ -159,6 +163,10 @@ class Process
 
 class LintProcess extends Process
 {
+
+    /** @var SkipLintProcess */
+    protected $skipProcess;
+
     /**
      * @param string $phpExecutable
      * @param string $fileToCheck Path to file to check
@@ -174,6 +182,8 @@ class LintProcess extends Process
             throw new \InvalidArgumentException("File to check must be set.");
         }
 
+        $this->skipProcess = new SkipLintProcess($phpExecutable, $fileToCheck, $aspTags, $shortTag);
+
         $cmdLine = escapeshellarg($phpExecutable);
         $cmdLine .= ' -d asp_tags=' . ($aspTags ? 'On' : 'Off');
         $cmdLine .= ' -d short_open_tag=' . ($shortTag ? 'On' : 'Off');
@@ -181,6 +191,20 @@ class LintProcess extends Process
         $cmdLine .= ' -n -l ' . escapeshellarg($fileToCheck);
 
         parent::__construct($cmdLine);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFinished()
+    {
+        return parent::isFinished() && $this->skipProcess->isFinished();
+    }
+
+    protected function terminateAndReadOutput()
+    {
+        $this->skipProcess->terminateAndReadOutput();
+        parent::terminateAndReadOutput();
     }
 
     /**
@@ -209,10 +233,56 @@ class LintProcess extends Process
      */
     public function isFail()
     {
-        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
-           return $this->getStatusCode() === 1;
-        } else {
-            return parent::isFail();
+       $fail = defined('PHP_WINDOWS_VERSION_MAJOR') ? $this->getStatusCode() === 1 : parent::isFail();
+        if (!$fail) {
+            return false;
         }
+
+        return !$this->skipProcess->isSkipped();
     }
+
+    /**
+     * @return bool
+     */
+    public function isSkipped()
+    {
+        return $this->skipProcess->isSkipped();
+    }
+}
+
+
+
+class SkipLintProcess extends Process
+{
+
+    /**
+     * @param string $phpExecutable
+     * @param string $fileToCheck Path to file to check
+     * @param bool $aspTags
+     * @param bool $shortTag
+     */
+    public function __construct($phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false)
+    {
+        if (empty($phpExecutable)) {
+            throw new \InvalidArgumentException("PHP executable must be set.");
+        }
+        if (empty($fileToCheck)) {
+            throw new \InvalidArgumentException("File to check must be set.");
+        }
+
+        $cmdLine = escapeshellarg($phpExecutable);
+        $cmdLine .= ' -d asp_tags=' . ($aspTags ? 'On' : 'Off');
+        $cmdLine .= ' -d short_open_tag=' . ($shortTag ? 'On' : 'Off');
+        $cmdLine .= ' -d error_reporting=E_ALL';
+        $cmdLine .= ' -n ' . escapeshellarg(__DIR__ . '/../bin/skip-linting.php');
+        $cmdLine .= ' ' . escapeshellarg($fileToCheck);
+
+        parent::__construct($cmdLine);
+    }
+
+    public function isSkipped()
+    {
+        return $this->getStatusCode() === 2;
+    }
+
 }
