@@ -103,7 +103,7 @@ class Manager
             $message .= ($result->getFilesWithSyntaxError() === 1 ? 'file' : 'files');
         }
 
-        $output->writeLine($message, $result->hasSyntaxError() === 0 ? Output::TYPE_OK : Output::TYPE_ERROR);
+        $output->writeLine($message, $result->hasSyntaxError() ? Output::TYPE_ERROR : Output::TYPE_OK);
 
         if ($result->hasError()) {
             $errorFormatter = new ErrorFormatter($settings->colors, $translateTokens);
