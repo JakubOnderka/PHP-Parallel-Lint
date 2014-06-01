@@ -84,6 +84,10 @@ class Process
      */
     public function isFinished()
     {
+        if ($this->statusCode !== null) {
+            return true;
+        }
+
         $status = proc_get_status($this->process);
 
         if ($status['running']) {
