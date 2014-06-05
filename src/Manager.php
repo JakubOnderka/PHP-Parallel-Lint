@@ -74,7 +74,9 @@ class Manager
         $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
            if ($status === ParallelLint::STATUS_OK) {
                $output->ok();
-           } else if ($status === ParallelLint::STATUS_ERROR) {
+           } elseif ($status === ParallelLint::STATUS_SKIP) {
+               $output->skip();
+           } elseif ($status === ParallelLint::STATUS_ERROR) {
                $output->error();
            } else {
                $output->fail();
@@ -87,6 +89,13 @@ class Manager
 
         $testTime = round($result->getTestTime(), 1);
         $message = "Checked {$result->getCheckedFiles()} files in $testTime second, ";
+
+        if ($result->getSkippedFiles() > 0) {
+            $message .= "skipped {$result->getSkippedFiles()} ";
+            $message .= ($result->getSkippedFiles() === 1 ? 'file' : 'files');
+            $message .= ", ";
+        }
+
         if (!$result->hasSyntaxError()) {
             $message .= "no syntax error found";
         } else {
@@ -169,7 +178,7 @@ class Manager
         foreach ($paths as $path) {
             if (is_file($path)) {
                 $files[] = $path;
-            } else if (is_dir($path)) {
+            } elseif (is_dir($path)) {
                 $iterator = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
                 if (!empty($excluded)) {
                     $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded);

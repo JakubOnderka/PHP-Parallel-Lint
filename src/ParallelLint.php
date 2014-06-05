@@ -41,6 +41,9 @@ class Result
     /** @var int */
     private $filesWithSyntaxError;
 
+    /** @var int */
+    private $skippedFiles;
+
     /** @var float */
     private $testTime;
 
@@ -50,11 +53,12 @@ class Result
      * @param int $filesWithSyntaxError
      * @param float $testTime
      */
-    public function __construct(array $errors, $checkedFiles, $filesWithSyntaxError, $testTime)
+    public function __construct(array $errors, $checkedFiles, $filesWithSyntaxError, $skippedFiles, $testTime)
     {
         $this->errors = $errors;
         $this->checkedFiles = $checkedFiles;
         $this->filesWithSyntaxError = $filesWithSyntaxError;
+        $this->skippedFiles = $skippedFiles;
         $this->testTime = $testTime;
     }
 
@@ -85,6 +89,14 @@ class Result
     /**
      * @return int
      */
+    public function getSkippedFiles()
+    {
+        return $this->skippedFiles;
+    }
+
+    /**
+     * @return int
+     */
     public function getFilesWithSyntaxError()
     {
         return $this->filesWithSyntaxError;
@@ -110,6 +122,7 @@ class Result
 class ParallelLint
 {
     const STATUS_OK = 'ok',
+        STATUS_SKIP = 'skip',
         STATUS_FAIL = 'fail',
         STATUS_ERROR = 'error';
 
@@ -140,34 +153,50 @@ class ParallelLint
      */
     public function lint(array $files)
     {
+        $startTime = microtime(true);
+
+        $skipLintProcess = new SkipLintProcess($this->phpExecutable, $files);
+
         $processCallback = is_callable($this->processCallback) ? $this->processCallback : function() {};
 
-        /** @var LintProcess[] $running */
-        $running = array();
-        $errors = array();
-        $checkedFiles = 0;
-        $filesWithSyntaxError = 0;
-
-        $startTime = microtime(true);
+        /**
+         * @var LintProcess[] $running
+         * @var LintProcess[] $waiting
+         */
+        $errors = $running = $waiting = array();
+        $skippedFiles = $checkedFiles = $filesWithSyntaxError = 0;
 
         while ($files || $running) {
             for ($i = count($running); $files && $i < $this->parallelJobs; $i++) {
                 $file = array_shift($files);
-                $running[$file] = new LintProcess(
-                    $this->phpExecutable,
-                    $file,
-                    $this->aspTagsEnabled,
-                    $this->shortTagEnabled
-                );
+
+                if ($skipLintProcess->isSkipped($file) === true) {
+                    $skippedFiles++;
+                    $processCallback(self::STATUS_SKIP, $file);
+                } else {
+                    $running[$file] = new LintProcess(
+                        $this->phpExecutable,
+                        $file,
+                        $this->aspTagsEnabled,
+                        $this->shortTagEnabled
+                    );
+                }
             }
 
+            $skipLintProcess->getChunk();
             usleep(100);
 
             foreach ($running as $file => $process) {
                 if ($process->isFinished()) {
                     unset($running[$file]);
 
-                    if ($process->isFail()) {
+                    $skipStatus = $skipLintProcess->isSkipped($file);
+                    if ($skipStatus === null) {
+                        $waiting[$file] = $process;
+                    } elseif ($skipStatus === true) {
+                        $skippedFiles++;
+                        $processCallback(self::STATUS_SKIP, $file);
+                    } elseif ($process->isFail()) {
                         $errors[] = new Error($file, $process->getErrorOutput());
                         $processCallback(self::STATUS_FAIL, $file);
                     } else {
@@ -184,9 +213,37 @@ class ParallelLint
             }
         }
 
+        if (!empty($waiting)) {
+            while (!$skipLintProcess->isFinished()) {
+                usleep(100);
+            }
+
+            foreach ($waiting as $file => $process) {
+                $skipStatus = $skipLintProcess->isSkipped($file);
+                if ($skipStatus === null) {
+                    throw new \Exception("File $file has empty skip status. Please contact PHP Parallel Lint author.");
+                } elseif ($skipStatus === true) {
+                    $skippedFiles++;
+                    $processCallback(self::STATUS_SKIP, $file);
+                } elseif ($process->isFail()) {
+                    $errors[] = new Error($file, $process->getErrorOutput());
+                    $processCallback(self::STATUS_FAIL, $file);
+                } else {
+                    $checkedFiles++;
+                    if ($process->hasSyntaxError()) {
+                        $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                        $filesWithSyntaxError++;
+                        $processCallback(self::STATUS_ERROR, $file);
+                    } else {
+                        $processCallback(self::STATUS_OK, $file);
+                    }
+                }
+            }
+        }
+
         $testTime = microtime(true) - $startTime;
 
-        return new Result($errors, $checkedFiles, $filesWithSyntaxError, $testTime);
+        return new Result($errors, $checkedFiles, $filesWithSyntaxError, $skippedFiles, $testTime);
     }
 
     /**

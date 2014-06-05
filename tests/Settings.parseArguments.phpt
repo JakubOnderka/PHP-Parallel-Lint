@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @testCase
+ */
+
 require __DIR__ . '/../vendor/nette/tester/Tester/bootstrap.php';
 require_once __DIR__ . '/../src/Settings.php';
 
