@@ -13,7 +13,7 @@ foreach ($files as $file) {
             $skip = false;
         }
 
-        $skip = isset($m[2]) && version_compare(PHP_VERSION, $m[2], $m[1]);
+        $skip = isset($m[2]) && !version_compare(PHP_VERSION, $m[2], $m[1]);
     }
 
     echo "$file;" . ($skip ? '1' : '0') . "\n";
