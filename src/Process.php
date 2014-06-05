@@ -247,7 +247,6 @@ class SkipLintProcess extends Process
     {
         $isFinished = parent::isFinished();
         if ($isFinished && !$this->done) {
-            echo 'F';
             $this->done = true;
             $output = $this->getOutput();
             $this->processLines($output);
