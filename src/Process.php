@@ -96,6 +96,21 @@ class Process
             $this->statusCode = (int) $status['exitcode'];
         }
 
+        // Process outputs
+        $this->output = stream_get_contents($this->stdout);
+        fclose($this->stdout);
+
+        $this->errorOutput = stream_get_contents($this->stderr);
+        fclose($this->stderr);
+
+        $statusCode = proc_close($this->process);
+
+        if ($this->statusCode === null) {
+            $this->statusCode = $statusCode;
+        }
+
+        $this->process = null;
+
         return true;
     }
 
@@ -104,7 +119,10 @@ class Process
      */
     public function getOutput()
     {
-        $this->terminateAndReadOutput();
+        if (!$this->isFinished()) {
+            throw new \RuntimeException("Cannot get output for running process");
+        }
+
         return $this->output;
     }
 
@@ -113,7 +131,10 @@ class Process
      */
     public function getErrorOutput()
     {
-        $this->terminateAndReadOutput();
+        if (!$this->isFinished()) {
+            throw new \RuntimeException("Cannot get error output for running process");
+        }
+
         return $this->errorOutput;
     }
 
@@ -122,7 +143,10 @@ class Process
      */
     public function getStatusCode()
     {
-        $this->terminateAndReadOutput();
+        if (!$this->isFinished()) {
+            throw new \RuntimeException("Cannot get status code for running process");
+        }
+
         return $this->statusCode;
     }
 
@@ -133,40 +157,10 @@ class Process
     {
         return $this->getStatusCode() === 1;
     }
-
-    /**
-     * @throws \Exception
-     */
-    protected function terminateAndReadOutput()
-    {
-        if ($this->process !== null) {
-            if (!$this->isFinished()) {
-                throw new \RuntimeException("Cannot terminate running process");
-            }
-
-            $this->output = stream_get_contents($this->stdout);
-            fclose($this->stdout);
-
-            $this->errorOutput = stream_get_contents($this->stderr);
-            fclose($this->stderr);
-
-            $statusCode = proc_close($this->process);
-
-            if ($this->statusCode === null) {
-                $this->statusCode = $statusCode;
-            }
-
-            $this->process = null;
-        }
-    }
 }
 
 class LintProcess extends Process
 {
-
-    /** @var SkipLintProcess */
-    protected $skipProcess;
-
     /**
      * @param string $phpExecutable
      * @param string $fileToCheck Path to file to check
@@ -182,8 +176,6 @@ class LintProcess extends Process
             throw new \InvalidArgumentException("File to check must be set.");
         }
 
-        $this->skipProcess = new SkipLintProcess($phpExecutable, $fileToCheck, $aspTags, $shortTag);
-
         $cmdLine = escapeshellarg($phpExecutable);
         $cmdLine .= ' -d asp_tags=' . ($aspTags ? 'On' : 'Off');
         $cmdLine .= ' -d short_open_tag=' . ($shortTag ? 'On' : 'Off');
@@ -191,20 +183,6 @@ class LintProcess extends Process
         $cmdLine .= ' -n -l ' . escapeshellarg($fileToCheck);
 
         parent::__construct($cmdLine);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFinished()
-    {
-        return parent::isFinished() && $this->skipProcess->isFinished();
-    }
-
-    protected function terminateAndReadOutput()
-    {
-        $this->skipProcess->terminateAndReadOutput();
-        parent::terminateAndReadOutput();
     }
 
     /**
@@ -233,56 +211,70 @@ class LintProcess extends Process
      */
     public function isFail()
     {
-       $fail = defined('PHP_WINDOWS_VERSION_MAJOR') ? $this->getStatusCode() === 1 : parent::isFail();
-        if (!$fail) {
-            return FALSE;
-        }
-
-        return !$this->skipProcess->isSkipped();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSkipped()
-    {
-        return $this->skipProcess->isSkipped();
+       return defined('PHP_WINDOWS_VERSION_MAJOR') ? $this->getStatusCode() === 1 : parent::isFail();
     }
 }
 
-
-
 class SkipLintProcess extends Process
 {
+    private $skipped = array();
 
-    /**
-     * @param string $phpExecutable
-     * @param string $fileToCheck Path to file to check
-     * @param bool $aspTags
-     * @param bool $shortTag
-     */
-    public function __construct($phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false)
+    private $done = false;
+
+    private $endLastChunk = '';
+
+    public function __construct($phpExecutable, array $filesToCheck)
     {
         if (empty($phpExecutable)) {
             throw new \InvalidArgumentException("PHP executable must be set.");
         }
-        if (empty($fileToCheck)) {
-            throw new \InvalidArgumentException("File to check must be set.");
-        }
 
         $cmdLine = escapeshellarg($phpExecutable);
-        $cmdLine .= ' -d asp_tags=' . ($aspTags ? 'On' : 'Off');
-        $cmdLine .= ' -d short_open_tag=' . ($shortTag ? 'On' : 'Off');
-        $cmdLine .= ' -d error_reporting=E_ALL';
         $cmdLine .= ' -n ' . escapeshellarg(__DIR__ . '/../bin/skip-linting.php');
-        $cmdLine .= ' ' . escapeshellarg($fileToCheck);
+        $cmdLine .= ' ' . implode(' ', array_map('escapeshellarg', $filesToCheck));
 
         parent::__construct($cmdLine);
     }
 
-    public function isSkipped()
+    public function getChunk()
     {
-        return $this->getStatusCode() === 2;
+        if (!$this->isFinished()) {
+            $this->processLines(fread($this->stdout, 8192));
+        }
     }
 
+    public function isFinished()
+    {
+        $isFinished = parent::isFinished();
+        if ($isFinished && !$this->done) {
+            echo 'F';
+            $this->done = true;
+            $output = $this->getOutput();
+            $this->processLines($output);
+        }
+
+        return $isFinished;
+    }
+
+    public function isSkipped($file)
+    {
+        if (isset($this->skipped[$file])) {
+            return $this->skipped[$file];
+        }
+
+        return null;
+    }
+
+    private function processLines($content)
+    {
+        if (!empty($content)) {
+            $lines = explode("\n", $this->endLastChunk . $content);
+            $this->endLastChunk = array_pop($lines);
+            foreach ($lines as $line) {
+                $parts = explode(';', $line);
+                list($file, $status) = $parts;
+                $this->skipped[$file] = $status === '1' ? true : false;
+            }
+        }
+    }
 }
