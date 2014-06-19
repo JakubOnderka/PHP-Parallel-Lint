@@ -118,8 +118,10 @@ class Output
 
     protected function progress()
     {
-        if (++$this->checkedFiles % $this->filesPerLine === 0) {
-            $percent = round($this->checkedFiles/$this->totalFileCount * 100);
+        ++$this->checkedFiles;
+
+        if ($this->checkedFiles % $this->filesPerLine === 0) {
+            $percent = floor($this->checkedFiles/$this->totalFileCount * 100);
             $current = $this->stringWidth($this->checkedFiles, strlen($this->totalFileCount));
             $this->writeLine(" $current/$this->totalFileCount ($percent %)");
         }
