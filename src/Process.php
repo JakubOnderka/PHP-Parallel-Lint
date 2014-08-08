@@ -59,9 +59,10 @@ class Process
 
     /**
      * @param string $cmdLine
+     * @param string $stdInInput
      * @throws \RuntimeException
      */
-    public function __construct($cmdLine)
+    public function __construct($cmdLine, $stdInInput = null)
     {
         $descriptors = array(
             self::STDIN  => array('pipe', self::READ),
@@ -76,6 +77,11 @@ class Process
         }
 
         list($stdin, $this->stdout, $this->stderr) = $pipes;
+
+        if ($stdInInput) {
+            fwrite($stdin, $stdInInput);
+        }
+
         fclose($stdin);
     }
 
@@ -231,9 +237,8 @@ class SkipLintProcess extends Process
 
         $cmdLine = escapeshellarg($phpExecutable);
         $cmdLine .= ' -n ' . escapeshellarg(__DIR__ . '/../bin/skip-linting.php');
-        $cmdLine .= ' ' . implode(' ', array_map('escapeshellarg', $filesToCheck));
 
-        parent::__construct($cmdLine);
+        parent::__construct($cmdLine, implode("\n", $filesToCheck));
     }
 
     public function getChunk()

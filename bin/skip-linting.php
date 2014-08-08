@@ -1,9 +1,9 @@
 <?php
-array_shift($_SERVER['argv']);
-$files = $_SERVER['argv'];
+$stdin = fopen('php://stdin', 'r');
 
-foreach ($files as $file) {
+while($file = fgets($stdin)) {
     $skip = false;
+    $file = rtrim($file);
     $f = @fopen($file, 'r');
     if ($f) {
         $firstLine = fgets($f);
@@ -18,3 +18,5 @@ foreach ($files as $file) {
 
     echo "$file;" . ($skip ? '1' : '0') . "\n";
 }
+
+fclose($stdin);
