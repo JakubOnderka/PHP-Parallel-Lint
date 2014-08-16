@@ -1,9 +1,10 @@
 <?php
 $stdin = fopen('php://stdin', 'r');
+$input = stream_get_contents($stdin);
+fclose($stdin);
 
-while($file = fgets($stdin)) {
+foreach (explode("\n", $input) as $file) {
     $skip = false;
-    $file = rtrim($file);
     $f = @fopen($file, 'r');
     if ($f) {
         $firstLine = fgets($f);
@@ -19,4 +20,3 @@ while($file = fgets($stdin)) {
     echo "$file;" . ($skip ? '1' : '0') . "\n";
 }
 
-fclose($stdin);
