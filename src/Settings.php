@@ -81,6 +81,14 @@ class Settings
     public $colors = true;
 
     /**
+     * @param array $paths
+     */
+    public function addPaths(array $paths)
+    {
+        $this->paths = array_merge($this->paths, $paths);
+    }
+
+    /**
      * @param array $arguments
      * @return Settings
      * @throws InvalidArgumentException
@@ -89,41 +97,41 @@ class Settings
     public static function parseArguments(array $arguments)
     {
         $arguments = new ArrayIterator(array_slice($arguments, 1));
-        $setting = new self;
+        $settings = new self;
 
         foreach ($arguments as $argument) {
             if ($argument{0} !== '-') {
-                $setting->paths[] = $argument;
+                $settings->paths[] = $argument;
             } else {
                 switch ($argument) {
                     case '-p':
-                        $setting->phpExecutable = $arguments->getNext();
+                        $settings->phpExecutable = $arguments->getNext();
                         break;
 
                     case '-s':
                     case '--short':
-                        $setting->shortTag = true;
+                        $settings->shortTag = true;
                         break;
 
                     case '-a':
                     case '--asp':
-                        $setting->aspTags = true;
+                        $settings->aspTags = true;
                         break;
 
                     case '--exclude':
-                        $setting->excluded[] = $arguments->getNext();
+                        $settings->excluded[] = $arguments->getNext();
                         break;
 
                     case '-e':
-                        $setting->extensions = array_map('trim', explode(',', $arguments->getNext()));
+                        $settings->extensions = array_map('trim', explode(',', $arguments->getNext()));
                         break;
 
                     case '-j':
-                        $setting->parallelJobs = max((int) $arguments->getNext(), 1);
+                        $settings->parallelJobs = max((int) $arguments->getNext(), 1);
                         break;
 
                     case '--no-colors':
-                        $setting->colors = false;
+                        $settings->colors = false;
                         break;
 
                     default:
@@ -132,11 +140,23 @@ class Settings
             }
         }
 
-        if (empty($setting->paths)) {
-            throw new Exception('No path set.');
+        return $settings;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPathsFromStdIn()
+    {
+        stream_set_blocking(STDIN, 0);
+        $content = stream_get_contents(STDIN);
+
+        if (empty($content)) {
+            return array();
         }
 
-        return $setting;
+        $lines = explode("\n", rtrim($content));
+        return array_map('rtrim', $lines);
     }
 }
 

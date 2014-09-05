@@ -2,9 +2,9 @@
 use JakubOnderka\PhpParallelLint;
 
 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50302) {
-    die("PHP Parallel Lint require PHP 5.3.2 or newer.\n");
+    echo "PHP Parallel Lint require PHP 5.3.2 or newer.\n";
+    die(255);
 }
-
 const SUCCESS = 0,
     WITH_ERRORS = 1,
     FAILED = 255;
@@ -26,17 +26,21 @@ Options:
 <?php
 }
 
-/**
- * Help
- */
-if (!isset($_SERVER['argv'][1]) || in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) { ?>
-PHP Parallel Lint version 0.7.1
+function showUsage()
+{
+    ?>
+PHP Parallel Lint version 0.7.2
 -----------------------------
 Usage:
     parallel-lint [sa] [-p php] [-e ext] [-j num] [--exclude dir] [files or directories]
+
 <?php
-    showOptions();
-    exit;
+showOptions();
+exit;
+}
+
+if (in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) {
+    showUsage();
 }
 
 $files = array(
@@ -54,15 +58,20 @@ foreach ($files as $file) {
 }
 
 if (!$autoloadFileFound) {
-    die(
-      'You need to set up the project dependencies using the following commands:' . PHP_EOL .
-      'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
-      'php composer.phar install' . PHP_EOL
-    );
+    echo 'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+        'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL;
+    die(FAILED);
 }
 
 try {
     $settings = PhpParallelLint\Settings::parseArguments($_SERVER['argv']);
+    $settings->addPaths(PhpParallelLint\Settings::getPathsFromStdIn());
+
+    if (empty($settings->paths)) {
+        showUsage();
+    }
+
     $manager = new PhpParallelLint\Manager;
     $result = $manager->run($settings);
     die($result ? SUCCESS : WITH_ERRORS);
