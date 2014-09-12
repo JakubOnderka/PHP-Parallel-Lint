@@ -109,7 +109,7 @@ class JsonOutput implements Output
     }
 }
 
-class TextOutput
+class TextOutput implements Output
 {
     const TYPE_DEFAULT = 'default',
         TYPE_SKIP = 'skip',
