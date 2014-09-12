@@ -11,6 +11,7 @@ require_once __DIR__ . '/../src/ParallelLint.php';
 require_once __DIR__ . '/../src/Manager.php';
 require_once __DIR__ . '/../src/Output.php';
 require_once __DIR__ . '/../src/Process.php';
+require_once __DIR__ . '/../src/Result.php';
 require_once __DIR__ . '/../src/Settings.php';
 require_once __DIR__ . '/../src/exceptions.php';
 
@@ -48,8 +49,8 @@ class ManagerRunTest extends Tester\TestCase
         $settings->paths = array('examples/example-02/');
 
         $manager = $this->getManager($settings);
-        $code = $manager->run($settings);
-        Assert::true($code);
+        $result = $manager->run($settings);
+        Assert::false($result->hasError());
     }
 
     public function testError()
@@ -58,8 +59,8 @@ class ManagerRunTest extends Tester\TestCase
         $settings->paths = array('examples/example-03/');
 
         $manager = $this->getManager($settings);
-        $code = $manager->run($settings);
-        Assert::false($code);
+        $result = $manager->run($settings);
+        Assert::true($result->hasError());
     }
 
     public function testExcludeRelativeSubdirectory()
@@ -68,14 +69,14 @@ class ManagerRunTest extends Tester\TestCase
         $settings->paths = array('examples/example-04/');
 
         $manager = $this->getManager($settings);
-        $code = $manager->run($settings);
-        Assert::false($code);
+        $result = $manager->run($settings);
+        Assert::true($result->hasError());
 
         $settings->excluded = array('examples/example-04/dir1/dir2');
 
         $manager = $this->getManager($settings);
-        $code = $manager->run($settings);
-        Assert::true($code);
+        $result = $manager->run($settings);
+        Assert::false($result->hasError());
     }
 
     public function testExcludeAbsoluteSubdirectory()
@@ -86,14 +87,14 @@ class ManagerRunTest extends Tester\TestCase
         $settings->excluded = array();
 
         $manager = $this->getManager($settings);
-        $code = $manager->run($settings);
-        Assert::false($code);
+        $result = $manager->run($settings);
+        Assert::true($result->hasError());
 
         $settings->excluded = array($cwd . '/examples/example-04/dir1/dir2');
 
         $manager = $this->getManager($settings);
-        $code = $manager->run($settings);
-        Assert::true($code);
+        $result = $manager->run($settings);
+        Assert::false($result->hasError());
     }
 
     /**
