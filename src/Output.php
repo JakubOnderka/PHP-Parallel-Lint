@@ -30,7 +30,86 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-class Output
+interface Output
+{
+    public function __construct(IWriter $writer);
+
+    public function ok();
+
+    public function skip();
+
+    public function error();
+
+    public function fail();
+
+    public function setTotalFileCount($count);
+
+    public function writeHeader($phpVersion, $parallelJobs);
+
+    public function writeResult(Result $result, ErrorFormatter $errorFormatter);
+}
+
+class JsonOutput implements Output
+{
+    /** @var IWriter */
+    protected $writer;
+
+    /** @var int */
+    protected $phpVersion;
+
+    /** @var int */
+    protected $parallelJobs;
+
+    /**
+     * @param IWriter $writer
+     */
+    public function __construct(IWriter $writer)
+    {
+        $this->writer = $writer;
+    }
+
+    public function ok()
+    {
+
+    }
+
+    public function skip()
+    {
+
+    }
+
+    public function error()
+    {
+
+    }
+
+    public function fail()
+    {
+
+    }
+
+    public function setTotalFileCount($count)
+    {
+
+    }
+
+    public function writeHeader($phpVersion, $parallelJobs)
+    {
+        $this->phpVersion = $phpVersion;
+        $this->parallelJobs = $parallelJobs;
+    }
+
+    public function writeResult(Result $result, ErrorFormatter $errorFormatter)
+    {
+        echo json_encode(array(
+            'phpVersion' => $this->phpVersion,
+            'parallelJobs' => $this->parallelJobs,
+            'results' => $result,
+        ));
+    }
+}
+
+class TextOutput
 {
     const TYPE_DEFAULT = 'default',
         TYPE_SKIP = 'skip',
@@ -54,7 +133,7 @@ class Output
      */
     public function __construct(IWriter $writer)
     {
-        $this->writer = $writer ?: new ConsoleWriter;
+        $this->writer = $writer;
     }
 
     public function ok()
@@ -116,6 +195,52 @@ class Output
         $this->totalFileCount = $count;
     }
 
+    /**
+     * @param int $phpVersion
+     * @param int $parallelJobs
+     */
+    public function writeHeader($phpVersion, $parallelJobs)
+    {
+        $this->write("PHP {$this->phpVersionIdToString($phpVersion)} | ");
+
+        if ($parallelJobs === 1) {
+            $this->writeLine("1 job");
+        } else {
+            $this->writeLine("{$parallelJobs} parallel jobs");
+        }
+    }
+
+    public function writeResult(Result $result, ErrorFormatter $errorFormatter)
+    {
+        $this->writeNewLine(2);
+
+        $testTime = round($result->getTestTime(), 1);
+        $message = "Checked {$result->getCheckedFilesCount()} files in $testTime second, ";
+
+        if ($result->getSkippedFilesCount() > 0) {
+            $message .= "skipped {$result->getSkippedFilesCount()} ";
+            $message .= ($result->getSkippedFilesCount() === 1 ? 'file' : 'files');
+            $message .= ", ";
+        }
+
+        if (!$result->hasSyntaxError()) {
+            $message .= "no syntax error found";
+        } else {
+            $message .= "syntax error found in {$result->getFilesWithSyntaxErrorCount()} ";
+            $message .= ($result->getFilesWithSyntaxErrorCount() === 1 ? 'file' : 'files');
+        }
+
+        $this->writeLine($message, $result->hasSyntaxError() ? self::TYPE_ERROR : self::TYPE_OK);
+
+        if ($result->hasError()) {
+            $this->writeNewLine();
+            foreach ($result->getErrors() as $error) {
+                $this->writeLine(str_repeat('-', 60));
+                $this->writeLine($errorFormatter->format($error));
+            }
+        }
+    }
+
     protected function progress()
     {
         ++$this->checkedFiles;
@@ -137,9 +262,22 @@ class Output
         $multiplier = $width - strlen($input);
         return str_repeat(' ', $multiplier > 0 ? $multiplier : 0) . $input;
     }
+
+    /**
+     * @param int $phpVersionId
+     * @return string
+     */
+    protected function phpVersionIdToString($phpVersionId)
+    {
+        $releaseVersion = (int) substr($phpVersionId, -2, 2);
+        $minorVersion = (int) substr($phpVersionId, -4, 2);
+        $majorVersion = (int) substr($phpVersionId, 0, strlen($phpVersionId)-4);
+
+        return "$majorVersion.$minorVersion.$releaseVersion";
+    }
 }
 
-class OutputColored extends Output
+class TextOutputColored extends TextOutput
 {
     /** @var \JakubOnderka\PhpConsoleColor\ConsoleColor */
     private $colors;

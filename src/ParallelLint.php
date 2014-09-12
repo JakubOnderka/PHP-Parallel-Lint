@@ -30,95 +30,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-class Result
-{
-    /** @var array */
-    private $errors;
-
-    /** @var int */
-    private $checkedFiles;
-
-    /** @var int */
-    private $filesWithSyntaxError;
-
-    /** @var int */
-    private $skippedFiles;
-
-    /** @var float */
-    private $testTime;
-
-    /**
-     * @param array $errors
-     * @param int $checkedFiles
-     * @param int $filesWithSyntaxError
-     * @param float $testTime
-     */
-    public function __construct(array $errors, $checkedFiles, $filesWithSyntaxError, $skippedFiles, $testTime)
-    {
-        $this->errors = $errors;
-        $this->checkedFiles = $checkedFiles;
-        $this->filesWithSyntaxError = $filesWithSyntaxError;
-        $this->skippedFiles = $skippedFiles;
-        $this->testTime = $testTime;
-    }
-
-    /**
-     * @return array
-     */
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasError()
-    {
-        return !empty($this->errors);
-    }
-
-    /**
-     * @return int
-     */
-    public function getCheckedFiles()
-    {
-        return $this->checkedFiles;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSkippedFiles()
-    {
-        return $this->skippedFiles;
-    }
-
-    /**
-     * @return int
-     */
-    public function getFilesWithSyntaxError()
-    {
-        return $this->filesWithSyntaxError;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasSyntaxError()
-    {
-        return $this->filesWithSyntaxError !== 0;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTestTime()
-    {
-        return $this->testTime;
-    }
-}
-
 class ParallelLint
 {
     const STATUS_OK = 'ok',
@@ -150,6 +61,7 @@ class ParallelLint
     /**
      * @param array $files
      * @return Result
+     * @throws \Exception
      */
     public function lint(array $files)
     {
@@ -164,14 +76,14 @@ class ParallelLint
          * @var LintProcess[] $waiting
          */
         $errors = $running = $waiting = array();
-        $skippedFiles = $checkedFiles = $filesWithSyntaxError = 0;
+        $skippedFiles = $checkedFiles = $filesWithSyntaxError = array();
 
         while ($files || $running) {
             for ($i = count($running); $files && $i < $this->parallelJobs; $i++) {
                 $file = array_shift($files);
 
                 if ($skipLintProcess->isSkipped($file) === true) {
-                    $skippedFiles++;
+                    $skippedFiles[] = $file;
                     $processCallback(self::STATUS_SKIP, $file);
                 } else {
                     $running[$file] = new LintProcess(
@@ -194,16 +106,16 @@ class ParallelLint
                     if ($skipStatus === null) {
                         $waiting[$file] = $process;
                     } elseif ($skipStatus === true) {
-                        $skippedFiles++;
+                        $skippedFiles[] = $file;
                         $processCallback(self::STATUS_SKIP, $file);
                     } elseif ($process->isFail()) {
                         $errors[] = new Error($file, $process->getErrorOutput());
                         $processCallback(self::STATUS_FAIL, $file);
                     } else {
-                        $checkedFiles++;
+                        $checkedFiles[] = $file;
                         if ($process->hasSyntaxError()) {
                             $errors[] = new SyntaxError($file, $process->getSyntaxError());
-                            $filesWithSyntaxError++;
+                            $filesWithSyntaxError[] = $file;
                             $processCallback(self::STATUS_ERROR, $file);
                         } else {
                             $processCallback(self::STATUS_OK, $file);
@@ -223,16 +135,16 @@ class ParallelLint
                 if ($skipStatus === null) {
                     throw new \Exception("File $file has empty skip status. Please contact PHP Parallel Lint author.");
                 } elseif ($skipStatus === true) {
-                    $skippedFiles++;
+                    $skippedFiles[] = $file;
                     $processCallback(self::STATUS_SKIP, $file);
                 } elseif ($process->isFail()) {
                     $errors[] = new Error($file, $process->getErrorOutput());
                     $processCallback(self::STATUS_FAIL, $file);
                 } else {
-                    $checkedFiles++;
+                    $checkedFiles[] = $file;
                     if ($process->hasSyntaxError()) {
                         $errors[] = new SyntaxError($file, $process->getSyntaxError());
-                        $filesWithSyntaxError++;
+                        $filesWithSyntaxError[] = $file;
                         $processCallback(self::STATUS_ERROR, $file);
                     } else {
                         $processCallback(self::STATUS_OK, $file);

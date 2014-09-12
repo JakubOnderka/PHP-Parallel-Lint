@@ -22,6 +22,7 @@ Options:
                 multiple exclude parameters.
     -j <num>    Run <num> jobs in parallel (default 10)
     --no-colors Disable colors in console output.
+    --json      Output results as JSON string.
     -h, --help  Print this help.
 <?php
 }
@@ -74,12 +75,16 @@ try {
 
     $manager = new PhpParallelLint\Manager;
     $result = $manager->run($settings);
-    die($result ? SUCCESS : WITH_ERRORS);
+    die($result->hasError() ? WITH_ERRORS : SUCCESS);
 } catch (PhpParallelLint\InvalidArgumentException $e) {
     echo "Invalid option {$e->getArgument()}" . PHP_EOL . PHP_EOL;
     showOptions();
     die(FAILED);
-} catch (Exception $e) {
-    echo $e->getMessage(), PHP_EOL;
+} catch (PhpParallelLint\Exception $e) {
+    if ($settings->json) {
+        echo json_encode($e);
+    } else {
+        echo $e->getMessage(), PHP_EOL;
+    }
     die(FAILED);
 }

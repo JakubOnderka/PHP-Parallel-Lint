@@ -81,6 +81,12 @@ class Settings
     public $colors = true;
 
     /**
+     * Output results as JSON string
+     * @var bool
+     */
+    public $json = false;
+
+    /**
      * @param array $paths
      */
     public function addPaths(array $paths)
@@ -132,6 +138,10 @@ class Settings
 
                     case '--no-colors':
                         $settings->colors = false;
+                        break;
+
+                    case '--json':
+                        $settings->json = true;
                         break;
 
                     default:

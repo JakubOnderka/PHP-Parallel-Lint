@@ -40,24 +40,18 @@ class Manager
 
     /**
      * @param null|Settings $settings
-     * @return bool
+     * @return Result
      * @throws \Exception
      */
     public function run(Settings $settings = null)
     {
         $settings = $settings ?: new Settings;
-        $output = $this->output ?: ($settings->colors ? new OutputColored(new ConsoleWriter) : new Output(new ConsoleWriter));
+        $output = $this->output ?: $this->getDefaultOutput($settings);
 
         $version = $this->getPhpExecutableVersion($settings->phpExecutable);
         $translateTokens = $version < 50400; // From PHP version 5.4 are tokens translated by default
 
-        $output->write("PHP {$this->phpVersionIdToString($version)} | ");
-
-        if ($settings->parallelJobs === 1) {
-            $output->writeLine("1 job");
-        } else {
-            $output->writeLine("{$settings->parallelJobs} parallel jobs");
-        }
+        $output->writeHeader($version, $settings->parallelJobs);
 
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
 
@@ -85,39 +79,9 @@ class Manager
 
         $result = $parallelLint->lint($files);
 
-        $output->writeNewLine(2);
+        $output->writeResult($result, new ErrorFormatter($settings->colors, $translateTokens));
 
-        $testTime = round($result->getTestTime(), 1);
-        $message = "Checked {$result->getCheckedFiles()} files in $testTime second, ";
-
-        if ($result->getSkippedFiles() > 0) {
-            $message .= "skipped {$result->getSkippedFiles()} ";
-            $message .= ($result->getSkippedFiles() === 1 ? 'file' : 'files');
-            $message .= ", ";
-        }
-
-        if (!$result->hasSyntaxError()) {
-            $message .= "no syntax error found";
-        } else {
-            $message .= "syntax error found in {$result->getFilesWithSyntaxError()} ";
-            $message .= ($result->getFilesWithSyntaxError() === 1 ? 'file' : 'files');
-        }
-
-        $output->writeLine($message, $result->hasSyntaxError() ? Output::TYPE_ERROR : Output::TYPE_OK);
-
-        if ($result->hasError()) {
-            $errorFormatter = new ErrorFormatter($settings->colors, $translateTokens);
-
-            $output->writeNewLine();
-            foreach ($result->getErrors() as $error) {
-                $output->writeLine(str_repeat('-', 60));
-                $output->writeLine($errorFormatter->format($error));
-            }
-
-            return false;
-        }
-
-        return true;
+        return $result;
     }
 
     /**
@@ -151,16 +115,17 @@ class Manager
     }
 
     /**
-     * @param int $phpVersionId
-     * @return string
+     * @param Settings $settings
+     * @return Output
      */
-    protected function phpVersionIdToString($phpVersionId)
+    protected function getDefaultOutput(Settings $settings)
     {
-        $releaseVersion = (int) substr($phpVersionId, -2, 2);
-        $minorVersion = (int) substr($phpVersionId, -4, 2);
-        $majorVersion = (int) substr($phpVersionId, 0, strlen($phpVersionId)-4);
-
-        return "$majorVersion.$minorVersion.$releaseVersion";
+        $writer = new ConsoleWriter;
+        if ($settings->json) {
+            return new JsonOutput($writer);
+        } else {
+            return ($settings->colors ? new TextOutputColored($writer) : new TextOutput($writer));
+        }
     }
 
     /**

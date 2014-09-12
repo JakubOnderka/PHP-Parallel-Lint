@@ -30,7 +30,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-class Error
+class Error implements \JsonSerializable
 {
     /** @var string */
     protected $filePath;
@@ -70,6 +70,22 @@ class Error
     public function getShortFilePath()
     {
         return str_replace(getcwd(), '', $this->filePath);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.4.0)<br/>
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'type' => 'error',
+            'file' => $this->getFilePath(),
+            'message' => $this->getMessage(),
+        );
     }
 }
 
@@ -151,5 +167,23 @@ class SyntaxError extends Error
 
             return $tokenName;
         }, $message);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.4.0)<br/>
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'type' => 'syntaxError',
+            'file' => $this->getFilePath(),
+            'line' => $this->getLine(),
+            'message' => $this->getMessage(),
+            'normalizeMessage' => $this->getNormalizedMessage(),
+        );
     }
 }

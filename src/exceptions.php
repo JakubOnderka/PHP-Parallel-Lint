@@ -30,8 +30,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-class Exception extends \Exception
+class Exception extends \Exception implements \JsonSerializable
 {
+    public function jsonSerialize()
+    {
+        return array(
+            'type' => get_class($this),
+            'message' => $this->getMessage(),
+            'code' => $this->getCode(),
+        );
+    }
 
 }
 
