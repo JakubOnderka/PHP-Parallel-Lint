@@ -8,6 +8,7 @@ require_once __DIR__ . '/../vendor/nette/tester/Tester/bootstrap.php';
 require_once __DIR__ . '/../src/Error.php';
 require_once __DIR__ . '/../src/ParallelLint.php';
 require_once __DIR__ . '/../src/Process.php';
+require_once __DIR__ . '/../src/Result.php';
 
 use JakubOnderka\PhpParallelLint\ParallelLint;
 use Tester\Assert;
