@@ -219,6 +219,28 @@ class LintProcess extends Process
     {
        return defined('PHP_WINDOWS_VERSION_MAJOR') ? $this->getStatusCode() === 1 : parent::isFail();
     }
+
+    /**
+     * @param string $phpExecutable
+     * @return int PHP version as PHP_VERSION_ID constant
+     * @throws \Exception
+     */
+    public static function getPhpExecutableVersion($phpExecutable)
+    {
+        exec(escapeshellarg($phpExecutable) . ' -v', $output, $result);
+
+        if ($result !== 0 && $result !== 255) {
+            throw new \Exception("Unable to execute '{$phpExecutable}'.");
+        }
+
+        if (!preg_match('~PHP ([0-9]*).([0-9]*).([0-9]*)~', $output[0], $matches)) {
+            throw new \Exception("'{$phpExecutable}' is not valid PHP binary.");
+        }
+
+        $phpVersionId = $matches[1] * 10000 + $matches[2] * 100 + $matches[3];
+
+        return $phpVersionId;
+    }
 }
 
 class SkipLintProcess extends Process
@@ -280,5 +302,118 @@ class SkipLintProcess extends Process
                 $this->skipped[$file] = $status === '1' ? true : false;
             }
         }
+    }
+}
+
+class GitBlameProcess extends Process
+{
+    /**
+     * @param string $gitExecutable
+     * @param string $file
+     * @param int $line
+     */
+    public function __construct($gitExecutable, $file, $line)
+    {
+        $cmd = escapeshellcmd($gitExecutable) . " blame -p -L $line,+1 " . escapeshellarg($file);
+        parent::__construct($cmd);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuccess()
+    {
+        return $this->getStatusCode() === 0;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getAuthor()
+    {
+        if (!$this->isSuccess()) {
+            throw new Exception("Author can be taken only for success process output.");
+        }
+
+        $output = $this->getOutput();
+        preg_match('~^author (.*)~m', $output, $matches);
+        return $matches[1];
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getAuthorEmail()
+    {
+        if (!$this->isSuccess()) {
+            throw new Exception("Author e-mail can be taken only for success process output.");
+        }
+
+        $output = $this->getOutput();
+        preg_match('~^author-mail <(.*)>~m', $output, $matches);
+        return $matches[1];
+    }
+
+    /**
+     * @return \DateTime
+     * @throws Exception
+     */
+    public function getAuthorTime()
+    {
+        if (!$this->isSuccess()) {
+            throw new Exception("Author time can be taken only for success process output.");
+        }
+
+        $output = $this->getOutput();
+
+        preg_match('~^author-time (.*)~m', $output, $matches);
+        $time = $matches[1];
+
+        preg_match('~^author-tz (.*)~m', $output, $matches);
+        $zone = $matches[1];
+
+        $datetime = \DateTime::createFromFormat('U', $time);
+        $datetime->setTimezone(new \DateTimeZone($zone));
+        return $datetime;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getCommitHash()
+    {
+        if (!$this->isSuccess()) {
+            throw new Exception("Commit hash can be taken only for success process output.");
+        }
+
+        return substr($this->getOutput(), 0, strpos($this->getOutput(), ' '));
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getSummary()
+    {
+        if (!$this->isSuccess()) {
+            throw new Exception("Commit summary can be taken only for success process output.");
+        }
+
+        $output = $this->getOutput();
+        preg_match('~^summary (.*)~m', $output, $matches);
+        return $matches[1];
+    }
+
+    /**
+     * @param string $gitExecutable
+     * @return bool
+     */
+    public static function gitExists($gitExecutable)
+    {
+        exec(escapeshellcmd($gitExecutable) . ' --version', $output, $result);
+        return $result === 0;
     }
 }

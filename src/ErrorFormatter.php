@@ -84,6 +84,13 @@ class ErrorFormatter
 
         $string .= $error->getNormalizedMessage($this->translateTokens);
 
+        if ($error->getBlame()) {
+            $blame = $error->getBlame();
+            $shortCommitHash = substr($blame->commitHash, 0, 8);
+            $dateTime = $blame->datetime->format('c');
+            $string .= PHP_EOL . "Blame {$blame->name} <{$blame->email}>, commit '$shortCommitHash' from $dateTime";
+        }
+
         return $string;
     }
 

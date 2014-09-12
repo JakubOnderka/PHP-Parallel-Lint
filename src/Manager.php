@@ -32,9 +32,6 @@ either expressed or implied, of the FreeBSD Project.
 
 class Manager
 {
-    const CODE_OK = 0,
-        CODE_ERROR = 255;
-
     /** @var Output */
     protected $output;
 
@@ -48,7 +45,7 @@ class Manager
         $settings = $settings ?: new Settings;
         $output = $this->output ?: $this->getDefaultOutput($settings);
 
-        $version = $this->getPhpExecutableVersion($settings->phpExecutable);
+        $version = LintProcess::getPhpExecutableVersion($settings->phpExecutable);
         $translateTokens = $version < 50400; // From PHP version 5.4 are tokens translated by default
 
         $output->writeHeader($version, $settings->parallelJobs);
@@ -79,6 +76,8 @@ class Manager
 
         $result = $parallelLint->lint($files);
 
+        $this->gitBlame($result);
+
         $output->writeResult($result, new ErrorFormatter($settings->colors, $translateTokens));
 
         return $result;
@@ -93,28 +92,6 @@ class Manager
     }
 
     /**
-     * @param string $phpExecutable
-     * @return int PHP version as PHP_VERSION_ID constant
-     * @throws \Exception
-     */
-    protected function getPhpExecutableVersion($phpExecutable)
-    {
-        exec(escapeshellarg($phpExecutable) . ' -v', $output, $result);
-
-        if ($result !== self::CODE_OK && $result !== self::CODE_ERROR) {
-            throw new \Exception("Unable to execute '{$phpExecutable}'.");
-        }
-
-        if (!preg_match('~PHP ([0-9]*).([0-9]*).([0-9]*)~', $output[0], $matches)) {
-            throw new \Exception("'{$phpExecutable}' is not valid PHP binary.");
-        }
-
-        $phpVersionId = $matches[1] * 10000 + $matches[2] * 100 + $matches[3];
-
-        return $phpVersionId;
-    }
-
-    /**
      * @param Settings $settings
      * @return Output
      */
@@ -125,6 +102,32 @@ class Manager
             return new JsonOutput($writer);
         } else {
             return ($settings->colors ? new TextOutputColored($writer) : new TextOutput($writer));
+        }
+    }
+
+    protected function gitBlame(Result $result)
+    {
+        if (!GitBlameProcess::gitExists('git')) {
+            return;
+        }
+
+        foreach ($result->getErrors() as $error) {
+            if ($error instanceof SyntaxError) {
+                $process = new GitBlameProcess('git', $error->getFilePath(), $error->getLine());
+
+                while (!$process->isFinished()) {}
+
+                if ($process->isSuccess()) {
+                    $blame = new Blame;
+                    $blame->name = $process->getAuthor();
+                    $blame->email = $process->getAuthorEmail();
+                    $blame->datetime = $process->getAuthorTime();
+                    $blame->commitHash = $process->getCommitHash();
+                    $blame->summary = $process->getSummary();
+
+                    $error->setBlame($blame);
+                }
+            }
         }
     }
 

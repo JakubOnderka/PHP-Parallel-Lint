@@ -89,8 +89,45 @@ class Error implements \JsonSerializable
     }
 }
 
+class Blame implements \JsonSerializable
+{
+    public $name;
+
+    public $email;
+
+    /** @var \DateTime */
+    public $datetime;
+
+    public $commitHash;
+
+    public $summary;
+
+    /**
+     * (PHP 5 &gt;= 5.4.0)<br/>
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     */
+    function jsonSerialize()
+    {
+        return array(
+            'name' => $this->name,
+            'email' => $this->email,
+            'datetime' => $this->datetime,
+            'commitHash' => $this->commitHash,
+            'summary' => $this->summary,
+        );
+    }
+
+
+}
+
 class SyntaxError extends Error
 {
+    /** @var Blame */
+    private $blame;
+
     /**
      * @return int|null
      */
@@ -121,6 +158,22 @@ class SyntaxError extends Error
         }
 
         return $message;
+    }
+
+    /**
+     * @param Blame $blame
+     */
+    public function setBlame(Blame $blame)
+    {
+        $this->blame = $blame;
+    }
+
+    /**
+     * @return Blame
+     */
+    public function getBlame()
+    {
+        return $this->blame;
     }
 
     /**
@@ -184,6 +237,7 @@ class SyntaxError extends Error
             'line' => $this->getLine(),
             'message' => $this->getMessage(),
             'normalizeMessage' => $this->getNormalizedMessage(),
+            'blame' => $this->blame,
         );
     }
 }
