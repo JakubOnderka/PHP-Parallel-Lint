@@ -27,6 +27,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
 		$expectedSettings->paths = array('.');
 		$expectedSettings->excluded = array();
 		$expectedSettings->colors = true;
+		$expectedSettings->json = false;
 
 		Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
 		Assert::equal($expectedSettings->shortTag, $settings->shortTag);
@@ -36,6 +37,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
 		Assert::equal($expectedSettings->paths, $settings->paths);
 		Assert::equal($expectedSettings->excluded, $settings->excluded);
 		Assert::equal($expectedSettings->colors, $settings->colors);
+        Assert::equal($expectedSettings->json, $settings->json);
 	}
 
 	public function testMoreArguments()
@@ -53,6 +55,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
 		$expectedSettings->paths = array('.');
 		$expectedSettings->excluded = array('vendor');
 		$expectedSettings->colors = false;
+        $expectedSettings->json = false;
 
 		Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
 		Assert::equal($expectedSettings->shortTag, $settings->shortTag);
@@ -62,6 +65,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
 		Assert::equal($expectedSettings->paths, $settings->paths);
 		Assert::equal($expectedSettings->excluded, $settings->excluded);
 		Assert::equal($expectedSettings->colors, $settings->colors);
+        Assert::equal($expectedSettings->json, $settings->json);
 	}
 }
 

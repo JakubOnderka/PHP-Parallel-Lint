@@ -16,8 +16,8 @@ require_once __DIR__ . '/../src/exceptions.php';
 
 use JakubOnderka\PhpParallelLint\Manager;
 use JakubOnderka\PhpParallelLint\NullWriter;
-use JakubOnderka\PhpParallelLint\Output;
 use JakubOnderka\PhpParallelLint\Settings;
+use JakubOnderka\PhpParallelLint\TextOutput;
 use Tester\Assert;
 
 class ManagerRunTest extends Tester\TestCase
@@ -103,7 +103,7 @@ class ManagerRunTest extends Tester\TestCase
     private function getManager(Settings $settings)
     {
         $manager = new Manager($settings);
-        $manager->setOutput(new Output(new NullWriter()));
+        $manager->setOutput(new TextOutput(new NullWriter()));
         return $manager;
     }
 
