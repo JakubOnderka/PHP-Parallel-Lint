@@ -13,16 +13,17 @@ function showOptions()
 {
 ?>
 Options:
-    -p <php>    Specify PHP-CGI executable to run.
-    -s, --short Set short_open_tag to On (default Off)
-    -a, -asp    Set asp_tags to On (default Off)
-    -e <ext>    Check only files with selected extensions separated by comma
+    -p <php>    Specify PHP-CGI executable to run (default: 'php').
+    -s, --short Set short_open_tag to On (default: Off).
+    -a, -asp    Set asp_tags to On (default: Off).
+    -e <ext>    Check only files with selected extensions separated by comma.
                 (default: php,php3,php4,php5,phtml)
     --exclude   Exclude directory. If you want exclude multiple directory, use
                 multiple exclude parameters.
-    -j <num>    Run <num> jobs in parallel (default 10)
+    -j <num>    Run <num> jobs in parallel (default: 10).
     --no-colors Disable colors in console output.
     --json      Output results as JSON string.
+    --git <git> Path to Git executable to show blame message (default: 'git').
     -h, --help  Print this help.
 <?php
 }
@@ -86,5 +87,8 @@ try {
     } else {
         echo $e->getMessage(), PHP_EOL;
     }
+    die(FAILED);
+} catch (Exception $e) {
+    echo $e->getMessage(), PHP_EOL;
     die(FAILED);
 }

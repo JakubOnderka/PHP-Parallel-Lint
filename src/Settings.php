@@ -87,6 +87,12 @@ class Settings
     public $json = false;
 
     /**
+     * Path to git executable
+     * @var string
+     */
+    public $gitExecutable = 'git';
+
+    /**
      * @param array $paths
      */
     public function addPaths(array $paths)
@@ -98,7 +104,6 @@ class Settings
      * @param array $arguments
      * @return Settings
      * @throws InvalidArgumentException
-     * @throws Exception
      */
     public static function parseArguments(array $arguments)
     {
@@ -142,6 +147,10 @@ class Settings
 
                     case '--json':
                         $settings->json = true;
+                        break;
+
+                    case '--git':
+                        $settings->gitExecutable = $arguments->getNext();
                         break;
 
                     default:

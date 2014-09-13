@@ -40,6 +40,10 @@ class Exception extends \Exception implements \JsonSerializable
             'code' => $this->getCode(),
         );
     }
+}
+
+class RunTimeException extends Exception
+{
 
 }
 

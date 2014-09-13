@@ -76,7 +76,7 @@ class Manager
 
         $result = $parallelLint->lint($files);
 
-        $this->gitBlame($result);
+        $this->gitBlame($result, $settings);
 
         $output->writeResult($result, new ErrorFormatter($settings->colors, $translateTokens));
 
@@ -105,17 +105,21 @@ class Manager
         }
     }
 
-    protected function gitBlame(Result $result)
+    /**
+     * @param Result $result
+     * @param Settings $settings
+     * @throws Exception
+     */
+    protected function gitBlame(Result $result, Settings $settings)
     {
-        if (!GitBlameProcess::gitExists('git')) {
+        if (!GitBlameProcess::gitExists($settings->gitExecutable)) {
             return;
         }
 
         foreach ($result->getErrors() as $error) {
             if ($error instanceof SyntaxError) {
-                $process = new GitBlameProcess('git', $error->getFilePath(), $error->getLine());
-
-                while (!$process->isFinished()) {}
+                $process = new GitBlameProcess($settings->gitExecutable, $error->getFilePath(), $error->getLine());
+                $process->waitForFinish();
 
                 if ($process->isSuccess()) {
                     $blame = new Blame;

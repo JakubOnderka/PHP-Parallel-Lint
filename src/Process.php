@@ -60,7 +60,7 @@ class Process
     /**
      * @param string $cmdLine
      * @param string $stdInInput
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function __construct($cmdLine, $stdInInput = null)
     {
@@ -73,7 +73,7 @@ class Process
         $this->process = proc_open($cmdLine, $descriptors, $pipes, null, null, array('bypass_shell' => true));
 
         if ($this->process === false) {
-            throw new \RuntimeException("Cannot create new process $cmdLine");
+            throw new RuntimeException("Cannot create new process $cmdLine");
         }
 
         list($stdin, $this->stdout, $this->stderr) = $pipes;
@@ -120,13 +120,21 @@ class Process
         return true;
     }
 
+    public function waitForFinish()
+    {
+        while (!$this->isFinished()) {
+            usleep(100);
+        }
+    }
+
     /**
      * @return string
+     * @throws RuntimeException
      */
     public function getOutput()
     {
         if (!$this->isFinished()) {
-            throw new \RuntimeException("Cannot get output for running process");
+            throw new RuntimeException("Cannot get output for running process");
         }
 
         return $this->output;
@@ -134,11 +142,12 @@ class Process
 
     /**
      * @return string
+     * @throws RuntimeException
      */
     public function getErrorOutput()
     {
         if (!$this->isFinished()) {
-            throw new \RuntimeException("Cannot get error output for running process");
+            throw new RuntimeException("Cannot get error output for running process");
         }
 
         return $this->errorOutput;
@@ -146,11 +155,12 @@ class Process
 
     /**
      * @return int
+     * @throws RuntimeException
      */
     public function getStatusCode()
     {
         if (!$this->isFinished()) {
-            throw new \RuntimeException("Cannot get status code for running process");
+            throw new RuntimeException("Cannot get status code for running process");
         }
 
         return $this->statusCode;
@@ -227,14 +237,15 @@ class LintProcess extends Process
      */
     public static function getPhpExecutableVersion($phpExecutable)
     {
-        exec(escapeshellarg($phpExecutable) . ' -v', $output, $result);
+        $process = new Process(escapeshellarg($phpExecutable) . ' -v');
+        $process->waitForFinish();
 
-        if ($result !== 0 && $result !== 255) {
-            throw new \Exception("Unable to execute '{$phpExecutable}'.");
+        if ($process->getStatusCode() !== 0 && $process->getStatusCode() !== 255) {
+            throw new RunTimeException("Unable to execute '{$phpExecutable}'.");
         }
 
-        if (!preg_match('~PHP ([0-9]*).([0-9]*).([0-9]*)~', $output[0], $matches)) {
-            throw new \Exception("'{$phpExecutable}' is not valid PHP binary.");
+        if (!preg_match('~PHP ([0-9]*).([0-9]*).([0-9]*)~', $process->getOutput(), $matches)) {
+            throw new RunTimeException("'{$phpExecutable}' is not valid PHP binary.");
         }
 
         $phpVersionId = $matches[1] * 10000 + $matches[2] * 100 + $matches[3];
@@ -328,12 +339,12 @@ class GitBlameProcess extends Process
 
     /**
      * @return string
-     * @throws Exception
+     * @throws RunTimeException
      */
     public function getAuthor()
     {
         if (!$this->isSuccess()) {
-            throw new Exception("Author can be taken only for success process output.");
+            throw new RunTimeException("Author can be taken only for success process output.");
         }
 
         $output = $this->getOutput();
@@ -343,12 +354,12 @@ class GitBlameProcess extends Process
 
     /**
      * @return string
-     * @throws Exception
+     * @throws RunTimeException
      */
     public function getAuthorEmail()
     {
         if (!$this->isSuccess()) {
-            throw new Exception("Author e-mail can be taken only for success process output.");
+            throw new RunTimeException("Author e-mail can be taken only for success process output.");
         }
 
         $output = $this->getOutput();
@@ -358,12 +369,12 @@ class GitBlameProcess extends Process
 
     /**
      * @return \DateTime
-     * @throws Exception
+     * @throws RunTimeException
      */
     public function getAuthorTime()
     {
         if (!$this->isSuccess()) {
-            throw new Exception("Author time can be taken only for success process output.");
+            throw new RunTimeException("Author time can be taken only for success process output.");
         }
 
         $output = $this->getOutput();
@@ -381,12 +392,12 @@ class GitBlameProcess extends Process
 
     /**
      * @return string
-     * @throws Exception
+     * @throws RunTimeException
      */
     public function getCommitHash()
     {
         if (!$this->isSuccess()) {
-            throw new Exception("Commit hash can be taken only for success process output.");
+            throw new RunTimeException("Commit hash can be taken only for success process output.");
         }
 
         return substr($this->getOutput(), 0, strpos($this->getOutput(), ' '));
@@ -394,12 +405,12 @@ class GitBlameProcess extends Process
 
     /**
      * @return string
-     * @throws Exception
+     * @throws RunTimeException
      */
     public function getSummary()
     {
         if (!$this->isSuccess()) {
-            throw new Exception("Commit summary can be taken only for success process output.");
+            throw new RunTimeException("Commit summary can be taken only for success process output.");
         }
 
         $output = $this->getOutput();
@@ -413,7 +424,8 @@ class GitBlameProcess extends Process
      */
     public static function gitExists($gitExecutable)
     {
-        exec(escapeshellcmd($gitExecutable) . ' --version', $output, $result);
-        return $result === 0;
+        $process = new Process(escapeshellcmd($gitExecutable) . ' --version');
+        $process->waitForFinish();
+        return $process->getStatusCode() === 0;
     }
 }
