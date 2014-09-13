@@ -126,9 +126,7 @@ class ParallelLint
         }
 
         if (!empty($waiting)) {
-            while (!$skipLintProcess->isFinished()) {
-                usleep(100);
-            }
+            $skipLintProcess->waitForFinish();
 
             foreach ($waiting as $file => $process) {
                 $skipStatus = $skipLintProcess->isSkipped($file);
