@@ -385,8 +385,9 @@ class GitBlameProcess extends Process
         preg_match('~^author-tz (.*)~m', $output, $matches);
         $zone = $matches[1];
 
-        $datetime = \DateTime::createFromFormat('U', $time);
-        $datetime->setTimezone(new \DateTimeZone($zone));
+        $timezone = new \DateTimeZone($zone);
+        $datetime = \DateTime::createFromFormat('U', $time, $timezone);
+        $datetime->setTimezone($timezone);
         return $datetime;
     }
 
