@@ -31,6 +31,8 @@ For colored output install suggested package `jakub-onderka/php-console-highligh
 }
 ```
 
+PHP Parallel Lint require PHP version 5.4 and newer, for support with PHP version 5.3 please use 0.7.1 version instead.
+
 Example output
 --------------
 

@@ -1,8 +1,8 @@
 <?php
 use JakubOnderka\PhpParallelLint;
 
-if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50302) {
-    echo "PHP Parallel Lint require PHP 5.3.2 or newer.\n";
+if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {
+    echo "PHP Parallel Lint require PHP 5.4 or newer.\n";
     die(255);
 }
 const SUCCESS = 0,
