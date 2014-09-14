@@ -385,10 +385,7 @@ class GitBlameProcess extends Process
         preg_match('~^author-tz (.*)~m', $output, $matches);
         $zone = $matches[1];
 
-        $timezone = new \DateTimeZone($zone);
-        $datetime = \DateTime::createFromFormat('U', $time, $timezone);
-        $datetime->setTimezone($timezone);
-        return $datetime;
+        return $this->getDateTime($time, $zone);
     }
 
     /**
@@ -428,5 +425,32 @@ class GitBlameProcess extends Process
         $process = new Process(escapeshellcmd($gitExecutable) . ' --version');
         $process->waitForFinish();
         return $process->getStatusCode() === 0;
+    }
+
+    /**
+     * This harakiri method is required to correct support time zone in PHP 5.4
+     *
+     * @param int $time
+     * @param string $zone
+     * @return \DateTime
+     */
+    protected function getDateTime($time, $zone)
+    {
+        $utcTimeZone = new \DateTimeZone('UTC');
+        $datetime = \DateTime::createFromFormat('U', $time, $utcTimeZone);
+
+        $way = substr($zone, 0, 1);
+        $hours = (int) substr($zone, 1, 2);
+        $minutes = (int) substr($zone, 3, 2);
+
+        $interval = new \DateInterval("PT{$hours}H{$minutes}M");
+
+        if ($way === '+') {
+            $datetime->add($interval);
+        } else {
+            $datetime->sub($interval);
+        }
+
+        return new \DateTime($datetime->format('Y-m-d\TH:i:s') . $zone, $utcTimeZone);
     }
 }
