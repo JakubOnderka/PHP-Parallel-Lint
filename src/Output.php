@@ -225,7 +225,8 @@ class TextOutput implements Output
         $this->writeNewLine(2);
 
         $testTime = round($result->getTestTime(), 1);
-        $message = "Checked {$result->getCheckedFilesCount()} files in $testTime second, ";
+        $message = "Checked {$result->getCheckedFilesCount()} files in $testTime ";
+        $message .= $testTime == 1 ? 'second, ' : 'seconds, ';
 
         if ($result->getSkippedFilesCount() > 0) {
             $message .= "skipped {$result->getSkippedFilesCount()} ";
