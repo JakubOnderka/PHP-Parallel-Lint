@@ -56,7 +56,11 @@ class ErrorFormatter
         if ($error instanceof SyntaxError) {
             return $this->formatSyntaxErrorMessage($error);
         } else {
-            return $error->getMessage();
+            if ($error->getMessage()) {
+                return $error->getMessage();
+            } else {
+                return "Unknown error for file '{$error->getFilePath()}'.";
+            }
         }
     }
 
