@@ -237,7 +237,7 @@ class LintProcess extends Process
      */
     public static function getPhpExecutableVersion($phpExecutable)
     {
-        $process = new Process(escapeshellarg($phpExecutable) . ' -r "echo PHP_VERSION_ID;"');
+        $process = new Process(escapeshellarg($phpExecutable) . ' -n -r "echo PHP_VERSION_ID;"');
         $process->waitForFinish();
 
         if ($process->getStatusCode() !== 0 && $process->getStatusCode() !== 255) {
@@ -248,7 +248,7 @@ class LintProcess extends Process
             throw new RunTimeException("'{$phpExecutable}' is not valid PHP binary.");
         }
 
-       return intval($matches[1]);
+        return intval($matches[1]);
     }
 }
 
