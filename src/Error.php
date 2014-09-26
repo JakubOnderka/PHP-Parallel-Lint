@@ -209,13 +209,14 @@ class SyntaxError extends Error
             'T_SR_EQUAL' => '>>=',
             'T_START_HEREDOC' => '<<<',
             'T_XOR_EQUAL' => '^=',
+            'T_ECHO' => 'echo'
         );
 
         return preg_replace_callback('~T_([A-Z_]*)~', function ($matches) use ($translateTokens) {
             list($tokenName) = $matches;
             if (isset($translateTokens[$tokenName])) {
                 $operator = $translateTokens[$tokenName];
-                return "$tokenName ($operator)";
+                return "$operator ($tokenName)";
             }
 
             return $tokenName;
