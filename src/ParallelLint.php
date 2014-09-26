@@ -108,7 +108,7 @@ class ParallelLint
                     } elseif ($skipStatus === true) {
                         $skippedFiles[] = $file;
                         $processCallback(self::STATUS_SKIP, $file);
-                    } elseif ($process->isFail()) {
+                    } elseif ($process->isFail() && !$process->hasSyntaxError()) {
                         $errors[] = new Error($file, $process->getErrorOutput());
                         $processCallback(self::STATUS_FAIL, $file);
                     } else {
@@ -135,7 +135,7 @@ class ParallelLint
                 } elseif ($skipStatus === true) {
                     $skippedFiles[] = $file;
                     $processCallback(self::STATUS_SKIP, $file);
-                } elseif ($process->isFail()) {
+                } elseif ($process->isFail() && !$process->hasSyntaxError()) {
                     $errors[] = new Error($file, $process->getErrorOutput());
                     $processCallback(self::STATUS_FAIL, $file);
                 } else {
