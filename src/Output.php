@@ -210,8 +210,18 @@ class TextOutput implements Output
         }
     }
 
+    /**
+     * @param Result $result
+     * @param ErrorFormatter $errorFormatter
+     */
     public function writeResult(Result $result, ErrorFormatter $errorFormatter)
     {
+        if ($this->checkedFiles % $this->filesPerLine !== 0) {
+            $rest = $this->filesPerLine - ($this->checkedFiles % $this->filesPerLine);
+            $this->write(str_repeat(' ', $rest));
+            $this->writeProgress();
+        }
+
         $this->writeNewLine(2);
 
         $testTime = round($result->getTestTime(), 1);
@@ -246,10 +256,15 @@ class TextOutput implements Output
         ++$this->checkedFiles;
 
         if ($this->checkedFiles % $this->filesPerLine === 0) {
-            $percent = floor($this->checkedFiles/$this->totalFileCount * 100);
-            $current = $this->stringWidth($this->checkedFiles, strlen($this->totalFileCount));
-            $this->writeLine(" $current/$this->totalFileCount ($percent %)");
+            $this->writeProgress();
         }
+    }
+
+    protected function writeProgress()
+    {
+        $percent = floor($this->checkedFiles / $this->totalFileCount * 100);
+        $current = $this->stringWidth($this->checkedFiles, strlen($this->totalFileCount));
+        $this->writeLine(" $current/$this->totalFileCount ($percent %)");
     }
 
     /**
