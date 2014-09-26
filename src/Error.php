@@ -149,7 +149,7 @@ class SyntaxError extends Error
      */
     public function getNormalizedMessage($translateTokens = false)
     {
-        $message = str_replace('Parse error: syntax error, ', '', $this->message);
+        $message = preg_replace('~(Parse|Fatal) error: syntax error, ~', '', $this->message);
         $message = ucfirst($message);
         $message = preg_replace('~ in (.*) on line [0-9]*~', '', $message);
 
