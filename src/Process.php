@@ -206,7 +206,8 @@ class LintProcess extends Process
      */
     public function hasSyntaxError()
     {
-        return strpos($this->getOutput(), 'No syntax errors detected') === false;
+        return strpos($this->getOutput(), 'Fatal error') !== false ||
+            strpos($this->getOutput(), 'Parse error') !== false;
     }
 
     /**
@@ -228,6 +229,14 @@ class LintProcess extends Process
     public function isFail()
     {
        return defined('PHP_WINDOWS_VERSION_MAJOR') ? $this->getStatusCode() === 1 : parent::isFail();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuccess()
+    {
+        return $this->getStatusCode() === 0;
     }
 
     /**
