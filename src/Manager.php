@@ -46,7 +46,7 @@ class Manager
         $output = $this->output ?: $this->getDefaultOutput($settings);
 
         list($version, $hhvmVersion) = LintProcess::getPhpExecutableVersion($settings->phpExecutable);
-        $translateTokens = $version < 50400; // From PHP version 5.4 are tokens translated by default
+        $translateTokens = $hhvmVersion || $version < 50400; // From PHP version 5.4 are tokens translated by default
 
         $output->writeHeader($version, $settings->parallelJobs, $hhvmVersion);
 
