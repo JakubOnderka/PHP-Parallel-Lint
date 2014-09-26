@@ -44,7 +44,7 @@ interface Output
 
     public function setTotalFileCount($count);
 
-    public function writeHeader($phpVersion, $parallelJobs);
+    public function writeHeader($phpVersion, $parallelJobs, $hhvmVersion = null);
 
     public function writeResult(Result $result, ErrorFormatter $errorFormatter);
 }
@@ -93,7 +93,7 @@ class JsonOutput implements Output
 
     }
 
-    public function writeHeader($phpVersion, $parallelJobs)
+    public function writeHeader($phpVersion, $parallelJobs, $hhvmVersion = null)
     {
         $this->phpVersion = $phpVersion;
         $this->parallelJobs = $parallelJobs;
@@ -198,10 +198,15 @@ class TextOutput implements Output
     /**
      * @param int $phpVersion
      * @param int $parallelJobs
+     * @param string $hhvmVersion
      */
-    public function writeHeader($phpVersion, $parallelJobs)
+    public function writeHeader($phpVersion, $parallelJobs, $hhvmVersion = null)
     {
         $this->write("PHP {$this->phpVersionIdToString($phpVersion)} | ");
+
+        if ($hhvmVersion) {
+            $this->write("HHVM version $hhvmVersion | ");
+        }
 
         if ($parallelJobs === 1) {
             $this->writeLine("1 job");

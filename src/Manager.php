@@ -45,10 +45,10 @@ class Manager
         $settings = $settings ?: new Settings;
         $output = $this->output ?: $this->getDefaultOutput($settings);
 
-        $version = LintProcess::getPhpExecutableVersion($settings->phpExecutable);
+        list($version, $hhvmVersion) = LintProcess::getPhpExecutableVersion($settings->phpExecutable);
         $translateTokens = $version < 50400; // From PHP version 5.4 are tokens translated by default
 
-        $output->writeHeader($version, $settings->parallelJobs);
+        $output->writeHeader($version, $settings->parallelJobs, $hhvmVersion);
 
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
 
