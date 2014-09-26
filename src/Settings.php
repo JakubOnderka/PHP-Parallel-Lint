@@ -87,6 +87,12 @@ class Settings
     public $json = false;
 
     /**
+     * Read files and folder to tests from standard input (blocking)
+     * @var bool
+     */
+    public $stdin = false;
+
+    /**
      * Path to git executable
      * @var string
      */
@@ -153,6 +159,10 @@ class Settings
                         $settings->gitExecutable = $arguments->getNext();
                         break;
 
+                    case '--stdin':
+                        $settings->stdin = true;
+                        break;
+
                     default:
                         throw new InvalidArgumentException($argument);
                 }
@@ -167,10 +177,7 @@ class Settings
      */
     public static function getPathsFromStdIn()
     {
-        $content = '';
-        while (($line = self::nonBlockingReadLineFromStdIn()) !== false) {
-            $content .= $line;
-        }
+        $content = stream_get_contents(STDIN);
 
         if (empty($content)) {
             return array();
@@ -178,29 +185,6 @@ class Settings
 
         $lines = explode("\n", rtrim($content));
         return array_map('rtrim', $lines);
-    }
-
-    /**
-     * @return bool|string
-     * @throws RunTimeException
-     */
-    private static function nonBlockingReadLineFromStdIn()
-    {
-        $read = array(STDIN);
-        $write = array();
-        $except = array();
-
-        $result = stream_select($read, $write, $except, 0);
-
-        if ($result === false) {
-            throw new RunTimeException("Can not select stream STDIN");
-        }
-
-        if ($result === 0) {
-            return false;
-        }
-
-        return stream_get_line(STDIN, 1);
     }
 }
 

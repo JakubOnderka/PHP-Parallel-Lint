@@ -24,6 +24,7 @@ Options:
     --no-colors Disable colors in console output.
     --json      Output results as JSON string.
     --git <git> Path to Git executable to show blame message (default: 'git').
+    --stdin     Load files and folder to test from standard input.
     -h, --help  Print this help.
 <?php
 }
@@ -68,7 +69,9 @@ if (!$autoloadFileFound) {
 
 try {
     $settings = PhpParallelLint\Settings::parseArguments($_SERVER['argv']);
-    $settings->addPaths(PhpParallelLint\Settings::getPathsFromStdIn());
+    if ($settings->stdin) {
+        $settings->addPaths(PhpParallelLint\Settings::getPathsFromStdIn());
+    }
 
     if (empty($settings->paths)) {
         showUsage();
