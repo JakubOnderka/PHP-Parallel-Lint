@@ -30,6 +30,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
+use JakubOnderka\PhpParallelLint\Process\LintProcess;
+use JakubOnderka\PhpParallelLint\Process\PhpExecutable;
+use JakubOnderka\PhpParallelLint\Process\SkipLintProcess;
+
 class ParallelLint
 {
     const STATUS_OK = 'ok',
@@ -40,7 +44,7 @@ class ParallelLint
     /** @var int */
     private $parallelJobs;
 
-    /** @var string */
+    /** @var PhpExecutable */
     private $phpExecutable;
 
     /** @var bool */
@@ -52,7 +56,7 @@ class ParallelLint
     /** @var callable */
     private $processCallback;
 
-    public function __construct($phpExecutable, $parallelJobs = 10)
+    public function __construct(PhpExecutable $phpExecutable, $parallelJobs = 10)
     {
         $this->phpExecutable = $phpExecutable;
         $this->parallelJobs = $parallelJobs;

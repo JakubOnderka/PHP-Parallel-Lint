@@ -30,6 +30,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
+use JakubOnderka\PhpParallelLint\Process\GitBlameProcess;
+use JakubOnderka\PhpParallelLint\Process\PhpExecutable;
+
 class Manager
 {
     /** @var Output */
@@ -45,10 +48,10 @@ class Manager
         $settings = $settings ?: new Settings;
         $output = $this->output ?: $this->getDefaultOutput($settings);
 
-        list($version, $hhvmVersion) = LintProcess::getPhpExecutableVersion($settings->phpExecutable);
-        $translateTokens = $hhvmVersion || $version < 50400; // From PHP version 5.4 are tokens translated by default
+        $phpExecutable = PhpExecutable::getPhpExecutable($settings->phpExecutable);
+        $translateTokens = $phpExecutable->isIsHhvmType() || $phpExecutable->getVersionId() < 50400; // From PHP version 5.4 are tokens translated by default
 
-        $output->writeHeader($version, $settings->parallelJobs, $hhvmVersion);
+        $output->writeHeader($phpExecutable->getVersionId(), $settings->parallelJobs, $phpExecutable->getHhvmVersion());
 
         $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
 
@@ -58,7 +61,7 @@ class Manager
 
         $output->setTotalFileCount(count($files));
 
-        $parallelLint = new ParallelLint($settings->phpExecutable, $settings->parallelJobs);
+        $parallelLint = new ParallelLint($phpExecutable, $settings->parallelJobs);
         $parallelLint->setAspTagsEnabled($settings->aspTags);
         $parallelLint->setShortTagEnabled($settings->shortTag);
 
