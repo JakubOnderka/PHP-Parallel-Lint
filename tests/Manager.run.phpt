@@ -4,16 +4,7 @@
  * @testCase
  */
 
-require_once __DIR__ . '/../vendor/nette/tester/Tester/bootstrap.php';
-require_once __DIR__ . '/../src/Error.php';
-require_once __DIR__ . '/../src/ErrorFormatter.php';
-require_once __DIR__ . '/../src/ParallelLint.php';
-require_once __DIR__ . '/../src/Manager.php';
-require_once __DIR__ . '/../src/Output.php';
-require_once __DIR__ . '/../src/Process.php';
-require_once __DIR__ . '/../src/Result.php';
-require_once __DIR__ . '/../src/Settings.php';
-require_once __DIR__ . '/../src/exceptions.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use JakubOnderka\PhpParallelLint\Manager;
 use JakubOnderka\PhpParallelLint\NullWriter;

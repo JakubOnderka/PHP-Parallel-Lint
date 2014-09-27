@@ -4,8 +4,7 @@
  * @testCase
  */
 
-require __DIR__ . '/../vendor/nette/tester/Tester/bootstrap.php';
-require_once __DIR__ . '/../src/Process.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Tester\Assert;
 
@@ -22,7 +21,8 @@ class SkipLintProcessTest extends Tester\TestCase
             $filesToCheck = array_merge($filesToCheck, $filesToCheck);
         }
 
-        $process = new \JakubOnderka\PhpParallelLint\SkipLintProcess('php', $filesToCheck);
+        $phpExecutable = \JakubOnderka\PhpParallelLint\Process\PhpExecutable::getPhpExecutable('php');
+        $process = new \JakubOnderka\PhpParallelLint\Process\SkipLintProcess($phpExecutable, $filesToCheck);
 
         while (!$process->isFinished()) {
             usleep(100);
