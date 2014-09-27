@@ -1,8 +1,8 @@
 <?php
 use JakubOnderka\PhpParallelLint;
 
-if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {
-    echo "PHP Parallel Lint require PHP 5.4 or newer.\n";
+if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50303) {
+    echo "PHP Parallel Lint require PHP 5.3.3 or newer.\n";
     die(255);
 }
 const SUCCESS = 0,
@@ -22,7 +22,7 @@ Options:
                 multiple exclude parameters.
     -j <num>    Run <num> jobs in parallel (default: 10).
     --no-colors Disable colors in console output.
-    --json      Output results as JSON string.
+    --json      Output results as JSON string (require PHP 5.4).
     --git <git> Path to Git executable to show blame message (default: 'git').
     --stdin     Load files and folder to test from standard input.
     -h, --help  Print this help.
@@ -39,7 +39,7 @@ Usage:
 
 <?php
 showOptions();
-exit;
+die();
 }
 
 if (in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) {
@@ -69,6 +69,11 @@ if (!$autoloadFileFound) {
 
 try {
     $settings = PhpParallelLint\Settings::parseArguments($_SERVER['argv']);
+
+    if ($settings->json && PHP_VERSION_ID < 50400) {
+        throw new \Exception('JSON output require PHP version 5.4 and newer.');
+    }
+
     if ($settings->stdin) {
         $settings->addPaths(PhpParallelLint\Settings::getPathsFromStdIn());
     }
@@ -80,10 +85,12 @@ try {
     $manager = new PhpParallelLint\Manager;
     $result = $manager->run($settings);
     die($result->hasError() ? WITH_ERRORS : SUCCESS);
+
 } catch (PhpParallelLint\InvalidArgumentException $e) {
     echo "Invalid option {$e->getArgument()}" . PHP_EOL . PHP_EOL;
     showOptions();
     die(FAILED);
+
 } catch (PhpParallelLint\Exception $e) {
     if ($settings->json) {
         echo json_encode($e);
@@ -91,6 +98,7 @@ try {
         echo $e->getMessage(), PHP_EOL;
     }
     die(FAILED);
+
 } catch (Exception $e) {
     echo $e->getMessage(), PHP_EOL;
     die(FAILED);
