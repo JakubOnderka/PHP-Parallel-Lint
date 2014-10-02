@@ -6,10 +6,12 @@ php:
   - 5.5
   - 5.6
   - hhvm
+  - hhvm-nightly
 
 matrix:
   allow_failures:
     - php: hhvm
+    - php: hhvm-nightly
 
 before_script:
   - composer self-update
@@ -17,6 +19,6 @@ before_script:
   - composer require jakub-onderka/php-console-highlighter 0.3
 
 script:
-  - ./vendor/bin/tester tests
+  - ./vendor/bin/tester -p php tests
   - ./parallel-lint --exclude vendor --exclude tests/examples --no-colors .
   - ./parallel-lint --exclude vendor --exclude tests/examples .
