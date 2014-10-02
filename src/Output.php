@@ -60,6 +60,9 @@ class JsonOutput implements Output
     /** @var int */
     protected $parallelJobs;
 
+    /** @var string */
+    protected $hhvmVersion;
+
     /**
      * @param IWriter $writer
      */
@@ -97,12 +100,14 @@ class JsonOutput implements Output
     {
         $this->phpVersion = $phpVersion;
         $this->parallelJobs = $parallelJobs;
+        $this->hhvmVersion = $hhvmVersion;
     }
 
     public function writeResult(Result $result, ErrorFormatter $errorFormatter)
     {
         echo json_encode(array(
             'phpVersion' => $this->phpVersion,
+            'hhvmVersion' => $this->hhvmVersion,
             'parallelJobs' => $this->parallelJobs,
             'results' => $result,
         ));
@@ -205,7 +210,7 @@ class TextOutput implements Output
         $this->write("PHP {$this->phpVersionIdToString($phpVersion)} | ");
 
         if ($hhvmVersion) {
-            $this->write("HHVM version $hhvmVersion | ");
+            $this->write("HHVM $hhvmVersion | ");
         }
 
         if ($parallelJobs === 1) {
@@ -292,7 +297,7 @@ class TextOutput implements Output
     {
         $releaseVersion = (int) substr($phpVersionId, -2, 2);
         $minorVersion = (int) substr($phpVersionId, -4, 2);
-        $majorVersion = (int) substr($phpVersionId, 0, strlen($phpVersionId)-4);
+        $majorVersion = (int) substr($phpVersionId, 0, strlen($phpVersionId) - 4);
 
         return "$majorVersion.$minorVersion.$releaseVersion";
     }
