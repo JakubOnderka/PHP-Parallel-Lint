@@ -7,7 +7,7 @@
         "php": ">=5.3.3"
     },
     "require-dev": {
-        "nette/tester": "~1.2",
+        "nette/tester": "~1.3",
         "jakub-onderka/php-console-highlighter": "~0.3"
     },
     "suggest": {
