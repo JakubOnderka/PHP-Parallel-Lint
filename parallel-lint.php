@@ -32,7 +32,7 @@ Options:
 function showUsage()
 {
     ?>
-PHP Parallel Lint version 0.7.2
+PHP Parallel Lint version 0.8
 -----------------------------
 Usage:
     parallel-lint [sa] [-p php] [-e ext] [-j num] [--exclude dir] [files or directories]
