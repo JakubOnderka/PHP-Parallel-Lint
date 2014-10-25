@@ -66,15 +66,15 @@ class Manager
         $parallelLint->setShortTagEnabled($settings->shortTag);
 
         $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
-           if ($status === ParallelLint::STATUS_OK) {
-               $output->ok();
-           } elseif ($status === ParallelLint::STATUS_SKIP) {
-               $output->skip();
-           } elseif ($status === ParallelLint::STATUS_ERROR) {
-               $output->error();
-           } else {
-               $output->fail();
-           }
+            if ($status === ParallelLint::STATUS_OK) {
+                $output->ok();
+            } elseif ($status === ParallelLint::STATUS_SKIP) {
+                $output->skip();
+            } elseif ($status === ParallelLint::STATUS_ERROR) {
+                $output->error();
+            } else {
+                $output->fail();
+            }
         });
 
         $result = $parallelLint->lint($files);
