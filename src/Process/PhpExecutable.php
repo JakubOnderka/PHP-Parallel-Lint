@@ -75,7 +75,7 @@ class PhpExecutable
     public static function getPhpExecutable($phpExecutable)
     {
         $codeToExecute = <<<PHP
-echo "PHP;", PHP_VERSION_ID, ";", defined('HPHP_VERSION') ? HPHP_VERSION : null;
+echo 'PHP;', PHP_VERSION_ID, ';', defined('HPHP_VERSION') ? HPHP_VERSION : null;
 PHP;
 
         $process = new Process(escapeshellarg($phpExecutable) . ' -n -r ' . escapeshellarg($codeToExecute));
