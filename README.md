@@ -54,9 +54,11 @@ or setting for ANT:
 
 <target name="parallel-lint" description="Run PHP parallel lint">
     <exec executable="${parallel-lint}" failonerror="true">
-        <arg line='--exclude ${basedir}/app/' />
-        <arg line='--exclude ${basedir}/vendor/' />
-        <arg line='${basedir}' />
+        <arg line="--exclude" />
+        <arg path="${basedir}/app/" />
+        <arg line="--exclude" />
+        <arg path="${basedir}/vendor/" />
+        <arg path="${basedir}" />
     </exec>
 </target>
 ```
