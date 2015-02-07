@@ -93,6 +93,12 @@ class Settings
     public $stdin = false;
 
     /**
+     * Try to show git blame for row with error
+     * @var bool
+     */
+    public $blame = false;
+
+    /**
      * Path to git executable
      * @var string
      */
@@ -161,6 +167,10 @@ class Settings
 
                     case '--stdin':
                         $settings->stdin = true;
+                        break;
+
+                    case '--blame':
+                        $settings->blame = true;
                         break;
 
                     default:

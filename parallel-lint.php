@@ -25,6 +25,7 @@ Options:
     --json      Output results as JSON string (require PHP 5.4).
     --git <git> Path to Git executable to show blame message (default: 'git').
     --stdin     Load files and folder to test from standard input.
+    --blame     Try to show git blame for row with error.
     -h, --help  Print this help.
 <?php
 }
