@@ -79,7 +79,9 @@ class Manager
 
         $result = $parallelLint->lint($files);
 
-        $this->gitBlame($result, $settings);
+        if ($settings->blame) {
+            $this->gitBlame($result, $settings);
+        }
 
         $output->writeResult($result, new ErrorFormatter($settings->colors, $translateTokens));
 
