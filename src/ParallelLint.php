@@ -80,7 +80,7 @@ class ParallelLint
          * @var LintProcess[] $waiting
          */
         $errors = $running = $waiting = array();
-        $skippedFiles = $checkedFiles = $filesWithSyntaxError = array();
+        $skippedFiles = $checkedFiles = array();
 
         while ($files || $running) {
             for ($i = count($running); $files && $i < $this->parallelJobs; $i++) {
@@ -121,11 +121,10 @@ class ParallelLint
                     } elseif ($process->hasSyntaxError()) {
                         $checkedFiles[] = $file;
                         $errors[] = new SyntaxError($file, $process->getSyntaxError());
-                        $filesWithSyntaxError[] = $file;
                         $processCallback(self::STATUS_ERROR, $file);
 
                     } else {
-                        $errors[] = new Error($file, $process->getErrorOutput());
+                        $errors[] = new Error($file, $process->getOutput());
                         $processCallback(self::STATUS_FAIL, $file);
                     }
                 }
@@ -151,11 +150,10 @@ class ParallelLint
                 } elseif ($process->hasSyntaxError()) {
                     $checkedFiles[] = $file;
                     $errors[] = new SyntaxError($file, $process->getSyntaxError());
-                    $filesWithSyntaxError[] = $file;
                     $processCallback(self::STATUS_ERROR, $file);
 
                 } else {
-                    $errors[] = new Error($file, $process->getErrorOutput());
+                    $errors[] = new Error($file, $process->getOutput());
                     $processCallback(self::STATUS_FAIL, $file);
                 }
             }
@@ -163,7 +161,7 @@ class ParallelLint
 
         $testTime = microtime(true) - $startTime;
 
-        return new Result($errors, $checkedFiles, $filesWithSyntaxError, $skippedFiles, $testTime);
+        return new Result($errors, $checkedFiles, $skippedFiles, $testTime);
     }
 
     /**

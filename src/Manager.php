@@ -83,7 +83,7 @@ class Manager
             $this->gitBlame($result, $settings);
         }
 
-        $output->writeResult($result, new ErrorFormatter($settings->colors, $translateTokens));
+        $output->writeResult($result, new ErrorFormatter($settings->colors, $translateTokens), $settings->ignoreFails);
 
         return $result;
     }

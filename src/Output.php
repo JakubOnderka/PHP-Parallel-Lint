@@ -46,7 +46,7 @@ interface Output
 
     public function writeHeader($phpVersion, $parallelJobs, $hhvmVersion = null);
 
-    public function writeResult(Result $result, ErrorFormatter $errorFormatter);
+    public function writeResult(Result $result, ErrorFormatter $errorFormatter, $ignoreFails);
 }
 
 class JsonOutput implements Output
@@ -103,7 +103,7 @@ class JsonOutput implements Output
         $this->hhvmVersion = $hhvmVersion;
     }
 
-    public function writeResult(Result $result, ErrorFormatter $errorFormatter)
+    public function writeResult(Result $result, ErrorFormatter $errorFormatter, $ignoreFails)
     {
         echo json_encode(array(
             'phpVersion' => $this->phpVersion,
@@ -223,8 +223,9 @@ class TextOutput implements Output
     /**
      * @param Result $result
      * @param ErrorFormatter $errorFormatter
+     * @param bool $ignoreFails
      */
-    public function writeResult(Result $result, ErrorFormatter $errorFormatter)
+    public function writeResult(Result $result, ErrorFormatter $errorFormatter, $ignoreFails)
     {
         if ($this->checkedFiles % $this->filesPerLine !== 0) {
             $rest = $this->filesPerLine - ($this->checkedFiles % $this->filesPerLine);
@@ -236,22 +237,33 @@ class TextOutput implements Output
 
         $testTime = round($result->getTestTime(), 1);
         $message = "Checked {$result->getCheckedFilesCount()} files in $testTime ";
-        $message .= $testTime == 1 ? 'second, ' : 'seconds, ';
+        $message .= $testTime == 1 ? 'second' : 'seconds';
 
         if ($result->getSkippedFilesCount() > 0) {
             $message .= "skipped {$result->getSkippedFilesCount()} ";
             $message .= ($result->getSkippedFilesCount() === 1 ? 'file' : 'files');
-            $message .= ", ";
         }
 
+        $this->writeLine($message);
+
         if (!$result->hasSyntaxError()) {
-            $message .= "no syntax error found";
+            $message = "No syntax error found";
         } else {
-            $message .= "syntax error found in {$result->getFilesWithSyntaxErrorCount()} ";
+            $message = "Syntax error found in {$result->getFilesWithSyntaxErrorCount()} ";
             $message .= ($result->getFilesWithSyntaxErrorCount() === 1 ? 'file' : 'files');
         }
 
-        $this->writeLine($message, $result->hasSyntaxError() ? self::TYPE_ERROR : self::TYPE_OK);
+        if ($result->hasFilesWithFail()) {
+            $message .= ", failed to check {$result->getFilesWithFailCount()} ";
+            $message .= ($result->getFilesWithFailCount() === 1 ? 'file' : 'files');
+
+            if ($ignoreFails) {
+                $message .= ' (ignored)';
+            }
+        }
+
+        $hasError = $ignoreFails ? $result->hasSyntaxError() : $result->hasError();
+        $this->writeLine($message, $hasError ? self::TYPE_ERROR : self::TYPE_OK);
 
         if ($result->hasError()) {
             $this->writeNewLine();

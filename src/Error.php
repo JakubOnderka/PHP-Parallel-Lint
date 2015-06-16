@@ -45,7 +45,7 @@ class Error implements \JsonSerializable
     public function __construct($filePath, $message)
     {
         $this->filePath = $filePath;
-        $this->message = $message;
+        $this->message = rtrim($message);
     }
 
     /**

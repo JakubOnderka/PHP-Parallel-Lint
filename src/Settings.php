@@ -99,10 +99,15 @@ class Settings
     public $blame = false;
 
     /**
-     * Path to git executable
+     * Path to git executable for blame
      * @var string
      */
     public $gitExecutable = 'git';
+
+    /**
+     * @var bool
+     */
+    public $ignoreFails = false;
 
     /**
      * @param array $paths
@@ -171,6 +176,10 @@ class Settings
 
                     case '--blame':
                         $settings->blame = true;
+                        break;
+
+                    case '--ignore-fails':
+                        $settings->ignoreFails = true;
                         break;
 
                     default:

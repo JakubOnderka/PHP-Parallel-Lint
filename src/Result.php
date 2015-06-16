@@ -39,9 +39,6 @@ class Result implements \JsonSerializable
     private $checkedFiles;
 
     /** @var array */
-    private $filesWithSyntaxError;
-
-    /** @var array */
     private $skippedFiles;
 
     /** @var float */
@@ -50,15 +47,13 @@ class Result implements \JsonSerializable
     /**
      * @param Error[] $errors
      * @param array $checkedFiles
-     * @param array $filesWithSyntaxError
      * @param array $skippedFiles
      * @param float $testTime
      */
-    public function __construct(array $errors, array $checkedFiles, array $filesWithSyntaxError, array $skippedFiles, $testTime)
+    public function __construct(array $errors, array $checkedFiles, array $skippedFiles, $testTime)
     {
         $this->errors = $errors;
         $this->checkedFiles = $checkedFiles;
-        $this->filesWithSyntaxError = $filesWithSyntaxError;
         $this->skippedFiles = $skippedFiles;
         $this->testTime = $testTime;
     }
@@ -77,6 +72,37 @@ class Result implements \JsonSerializable
     public function hasError()
     {
         return !empty($this->errors);
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilesWithFail()
+    {
+        $filesWithFail = array();
+        foreach ($this->errors as $error) {
+            if (!$error instanceof SyntaxError) {
+                $filesWithFail[] = $error->getFilePath();
+            }
+        }
+
+        return $filesWithFail;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFilesWithFailCount()
+    {
+        return count($this->getFilesWithFail());
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFilesWithFail()
+    {
+        return $this->getFilesWithFailCount() !== 0;
     }
 
     /**
@@ -116,7 +142,14 @@ class Result implements \JsonSerializable
      */
     public function getFilesWithSyntaxError()
     {
-        return $this->filesWithSyntaxError;
+        $filesWithSyntaxError = array();
+        foreach ($this->errors as $error) {
+            if ($error instanceof SyntaxError) {
+                $filesWithSyntaxError[] = $error->getFilePath();
+            }
+        }
+
+        return $filesWithSyntaxError;
     }
 
     /**
@@ -124,7 +157,7 @@ class Result implements \JsonSerializable
      */
     public function getFilesWithSyntaxErrorCount()
     {
-        return count($this->filesWithSyntaxError);
+        return count($this->getFilesWithSyntaxError());
     }
 
     /**
