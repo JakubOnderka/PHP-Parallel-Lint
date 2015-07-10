@@ -18,7 +18,10 @@ class SkipLintProcess extends PhpProcess
      */
     public function __construct(PhpExecutable $phpExecutable, array $filesToCheck)
     {
-        $parameters = array('-n ' . escapeshellarg(__DIR__ . '/../../bin/skip-linting.php'));
+        $script = file_get_contents(__DIR__ . '/../../bin/skip-linting.php');
+        $script = str_replace('<?php', '', $script);
+
+        $parameters = array('-n -r ' . escapeshellarg($script));
 
         parent::__construct($phpExecutable, $parameters, implode("\n", $filesToCheck));
     }
