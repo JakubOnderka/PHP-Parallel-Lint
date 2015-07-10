@@ -1,6 +1,8 @@
 <?php
 namespace JakubOnderka\PhpParallelLint\Process;
 
+use JakubOnderka\PhpParallelLint\RunTimeException;
+
 class SkipLintProcess extends PhpProcess
 {
     /** @var array */
@@ -15,13 +17,20 @@ class SkipLintProcess extends PhpProcess
     /**
      * @param PhpExecutable $phpExecutable
      * @param array $filesToCheck
+     * @throws RunTimeException
      */
     public function __construct(PhpExecutable $phpExecutable, array $filesToCheck)
     {
-        $script = file_get_contents(__DIR__ . '/../../bin/skip-linting.php');
+        $scriptPath = __DIR__ . '/../../bin/skip-linting.php';
+        $script = file_get_contents($scriptPath);
+
+        if (!$script) {
+            throw new RunTimeException("skip-linting.php script not found in '$scriptPath'.");
+        }
+
         $script = str_replace('<?php', '', $script);
 
-        $parameters = array('-n -r ' . escapeshellarg($script));
+        $parameters = array('-n', '-r ' . escapeshellarg($script));
 
         parent::__construct($phpExecutable, $parameters, implode("\n", $filesToCheck));
     }
