@@ -240,7 +240,7 @@ class TextOutput implements Output
         $message .= $testTime == 1 ? 'second' : 'seconds';
 
         if ($result->getSkippedFilesCount() > 0) {
-            $message .= "skipped {$result->getSkippedFilesCount()} ";
+            $message .= ", skipped {$result->getSkippedFilesCount()} ";
             $message .= ($result->getSkippedFilesCount() === 1 ? 'file' : 'files');
         }
 
