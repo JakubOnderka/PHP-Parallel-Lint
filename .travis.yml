@@ -12,6 +12,13 @@ matrix:
   allow_failures:
     - php: 7.0
 
+sudo: false
+
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+
 before_script:
   - composer self-update
   - composer install --no-interaction --prefer-source --dev
