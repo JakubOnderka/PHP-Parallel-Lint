@@ -63,6 +63,20 @@ or setting for ANT:
 </target>
 ```
 
+Create Phar package
+--------------
+PHP Parallel Lint supports [Box app](http://box-project.org) for creating Phar package. First, install box app:
+
+```
+curl -LSs http://box-project.org/installer.php | php
+```
+
+and then run this command in parallel lint folder, which creates `parallel-lint.phar` file.
+
+```
+box build
+```
+
 ------
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/jakub-onderka/php-parallel-lint.svg)](https://packagist.org/packages/jakub-onderka/php-parallel-lint)
