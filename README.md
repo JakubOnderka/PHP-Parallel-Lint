@@ -5,8 +5,6 @@ This tool check syntax of PHP files faster then serial check with fancier output
 
 Running parallel jobs in PHP inspired by Nette framework tests.
 
-![Alt text](/tests/examples/example-images/use-success.png?raw=true "Example use of tool")
-
 Install
 -------
 
