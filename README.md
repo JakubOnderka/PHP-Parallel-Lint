@@ -40,24 +40,28 @@ Recommended setting for usage with Symfony framework
 For run from command line:
 
 ```
-$ ./bin/parallel-lint --exclude app --exclude vendor .
+$ ./vendor/bin/parallel-lint --exclude app --exclude vendor .
 ```
 
 or setting for ANT:
 
 ```xml
-<condition property="parallel-lint" value="${basedir}/bin/parallel-lint.bat" else="${basedir}/bin/parallel-lint">
+<condition property="parallel-lint" value="${basedir}/vendor/bin/parallel-lint.bat" else="${basedir}/vendor/bin/parallel-lint">
     <os family="windows"/>
 </condition>
 
-<target name="parallel-lint" description="Run PHP parallel lint">
-    <exec executable="${parallel-lint}" failonerror="true">
-        <arg line="--exclude" />
-        <arg path="${basedir}/app/" />
-        <arg line="--exclude" />
-        <arg path="${basedir}/vendor/" />
-        <arg path="${basedir}" />
-    </exec>
+<target name="lint" description="Run PHP parallel lint">
+	<apply executable="${parallel-lint}" failonerror="true" parallel="true" skipemptyfilesets="true">
+		<fileset dir="${basedir}">
+			<include name="**/*.php" />
+			<include name="**/*.php3" />
+			<include name="**/*.php4" />
+			<include name="**/*.php5" />
+			<include name="**/*.phtml" />
+			<exclude name="vendor/**" />
+			<modified />
+		</fileset>
+	</apply>
 </target>
 ```
 
