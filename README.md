@@ -63,7 +63,7 @@ or setting for ANT:
 
 Create Phar package
 --------------
-PHP Parallel Lint supports [Box app](http://box-project.github.io/box2/) for creating Phar package. First, install box app:
+PHP Parallel Lint supports [Box app](https://box-project.github.io/box2/) for creating Phar package. First, install box app:
 
 ```
 curl -LSs https://box-project.github.io/box2/installer.php | php
