@@ -1,13 +1,10 @@
-PHP Parallel Lint
-=================
-
+# PHP Parallel Lint
 This tool check syntax of PHP files faster then serial check with fancier output.
 
 Running parallel jobs in PHP inspired by Nette framework tests.
 
-Install
--------
 
+## Install
 Just create a `composer.json` file and run the `php composer.phar install` command to install it:
 
 ```json
@@ -29,14 +26,12 @@ For colored output install suggested package `jakub-onderka/php-console-highligh
 }
 ```
 
-Example output
---------------
 
+## Example output
 ![Alt text](/tests/examples/example-images/use-error.png?raw=true "Example use of tool with error")
 
-Recommended setting for usage with Symfony framework
---------------
 
+## Recommended setting for usage with Symfony framework
 For run from command line:
 
 ```
@@ -61,8 +56,7 @@ or setting for ANT:
 </target>
 ```
 
-Create Phar package
---------------
+## Create Phar package
 PHP Parallel Lint supports [Box app](https://box-project.github.io/box2/) for creating Phar package. First, install box app:
 
 ```
