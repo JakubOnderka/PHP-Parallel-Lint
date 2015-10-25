@@ -31,6 +31,22 @@ For colored output install suggested package `jakub-onderka/php-console-highligh
 ![Alt text](/tests/examples/example-images/use-error.png?raw=true "Example use of tool with error")
 
 
+## Options for run
+- `-p <php>`        Specify PHP-CGI executable to run (default: 'php').
+- `-s, --short`     Set short_open_tag to On (default: Off).
+- `-a, -asp`        Set asp_tags to On (default: Off).
+- `-e <ext>`        Check only files with selected extensions separated by comma. (default: php,php3,php4,php5,phtml)
+- `--exclude`       Exclude directory. If you want exclude multiple directories, use multiple exclude parameters.
+- `-j <num>`        Run <num> jobs in parallel (default: 10).
+- `--no-colors`     Disable colors in console output.
+- `--json`          Output results as JSON string (require PHP 5.4).
+- `--blame`         Try to show git blame for row with error.
+- `--git <git>`     Path to Git executable to show blame message (default: 'git').
+- `--stdin`         Load files and folder to test from standard input.
+- `--ignore-fails`  Ignore failed tests.
+- `-h, --help`      Print this help.
+
+
 ## Recommended setting for usage with Symfony framework
 For run from command line:
 
