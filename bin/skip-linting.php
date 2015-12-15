@@ -3,7 +3,7 @@ $stdin = fopen('php://stdin', 'r');
 $input = stream_get_contents($stdin);
 fclose($stdin);
 
-foreach (explode("\n", $input) as $file) {
+foreach (explode(PHP_EOL, $input) as $file) {
     $skip = false;
     $f = @fopen($file, 'r');
     if ($f) {
@@ -17,6 +17,6 @@ foreach (explode("\n", $input) as $file) {
         $skip = isset($m[2]) && !version_compare(PHP_VERSION, $m[2], $m[1]);
     }
 
-    echo "$file;" . ($skip ? '1' : '0') . "\n";
+    echo $file . ';' . ($skip ? '1' : '0') . PHP_EOL;
 }
 
