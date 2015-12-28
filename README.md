@@ -3,29 +3,14 @@ This tool check syntax of PHP files faster then serial check with fancier output
 
 Running parallel jobs in PHP inspired by Nette framework tests.
 
-
 ## Install
-Just create a `composer.json` file and run the `php composer.phar install` command to install it:
+Just run the following command to install it:
 
-```json
-{
-    "require-dev": {
-        "jakub-onderka/php-parallel-lint": "0.*"
-    }
-}
-```
+    composer require --dev jakub-onderka/php-parallel-lint
 
-For colored output install suggested package `jakub-onderka/php-console-highlighter`. After a `composer.json` file include:
+For colored output install the suggested package `jakub-onderka/php-console-highlighter`:
 
-```json
-{
-    "require-dev": {
-        "jakub-onderka/php-parallel-lint": "0.*",
-        "jakub-onderka/php-console-highlighter": "0.*"
-    }
-}
-```
-
+    composer require --dev jakub-onderka/php-console-highlighter
 
 ## Example output
 ![Alt text](/tests/examples/example-images/use-error.png?raw=true "Example use of tool with error")
