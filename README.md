@@ -36,7 +36,7 @@ For colored output install the suggested package `jakub-onderka/php-console-high
 For run from command line:
 
 ```
-$ ./bin/parallel-lint --exclude app --exclude vendor .
+./bin/parallel-lint --exclude app --exclude vendor .
 ```
 
 or setting for ANT:
