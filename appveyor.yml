@@ -21,6 +21,7 @@ install:
 
     # Install Composer dependencies
     - appveyor DownloadFile https://getcomposer.org/composer.phar
+    - php composer.phar config disable-tls true
     - php composer.phar install --no-interaction --prefer-source --no-progress
 
 test_script:
