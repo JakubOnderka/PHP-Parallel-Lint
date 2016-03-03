@@ -1,4 +1,5 @@
 <?php
+
 namespace JakubOnderka\PhpParallelLint\Process;
 
 use JakubOnderka\PhpParallelLint\RunTimeException;
@@ -33,7 +34,7 @@ class Process
     /**
      * @param string $cmdLine
      * @param string $stdInInput
-     * @throws RuntimeException
+     * @throws RunTimeException
      */
     public function __construct($cmdLine, $stdInInput = null)
     {
@@ -46,7 +47,7 @@ class Process
         $this->process = proc_open($cmdLine, $descriptors, $pipes, null, null, array('bypass_shell' => true));
 
         if ($this->process === false || $this->process === null) {
-            throw new RuntimeException("Cannot create new process $cmdLine");
+            throw new RunTimeException("Cannot create new process $cmdLine");
         }
 
         list($stdin, $this->stdout, $this->stderr) = $pipes;
@@ -102,12 +103,12 @@ class Process
 
     /**
      * @return string
-     * @throws RuntimeException
+     * @throws RunTimeException
      */
     public function getOutput()
     {
         if (!$this->isFinished()) {
-            throw new RuntimeException("Cannot get output for running process");
+            throw new RunTimeException("Cannot get output for running process");
         }
 
         return $this->output;
@@ -115,12 +116,12 @@ class Process
 
     /**
      * @return string
-     * @throws RuntimeException
+     * @throws RunTimeException
      */
     public function getErrorOutput()
     {
         if (!$this->isFinished()) {
-            throw new RuntimeException("Cannot get error output for running process");
+            throw new RunTimeException("Cannot get error output for running process");
         }
 
         return $this->errorOutput;
@@ -128,12 +129,12 @@ class Process
 
     /**
      * @return int
-     * @throws RuntimeException
+     * @throws RunTimeException
      */
     public function getStatusCode()
     {
         if (!$this->isFinished()) {
-            throw new RuntimeException("Cannot get status code for running process");
+            throw new RunTimeException("Cannot get status code for running process");
         }
 
         return $this->statusCode;

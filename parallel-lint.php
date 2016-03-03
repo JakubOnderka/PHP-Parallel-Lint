@@ -40,8 +40,8 @@ Options:
 function showUsage()
 {
     ?>
-PHP Parallel Lint version 0.9
------------------------------
+PHP Parallel Lint version 0.9.1
+-------------------------------
 Usage:
     parallel-lint [sa] [-p php] [-e ext] [-j num] [--exclude dir] [files or directories]
 

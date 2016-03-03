@@ -17,6 +17,7 @@ class PhpProcess extends Process
 
     /**
      * @param array $parameters
+     * @param bool $isHhvm
      * @return string
      */
     private function constructParameters(array $parameters, $isHhvm)

@@ -32,7 +32,7 @@ class SkipLintProcess extends PhpProcess
 
         $parameters = array('-n', '-r ' . escapeshellarg($script));
 
-        parent::__construct($phpExecutable, $parameters, implode("\n", $filesToCheck));
+        parent::__construct($phpExecutable, $parameters, implode(PHP_EOL, $filesToCheck));
     }
 
     public function getChunk()
@@ -77,7 +77,7 @@ class SkipLintProcess extends PhpProcess
     private function processLines($content)
     {
         if (!empty($content)) {
-            $lines = explode("\n", $this->endLastChunk . $content);
+            $lines = explode(PHP_EOL, $this->endLastChunk . $content);
             $this->endLastChunk = array_pop($lines);
             foreach ($lines as $line) {
                 $parts = explode(';', $line);
