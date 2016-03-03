@@ -2,12 +2,18 @@
 use JakubOnderka\PhpParallelLint;
 
 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50303) {
-    echo "PHP Parallel Lint require PHP 5.3.3 or newer.\n";
+    echo "PHP Parallel Lint require PHP 5.3.3 or newer.", PHP_EOL;
     die(255);
 }
+
 const SUCCESS = 0,
     WITH_ERRORS = 1,
     FAILED = 255;
+
+if (in_array('proc_open', explode(',', ini_get('disable_functions')))) {
+    echo "Function 'proc_open' is required, but it is disabled by disable_functions setting.", PHP_EOL;
+    die(FAILED);
+}
 
 function showOptions()
 {
@@ -64,7 +70,7 @@ foreach ($files as $file) {
 
 if (!$autoloadFileFound) {
     echo 'You need to set up the project dependencies using the following commands:' . PHP_EOL .
-        'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
+        'curl -s https://getcomposer.org/installer | php' . PHP_EOL .
         'php composer.phar install' . PHP_EOL;
     die(FAILED);
 }
@@ -94,12 +100,12 @@ try {
     }
 
 } catch (PhpParallelLint\InvalidArgumentException $e) {
-    echo "Invalid option {$e->getArgument()}" . PHP_EOL . PHP_EOL;
+    echo "Invalid option {$e->getArgument()}", PHP_EOL, PHP_EOL;
     showOptions();
     die(FAILED);
 
 } catch (PhpParallelLint\Exception $e) {
-    if ($settings->json) {
+    if (isset($settings) && $settings->json) {
         echo json_encode($e);
     } else {
         echo $e->getMessage(), PHP_EOL;
