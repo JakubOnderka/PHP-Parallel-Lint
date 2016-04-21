@@ -16,9 +16,9 @@ cache:
     - $HOME/.composer/cache
 
 before_script:
-  - composer self-update
   - if [ "$TRAVIS_PHP_VERSION" == "5.3.3" ]; then composer config disable-tls true; fi
   - if [ "$TRAVIS_PHP_VERSION" == "5.3.3" ]; then composer config secure-http false; fi
+  - composer self-update
   - composer install --no-interaction --prefer-source
   - composer require jakub-onderka/php-console-highlighter 0.3
 
