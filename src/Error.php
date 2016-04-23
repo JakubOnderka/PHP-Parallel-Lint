@@ -149,10 +149,12 @@ class SyntaxError extends Error
      */
     public function getNormalizedMessage($translateTokens = false)
     {
-        $message = preg_replace('~(Parse|Fatal) error: syntax error, ~', '', $this->message);
+        $message = preg_replace('~(Parse|Fatal) error: (syntax error,)?[\s]?~', '', $this->message);
         $message = ucfirst($message);
-        $message = preg_replace('~ in (.*) on line [0-9]*~', '', $message);
 
+        $inParts = preg_split('/[\s]+in[\s]+/', $message);
+        array_pop($inParts);
+        $message = implode(' in ', $inParts);
         if ($translateTokens) {
             $message = $this->translateTokens($message);
         }
