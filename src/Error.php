@@ -133,7 +133,7 @@ class SyntaxError extends Error
      */
     public function getLine()
     {
-        preg_match('~on line ([0-9]*)~', $this->message, $matches);
+        preg_match('~on line ([0-9]+)$~', $this->message, $matches);
 
         if ($matches && isset($matches[1])) {
             $onLine = (int) $matches[1];
@@ -149,9 +149,9 @@ class SyntaxError extends Error
      */
     public function getNormalizedMessage($translateTokens = false)
     {
-        $message = preg_replace('~(Parse|Fatal) error: syntax error, ~', '', $this->message);
+        $message = preg_replace('~^(Parse|Fatal) error: (syntax error, )?~', '', $this->message);
+        $message = preg_replace('~ in ' . preg_quote(basename($this->filePath)) . ' on line [0-9]+$~', '', $message);
         $message = ucfirst($message);
-        $message = preg_replace('~ in (.*) on line [0-9]*~', '', $message);
 
         if ($translateTokens) {
             $message = $this->translateTokens($message);
