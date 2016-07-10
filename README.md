@@ -30,6 +30,7 @@ For colored output install the suggested package `jakub-onderka/php-console-high
 - `--stdin`         Load files and folder to test from standard input.
 - `--ignore-fails`  Ignore failed tests.
 - `-h, --help`      Print this help.
+- `-V, --version`   Display this application version
 
 
 ## Recommended setting for usage with Symfony framework
