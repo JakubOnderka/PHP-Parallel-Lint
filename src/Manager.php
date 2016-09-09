@@ -53,7 +53,7 @@ class Manager
 
         $output->writeHeader($phpExecutable->getVersionId(), $settings->parallelJobs, $phpExecutable->getHhvmVersion());
 
-        $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded);
+        $files = $this->getFilesFromPaths($settings->paths, $settings->extensions, $settings->excluded, $settings->OnlyFilesChanged);
 
         if (empty($files)) {
             throw new Exception('No file found to check.');
@@ -144,10 +144,11 @@ class Manager
      * @param array $paths
      * @param array $extensions
      * @param array $excluded
+     * @param array $OnlyFilesChanged
      * @return array
      * @throws NotExistsPathException
      */
-    protected function getFilesFromPaths(array $paths, array $extensions, array $excluded = array())
+    protected function getFilesFromPaths(array $paths, array $extensions, array $excluded = array(), array $OnlyFilesChanged = array() )
     {
         $extensions = array_flip($extensions);
         $files = array();
@@ -157,8 +158,12 @@ class Manager
                 $files[] = $path;
             } elseif (is_dir($path)) {
                 $iterator = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
-                if (!empty($excluded)) {
-                    $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded);
+                if (!empty($excluded) && !empty($OnlyFilesChanged)) {
+                    $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded, $OnlyFilesChanged);
+                } elseif (!empty($OnlyFilesChanged) ) {
+                    $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded, $OnlyFilesChanged);
+                } elseif (!empty($excluded)) {
+                    $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded, $OnlyFilesChanged);
                 }
                 $iterator = new \RecursiveIteratorIterator(
                     $iterator,
@@ -191,15 +196,19 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
     /** @var array */
     private $excluded = array();
 
+    /** @var array */
+    private $OnlyFilesChanged = array();
+
     /**
      * @param \RecursiveDirectoryIterator $iterator
      * @param array $excluded
      */
-    public function __construct(\RecursiveDirectoryIterator $iterator, array $excluded)
+    public function __construct(\RecursiveDirectoryIterator $iterator, array $excluded, array $OnlyFilesChanged)
     {
         parent::__construct($iterator);
         $this->iterator = $iterator;
         $this->excluded = array_map(array($this, 'getPathname'), $excluded);
+        $this->OnlyFilesChanged = array_map(array($this, 'getPathname'), $OnlyFilesChanged);
     }
 
     /**
