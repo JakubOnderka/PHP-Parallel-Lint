@@ -139,7 +139,7 @@ class Settings
            -m \
            --first-parent \
            --format=format: \
-           -- "${PATH_ARGS[@]}" | egrep -v '^$' || :";
+           -- "'*' . array('.php', '.phtml', '.php3', '.php4', '.php5')" | egrep -v '^$' || :";
 
         foreach ($arguments as $argument) {
             if ($argument{0} !== '-') {
