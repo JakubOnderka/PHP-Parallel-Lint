@@ -39,6 +39,12 @@ class Settings
     public $phpExecutable = 'php';
 
     /**
+     * Git executable
+     * @var string
+     */
+    public $OnlyFilesChanged = 'git';
+
+    /**
      * Check code inside PHP opening short tag <? or <?= in PHP 5.3
      * @var bool
      */
@@ -126,6 +132,14 @@ class Settings
     {
         $arguments = new ArrayIterator(array_slice($arguments, 1));
         $settings = new self;
+        
+        $git = "git show HEAD \
+           --name-only \
+           --diff-filter=ACM \
+           -m \
+           --first-parent \
+           --format=format: \
+           -- "${PATH_ARGS[@]}" | egrep -v '^$' || :";
 
         foreach ($arguments as $argument) {
             if ($argument{0} !== '-') {
@@ -148,6 +162,10 @@ class Settings
 
                     case '--exclude':
                         $settings->excluded[] = $arguments->getNext();
+                        break;
+
+                    case '-h':
+                        $settings->OnlyFilesChanged = exec($git);
                         break;
 
                     case '-e':
