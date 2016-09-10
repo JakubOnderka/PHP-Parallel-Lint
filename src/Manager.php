@@ -197,7 +197,7 @@ class RecursiveDirectoryFilterIterator extends \RecursiveFilterIterator
     private $excluded = array();
 
     /** @var array */
-    private $OnlyFilesChanged = array();
+    private $changedFiles = array();
 
     /**
      * @param \RecursiveDirectoryIterator $iterator
