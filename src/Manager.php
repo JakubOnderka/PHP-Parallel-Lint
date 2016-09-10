@@ -144,7 +144,7 @@ class Manager
      * @param array $paths
      * @param array $extensions
      * @param array $excluded
-     * @param array $OnlyFilesChanged
+     * @param array $changedFiles
      * @return array
      * @throws NotExistsPathException
      */
