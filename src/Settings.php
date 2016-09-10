@@ -42,7 +42,7 @@ class Settings
      * Git executable
      * @var string
      */
-    public $OnlyFilesChanged = 'git';
+    public $changedFiles = 'git';
 
     /**
      * Check code inside PHP opening short tag <? or <?= in PHP 5.3
@@ -164,8 +164,8 @@ class Settings
                         $settings->excluded[] = $arguments->getNext();
                         break;
 
-                    case '-h':
-                        $settings->OnlyFilesChanged = exec($git);
+                    case '--head':
+                        $settings->changedFiles = exec($git);
                         break;
 
                     case '-e':
