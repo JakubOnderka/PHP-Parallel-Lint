@@ -30,7 +30,7 @@ class SkipLintProcess extends PhpProcess
 
         $script = str_replace('<?php', '', $script);
 
-        $parameters = array('-n', '-r ' . escapeshellarg($script));
+        $parameters = array('-r ' . escapeshellarg($script));
 
         parent::__construct($phpExecutable, $parameters, implode(PHP_EOL, $filesToCheck));
     }
