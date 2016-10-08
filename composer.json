@@ -8,7 +8,8 @@
     },
     "require-dev": {
         "nette/tester": "~1.3",
-        "jakub-onderka/php-console-highlighter": "~0.3"
+        "jakub-onderka/php-console-highlighter": "~0.3",
+        "squizlabs/php_codesniffer": "~2.7"
     },
     "suggest": {
         "jakub-onderka/php-console-highlighter": "Highlight syntax in code snippet"

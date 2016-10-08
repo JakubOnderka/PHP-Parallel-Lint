@@ -26,3 +26,4 @@ script:
   - ./vendor/bin/tester -p php tests
   - ./parallel-lint --exclude vendor --exclude tests/examples --no-colors .
   - ./parallel-lint --exclude vendor --exclude tests/examples .
+  - ./vendor/bin/phpcs --standard=phpcs-ruleset.xml -s src

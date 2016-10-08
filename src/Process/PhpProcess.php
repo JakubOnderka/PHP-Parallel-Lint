@@ -11,7 +11,8 @@ class PhpProcess extends Process
      */
     public function __construct(PhpExecutable $phpExecutable, array $parameters = array(), $stdIn = null)
     {
-        $cmdLine = escapeshellcmd($phpExecutable->getPath()) . ' ' . $this->constructParameters($parameters, $phpExecutable->isIsHhvmType());
+        $constructedParameters = $this->constructParameters($parameters, $phpExecutable->isIsHhvmType());
+        $cmdLine = escapeshellcmd($phpExecutable->getPath()) . ' ' . $constructedParameters;
         parent::__construct($cmdLine, $stdIn);
     }
 
