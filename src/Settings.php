@@ -81,6 +81,12 @@ class Settings
     public $colors = true;
 
     /**
+     * Do not autodetect if colors are available
+     * @var bool
+     */
+    public $forceColors = false;
+
+    /**
      * Output results as JSON string
      * @var bool
      */
@@ -156,6 +162,11 @@ class Settings
 
                     case '-j':
                         $settings->parallelJobs = max((int) $arguments->getNext(), 1);
+                        break;
+
+                    case '--colors':
+                        $settings->forceColors = true;
+                        $settings->colors = true;
                         break;
 
                     case '--no-colors':

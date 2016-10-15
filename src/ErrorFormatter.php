@@ -39,11 +39,15 @@ class ErrorFormatter
     private $useColors;
 
     /** @var bool */
+    private $forceColors;
+
+    /** @var bool */
     private $translateTokens;
 
-    public function __construct($useColors = false, $translateTokens = false)
+    public function __construct($useColors = false, $translateTokens = false, $forceColors = false)
     {
         $this->useColors = $useColors;
+        $this->forceColors = $forceColors;
         $this->translateTokens = $translateTokens;
     }
 
@@ -143,7 +147,7 @@ class ErrorFormatter
         }
 
         $colors = new ConsoleColor();
-        $colors->setForceStyle(true);
+        $colors->setForceStyle($this->forceColors);
         $highlighter = new Highlighter($colors);
 
         $fileContent = file_get_contents($filePath);

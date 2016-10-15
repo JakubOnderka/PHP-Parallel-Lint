@@ -320,13 +320,13 @@ class TextOutputColored extends TextOutput
     /** @var \JakubOnderka\PhpConsoleColor\ConsoleColor */
     private $colors;
 
-    public function __construct(IWriter $writer)
+    public function __construct(IWriter $writer, $forceColors = false)
     {
         parent::__construct($writer);
 
         if (class_exists('\JakubOnderka\PhpConsoleColor\ConsoleColor')) {
             $this->colors = new \JakubOnderka\PhpConsoleColor\ConsoleColor();
-            $this->colors->setForceStyle(true);
+            $this->colors->setForceStyle($forceColors);
         }
     }
 
