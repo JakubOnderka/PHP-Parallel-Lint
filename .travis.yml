@@ -20,7 +20,6 @@ install:
   - if [ "$TRAVIS_PHP_VERSION" == "5.3.3" ]; then composer config disable-tls true; fi
   - if [ "$TRAVIS_PHP_VERSION" == "5.3.3" ]; then composer config secure-http false; fi
   - composer install --no-interaction --prefer-source
-  - composer require jakub-onderka/php-console-highlighter 0.3
 
 script:
   - ./vendor/bin/tester -p php tests
