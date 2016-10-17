@@ -6,7 +6,8 @@ if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50303) {
     die(255);
 }
 
-const SUCCESS = 0,
+const VERSION = '0.9.2',
+    SUCCESS = 0,
     WITH_ERRORS = 1,
     FAILED = 255;
 
@@ -34,13 +35,19 @@ Options:
     --stdin         Load files and folder to test from standard input.
     --ignore-fails  Ignore failed tests.
     -h, --help      Print this help.
+    -V, --version   Display this application version
 <?php
+}
+
+function showVersion()
+{
+    echo 'PHP Parallel Lint version ' . VERSION . PHP_EOL;
 }
 
 function showUsage()
 {
+    showVersion();
     ?>
-PHP Parallel Lint version 0.9.1
 -------------------------------
 Usage:
     parallel-lint [sa] [-p php] [-e ext] [-j num] [--exclude dir] [files or directories]
@@ -52,6 +59,11 @@ die();
 
 if (in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) {
     showUsage();
+}
+
+if (in_array('-V', $_SERVER['argv']) || in_array('--version', $_SERVER['argv'])) {
+    showVersion();
+    die();
 }
 
 $files = array(

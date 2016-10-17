@@ -73,7 +73,8 @@ class ParallelLint
 
         $skipLintProcess = new SkipLintProcess($this->phpExecutable, $files);
 
-        $processCallback = is_callable($this->processCallback) ? $this->processCallback : function() {};
+        $processCallback = is_callable($this->processCallback) ? $this->processCallback : function () {
+        };
 
         /**
          * @var LintProcess[] $running
@@ -110,15 +111,15 @@ class ParallelLint
                     if ($skipStatus === null) {
                         $waiting[$file] = $process;
 
-                    } elseif ($skipStatus === true) {
+                    } else if ($skipStatus === true) {
                         $skippedFiles[] = $file;
                         $processCallback(self::STATUS_SKIP, $file);
 
-                    } elseif ($process->isSuccess()) {
+                    } else if ($process->isSuccess()) {
                         $checkedFiles[] = $file;
                         $processCallback(self::STATUS_OK, $file);
 
-                    } elseif ($process->hasSyntaxError()) {
+                    } else if ($process->hasSyntaxError()) {
                         $checkedFiles[] = $file;
                         $errors[] = new SyntaxError($file, $process->getSyntaxError());
                         $processCallback(self::STATUS_ERROR, $file);
@@ -143,15 +144,15 @@ class ParallelLint
                 if ($skipStatus === null) {
                     throw new \Exception("File $file has empty skip status. Please contact PHP Parallel Lint author.");
 
-                } elseif ($skipStatus === true) {
+                } else if ($skipStatus === true) {
                     $skippedFiles[] = $file;
                     $processCallback(self::STATUS_SKIP, $file);
 
-                } elseif ($process->isSuccess()) {
+                } else if ($process->isSuccess()) {
                     $checkedFiles[] = $file;
                     $processCallback(self::STATUS_OK, $file);
 
-                } elseif ($process->hasSyntaxError()) {
+                } else if ($process->hasSyntaxError()) {
                     $checkedFiles[] = $file;
                     $errors[] = new SyntaxError($file, $process->getSyntaxError());
                     $processCallback(self::STATUS_ERROR, $file);

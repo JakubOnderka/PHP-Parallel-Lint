@@ -64,7 +64,7 @@ class Process
      */
     public function isFinished()
     {
-        if ($this->statusCode !== NULL) {
+        if ($this->statusCode !== null) {
             return true;
         }
 
@@ -72,7 +72,7 @@ class Process
 
         if ($status['running']) {
             return false;
-        } elseif ($this->statusCode === null) {
+        } else if ($this->statusCode === null) {
             $this->statusCode = (int) $status['exitcode'];
         }
 

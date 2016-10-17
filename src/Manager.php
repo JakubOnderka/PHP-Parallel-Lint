@@ -49,7 +49,8 @@ class Manager
         $output = $this->output ?: $this->getDefaultOutput($settings);
 
         $phpExecutable = PhpExecutable::getPhpExecutable($settings->phpExecutable);
-        $translateTokens = $phpExecutable->isIsHhvmType() || $phpExecutable->getVersionId() < 50400; // From PHP version 5.4 are tokens translated by default
+        $olderThanPhp54 = $phpExecutable->getVersionId() < 50400; // From PHP version 5.4 are tokens translated by default
+        $translateTokens = $phpExecutable->isIsHhvmType() || $olderThanPhp54;
 
         $output->writeHeader($phpExecutable->getVersionId(), $settings->parallelJobs, $phpExecutable->getHhvmVersion());
 
@@ -68,9 +69,9 @@ class Manager
         $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
             if ($status === ParallelLint::STATUS_OK) {
                 $output->ok();
-            } elseif ($status === ParallelLint::STATUS_SKIP) {
+            } else if ($status === ParallelLint::STATUS_SKIP) {
                 $output->skip();
-            } elseif ($status === ParallelLint::STATUS_ERROR) {
+            } else if ($status === ParallelLint::STATUS_ERROR) {
                 $output->error();
             } else {
                 $output->fail();
@@ -155,7 +156,7 @@ class Manager
         foreach ($paths as $path) {
             if (is_file($path)) {
                 $files[] = $path;
-            } elseif (is_dir($path)) {
+            } else if (is_dir($path)) {
                 $iterator = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
                 if (!empty($excluded)) {
                     $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded);

@@ -50,7 +50,6 @@
     <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
 
     <rule ref="Generic.Metrics.NestingLevel"/>
-    <rule ref="Generic.Metrics.CyclomaticComplexity"/>
 
     <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
