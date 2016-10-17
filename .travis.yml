@@ -31,7 +31,7 @@ script:
 before_deploy:
   - curl -LSs https://box-project.github.io/box2/installer.php | php
   - composer install --no-interaction --prefer-source --no-dev
-  - composer require jakub-onderka/php-console-highlighter 0.3
+  - composer require jakub-onderka/php-console-highlighter 0.3 --update-no-dev
   - ./box.phar build
 
 deploy:
@@ -40,6 +40,7 @@ deploy:
     secure: THl5cW0bAohVqLzCOYJEBA6/EsmWmq05pYsWGmOyl0uIyX/2aMCwldSjfOuoDoge2CDrJfBysaPBngJtimCF4oqBOVt46hDikluGH8atgFlBb+eZEcTZWpDwIN5o6za1y5RW2G0D4U9MYLP1wwM9SLwNblGTAgTokgFni9HfTNU=
   file: parallel-lint.phar
   overwrite: true
+  skip_cleanup: true
   on:
     repo: JakubOnderka/PHP-Parallel-Lint
     php: 5.6
