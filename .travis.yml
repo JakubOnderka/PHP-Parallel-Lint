@@ -32,7 +32,7 @@ before_deploy:
   - curl -LSs https://box-project.github.io/box2/installer.php | php
   - composer install --no-interaction --prefer-source --no-dev
   - composer require jakub-onderka/php-console-highlighter 0.3
-  - box build
+  - ./box.phar build
 
 deploy:
   provider: releases
