@@ -16,7 +16,7 @@ cache:
     - vendor
     - $HOME/.composer/cache
 
-before_script:
+install:
   - if [ "$TRAVIS_PHP_VERSION" == "5.3.3" ]; then composer config disable-tls true; fi
   - if [ "$TRAVIS_PHP_VERSION" == "5.3.3" ]; then composer config secure-http false; fi
   - composer install --no-interaction --prefer-source
@@ -27,3 +27,19 @@ script:
   - ./parallel-lint --exclude vendor --exclude tests/examples --no-colors .
   - ./parallel-lint --exclude vendor --exclude tests/examples .
   - ./vendor/bin/phpcs --standard=phpcs-ruleset.xml -s src
+
+before_deploy:
+  - curl -LSs https://box-project.github.io/box2/installer.php | php
+  - composer install --no-interaction --prefer-source --no-dev
+  - composer require jakub-onderka/php-console-highlighter 0.3
+  - box build
+
+deploy:
+  provider: releases
+  api_key:
+    secure: THl5cW0bAohVqLzCOYJEBA6/EsmWmq05pYsWGmOyl0uIyX/2aMCwldSjfOuoDoge2CDrJfBysaPBngJtimCF4oqBOVt46hDikluGH8atgFlBb+eZEcTZWpDwIN5o6za1y5RW2G0D4U9MYLP1wwM9SLwNblGTAgTokgFni9HfTNU=
+  file: parallel-lint.phar
+  overwrite: true
+  on:
+    repo: JakubOnderka/PHP-Parallel-Lint
+    php: 5.6
