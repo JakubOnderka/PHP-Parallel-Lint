@@ -19,4 +19,3 @@ foreach (explode(PHP_EOL, $input) as $file) {
 
     echo $file . ';' . ($skip ? '1' : '0') . PHP_EOL;
 }
-
