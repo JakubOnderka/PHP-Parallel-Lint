@@ -43,3 +43,4 @@ deploy:
   on:
     repo: JakubOnderka/PHP-Parallel-Lint
     php: 5.6
+    tags: true
