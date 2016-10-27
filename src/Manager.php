@@ -107,7 +107,7 @@ class Manager
         if ($settings->json) {
             return new JsonOutput($writer);
         } else {
-            return ($settings->colors ? new TextOutputColored($writer, $settings->forceColors) : new TextOutput($writer));
+            return ($settings->colors !== Settings::DISABLED ? new TextOutputColored($writer, $settings->colors) : new TextOutput($writer));
         }
     }
 

@@ -32,6 +32,14 @@ either expressed or implied, of the FreeBSD Project.
 
 class Settings
 {
+
+    /**
+     * constants for enum settings
+     */
+    const FORCED = 'FORCED';
+    const DISABLED = 'DISABLED';
+    const AUTODETECT = 'AUTODETECT';
+
     /**
      * Path to PHP executable
      * @var string
@@ -75,16 +83,10 @@ class Settings
     public $excluded = array();
 
     /**
-     * Print to console with colors
-     * @var bool
+     * Mode for color detection. Possible values: self::FORCED, self::DISABLED and self::AUTODETECT
+     * @var string
      */
-    public $colors = true;
-
-    /**
-     * Do not autodetect if colors are available
-     * @var bool
-     */
-    public $forceColors = false;
+    public $colors = self::AUTODETECT;
 
     /**
      * Output results as JSON string
@@ -165,12 +167,11 @@ class Settings
                         break;
 
                     case '--colors':
-                        $settings->forceColors = true;
-                        $settings->colors = true;
+                        $settings->colors = self::FORCED;
                         break;
 
                     case '--no-colors':
-                        $settings->colors = false;
+                        $settings->colors = self::DISABLED;
                         break;
 
                     case '--json':

@@ -35,7 +35,7 @@ use JakubOnderka\PhpConsoleHighlighter\Highlighter;
 
 class ErrorFormatter
 {
-    /** @var bool */
+    /** @var string */
     private $useColors;
 
     /** @var bool */
@@ -44,7 +44,7 @@ class ErrorFormatter
     /** @var bool */
     private $translateTokens;
 
-    public function __construct($useColors = false, $translateTokens = false, $forceColors = false)
+    public function __construct($useColors = Settings::AUTODETECT, $translateTokens = false, $forceColors = false)
     {
         $this->useColors = $useColors;
         $this->forceColors = $forceColors;
@@ -82,7 +82,7 @@ class ErrorFormatter
             $string .= ":$onLine" . PHP_EOL;
 
             if ($withCodeSnipped) {
-                if ($this->useColors) {
+                if ($this->useColors !== Settings::DISABLED) {
                     $string .= $this->getColoredCodeSnippet($error->getFilePath(), $onLine);
                 } else {
                     $string .= $this->getCodeSnippet($error->getFilePath(), $onLine);
