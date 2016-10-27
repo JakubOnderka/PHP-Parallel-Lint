@@ -25,7 +25,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->extensions = array('php', 'phtml', 'php3', 'php4', 'php5');
         $expectedSettings->paths = array('.');
         $expectedSettings->excluded = array();
-        $expectedSettings->colors = true;
+        $expectedSettings->colors = Settings::AUTODETECT;
         $expectedSettings->json = false;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
@@ -53,7 +53,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->extensions = array('php', 'phtml', 'php3', 'php4', 'php5');
         $expectedSettings->paths = array('.');
         $expectedSettings->excluded = array('vendor');
-        $expectedSettings->colors = false;
+        $expectedSettings->colors = Settings::DISABLED;
         $expectedSettings->json = false;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
@@ -65,6 +65,18 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         Assert::equal($expectedSettings->excluded, $settings->excluded);
         Assert::equal($expectedSettings->colors, $settings->colors);
         Assert::equal($expectedSettings->json, $settings->json);
+    }
+
+    public function testColorsForced()
+    {
+        $commandLine = "./parallel-lint --exclude vendor --colors .";
+        $argv = explode(" ", $commandLine);
+        $settings = Settings::parseArguments($argv);
+
+        $expectedSettings = new Settings();
+        $expectedSettings->colors = Settings::FORCED;
+
+        Assert::equal($expectedSettings->colors, $settings->colors);
     }
 }
 
