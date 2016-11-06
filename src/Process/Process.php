@@ -72,7 +72,7 @@ class Process
 
         if ($status['running']) {
             return false;
-        } else if ($this->statusCode === null) {
+        } elseif ($this->statusCode === null) {
             $this->statusCode = (int) $status['exitcode'];
         }
 
