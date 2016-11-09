@@ -109,6 +109,14 @@ class Settings
      */
     public $ignoreFails = false;
 
+    public function __construct()
+    {
+        // Detect console colors support
+        $this->colors = DIRECTORY_SEPARATOR === '\\'
+            ? getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON'
+            : function_exists('posix_isatty') && @posix_isatty(STDOUT);
+    }
+    
     /**
      * @param array $paths
      */
@@ -156,6 +164,10 @@ class Settings
 
                     case '-j':
                         $settings->parallelJobs = max((int) $arguments->getNext(), 1);
+                        break;
+
+                    case '--colors':
+                        $settings->colors = true;
                         break;
 
                     case '--no-colors':
