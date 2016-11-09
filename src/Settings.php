@@ -114,7 +114,7 @@ class Settings
         // Detect console colors support
         $this->colors = DIRECTORY_SEPARATOR === '\\'
             ? getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON'
-            : function_exists('posix_isatty') && @posix_isatty(STDOUT);
+            : function_exists('posix_isatty') && posix_isatty(STDOUT);
     }
     
     /**
