@@ -25,8 +25,8 @@ Options:
     -a, -asp        Set asp_tags to On (default: Off).
     -e <ext>        Check only files with selected extensions separated by comma.
                     (default: php,php3,php4,php5,phtml)
-    --exclude       Exclude directory. If you want exclude multiple directories, use
-                    multiple exclude parameters.
+    --exclude       Exclude a file or directory. If you want exclude multiple items,
+                    use multiple exclude parameters.
     -j <num>        Run <num> jobs in parallel (default: 10).
     --no-colors     Disable colors in console output.
     --json          Output results as JSON string (require PHP 5.4).
