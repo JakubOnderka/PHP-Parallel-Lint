@@ -10,11 +10,9 @@ foreach (explode(PHP_EOL, $input) as $file) {
         $firstLine = fgets($f);
         @fclose($f);
 
-        if (!preg_match('~<?php\\s*\\/\\/\s*lint\s*([^\d\s]+)\s*([^\s]+)\s*~i', $firstLine, $m)) {
-            $skip = false;
+        if (preg_match('~<?php\\s*\\/\\/\s*lint\s*([^\d\s]+)\s*([^\s]+)\s*~i', $firstLine, $m)) {
+            $skip = version_compare(PHP_VERSION, $m[2], $m[1]) === false;
         }
-
-        $skip = isset($m[2]) && !version_compare(PHP_VERSION, $m[2], $m[1]);
     }
 
     echo $file . ';' . ($skip ? '1' : '0') . PHP_EOL;
