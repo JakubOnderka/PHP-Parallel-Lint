@@ -28,6 +28,7 @@ Options:
     --exclude       Exclude a file or directory. If you want exclude multiple items,
                     use multiple exclude parameters.
     -j <num>        Run <num> jobs in parallel (default: 10).
+    --colors        Enable colors in console output. (disables auto detection of color support)
     --no-colors     Disable colors in console output.
     --json          Output results as JSON string (require PHP 5.4).
     --blame         Try to show git blame for row with error.

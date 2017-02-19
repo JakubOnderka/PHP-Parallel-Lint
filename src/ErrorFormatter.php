@@ -35,15 +35,19 @@ use JakubOnderka\PhpConsoleHighlighter\Highlighter;
 
 class ErrorFormatter
 {
-    /** @var bool */
+    /** @var string */
     private $useColors;
+
+    /** @var bool */
+    private $forceColors;
 
     /** @var bool */
     private $translateTokens;
 
-    public function __construct($useColors = false, $translateTokens = false)
+    public function __construct($useColors = Settings::AUTODETECT, $translateTokens = false, $forceColors = false)
     {
         $this->useColors = $useColors;
+        $this->forceColors = $forceColors;
         $this->translateTokens = $translateTokens;
     }
 
@@ -78,7 +82,7 @@ class ErrorFormatter
             $string .= ":$onLine" . PHP_EOL;
 
             if ($withCodeSnipped) {
-                if ($this->useColors) {
+                if ($this->useColors !== Settings::DISABLED) {
                     $string .= $this->getColoredCodeSnippet($error->getFilePath(), $onLine);
                 } else {
                     $string .= $this->getCodeSnippet($error->getFilePath(), $onLine);
@@ -143,7 +147,7 @@ class ErrorFormatter
         }
 
         $colors = new ConsoleColor();
-        $colors->setForceStyle(true);
+        $colors->setForceStyle($this->forceColors);
         $highlighter = new Highlighter($colors);
 
         $fileContent = file_get_contents($filePath);
