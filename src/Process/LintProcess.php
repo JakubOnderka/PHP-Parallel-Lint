@@ -1,8 +1,13 @@
 <?php
 namespace JakubOnderka\PhpParallelLint\Process;
 
+use JakubOnderka\PhpParallelLint\RunTimeException;
+
 class LintProcess extends PhpProcess
 {
+    const FATAL_ERROR = 'Fatal error';
+    const PARSE_ERROR = 'Parse error';
+
     /**
      * @param PhpExecutable $phpExecutable
      * @param string $fileToCheck Path to file to check
@@ -32,18 +37,23 @@ class LintProcess extends PhpProcess
      */
     public function hasSyntaxError()
     {
-        return strpos($this->getOutput(), 'Fatal error') !== false ||
-        strpos($this->getOutput(), 'Parse error') !== false;
+        return $this->containsParserOrFatalError($this->getOutput());
     }
 
     /**
-     * @return bool|string
+     * @return string
+     * @throws RunTimeException
      */
     public function getSyntaxError()
     {
         if ($this->hasSyntaxError()) {
-            list(, $out) = explode("\n", $this->getOutput());
-            return $out;
+            foreach (explode("\n", $this->getOutput()) as $line) {
+                if ($this->containsParserOrFatalError($line)) {
+                    return $line;
+                }
+            }
+
+            throw new RunTimeException("The output '{$this->getOutput()}' does not contains Parse or Syntax error");
         }
 
         return false;
@@ -63,5 +73,15 @@ class LintProcess extends PhpProcess
     public function isSuccess()
     {
         return $this->getStatusCode() === 0;
+    }
+
+    /**
+     * @param $string
+     * @return bool
+     */
+    private function containsParserOrFatalError($string)
+    {
+        return strpos($string, self::FATAL_ERROR) !== false ||
+            strpos($string, self::PARSE_ERROR) !== false;
     }
 }
