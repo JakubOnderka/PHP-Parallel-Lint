@@ -25,7 +25,9 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->extensions = array('php', 'phtml', 'php3', 'php4', 'php5');
         $expectedSettings->paths = array('.');
         $expectedSettings->excluded = array();
-        $expectedSettings->colors = true;
+        $expectedSettings->colors = DIRECTORY_SEPARATOR === '\\'
+            ? getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON'
+            : function_exists('posix_isatty') && posix_isatty(STDOUT);
         $expectedSettings->json = false;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
