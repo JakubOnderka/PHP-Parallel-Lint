@@ -111,15 +111,15 @@ class ParallelLint
                     if ($skipStatus === null) {
                         $waiting[$file] = $process;
 
-                    } else if ($skipStatus === true) {
+                    } elseif ($skipStatus === true) {
                         $skippedFiles[] = $file;
                         $processCallback(self::STATUS_SKIP, $file);
 
-                    } else if ($process->isSuccess()) {
+                    } elseif ($process->isSuccess()) {
                         $checkedFiles[] = $file;
                         $processCallback(self::STATUS_OK, $file);
 
-                    } else if ($process->hasSyntaxError()) {
+                    } elseif ($process->hasSyntaxError()) {
                         $checkedFiles[] = $file;
                         $errors[] = new SyntaxError($file, $process->getSyntaxError());
                         $processCallback(self::STATUS_ERROR, $file);
@@ -145,15 +145,15 @@ class ParallelLint
                 if ($skipStatus === null) {
                     throw new \Exception("File $file has empty skip status. Please contact PHP Parallel Lint author.");
 
-                } else if ($skipStatus === true) {
+                } elseif ($skipStatus === true) {
                     $skippedFiles[] = $file;
                     $processCallback(self::STATUS_SKIP, $file);
 
-                } else if ($process->isSuccess()) {
+                } elseif ($process->isSuccess()) {
                     $checkedFiles[] = $file;
                     $processCallback(self::STATUS_OK, $file);
 
-                } else if ($process->hasSyntaxError()) {
+                } elseif ($process->hasSyntaxError()) {
                     $checkedFiles[] = $file;
                     $errors[] = new SyntaxError($file, $process->getSyntaxError());
                     $processCallback(self::STATUS_ERROR, $file);

@@ -69,9 +69,9 @@ class Manager
         $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
             if ($status === ParallelLint::STATUS_OK) {
                 $output->ok();
-            } else if ($status === ParallelLint::STATUS_SKIP) {
+            } elseif ($status === ParallelLint::STATUS_SKIP) {
                 $output->skip();
-            } else if ($status === ParallelLint::STATUS_ERROR) {
+            } elseif ($status === ParallelLint::STATUS_ERROR) {
                 $output->error();
             } else {
                 $output->fail();
@@ -159,7 +159,7 @@ class Manager
         foreach ($paths as $path) {
             if (is_file($path)) {
                 $files[] = $path;
-            } else if (is_dir($path)) {
+            } elseif (is_dir($path)) {
                 $iterator = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
                 if (!empty($excluded)) {
                     $iterator = new RecursiveDirectoryFilterIterator($iterator, $excluded);
