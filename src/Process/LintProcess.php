@@ -19,9 +19,9 @@ class LintProcess extends PhpProcess
      * @param string $fileToCheck Path to file to check
      * @param bool $aspTags
      * @param bool $shortTag
-     * @param bool $showDeprecatedErrors
+     * @param bool $deprecated
      */
-    public function __construct(PhpExecutable $phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false, $showDeprecatedErrors = false)
+    public function __construct(PhpExecutable $phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false, $deprecated = false)
     {
         if (empty($fileToCheck)) {
             throw new \InvalidArgumentException("File to check must be set.");
@@ -36,7 +36,7 @@ class LintProcess extends PhpProcess
             escapeshellarg($fileToCheck),
         );
 
-        $this->showDeprecatedErrors = $showDeprecatedErrors;
+        $this->showDeprecatedErrors = $deprecated;
         parent::__construct($phpExecutable, $parameters);
     }
 
