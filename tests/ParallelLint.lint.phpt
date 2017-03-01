@@ -101,6 +101,10 @@ class ParallelLintLintTest extends Tester\TestCase
         Assert::false($result->hasSyntaxError());
         Assert::equal(0, count($result->getErrors()));
 
+        if (PHP_VERSION_ID < 70000) {
+            Tester\Environment::skip('test for php version > 7.0');
+        }
+
         $parallelLint = new ParallelLint($this->getPhpExecutable());
         $parallelLint->setShowDeprecated(true);
         $result = $parallelLint->lint(array(__DIR__ . '/examples/example-05/Foo.php'));
