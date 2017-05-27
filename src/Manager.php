@@ -108,9 +108,14 @@ class Manager
             return new JsonOutput($writer);
         } else {
             if ($settings->colors === Settings::DISABLED) {
-                return new TextOutput($writer);
+                $output = new TextOutput($writer);
+            } else {
+                $output = new TextOutputColored($writer, $settings->colors);
             }
-            return new TextOutputColored($writer, $settings->colors);
+
+            $output->showProgress = $settings->showProgress;
+
+            return $output;
         }
     }
 

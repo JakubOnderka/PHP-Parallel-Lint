@@ -26,6 +26,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->paths = array('.');
         $expectedSettings->excluded = array();
         $expectedSettings->colors = Settings::AUTODETECT;
+        $expectedSettings->showProgress = true;
         $expectedSettings->json = false;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
@@ -36,6 +37,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         Assert::equal($expectedSettings->paths, $settings->paths);
         Assert::equal($expectedSettings->excluded, $settings->excluded);
         Assert::equal($expectedSettings->colors, $settings->colors);
+        Assert::equal($expectedSettings->showProgress, $settings->showProgress);
         Assert::equal($expectedSettings->json, $settings->json);
     }
 
@@ -54,6 +56,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->paths = array('.');
         $expectedSettings->excluded = array('vendor');
         $expectedSettings->colors = Settings::DISABLED;
+        $expectedSettings->showProgress = true;
         $expectedSettings->json = false;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
@@ -64,6 +67,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         Assert::equal($expectedSettings->paths, $settings->paths);
         Assert::equal($expectedSettings->excluded, $settings->excluded);
         Assert::equal($expectedSettings->colors, $settings->colors);
+        Assert::equal($expectedSettings->showProgress, $settings->showProgress);
         Assert::equal($expectedSettings->json, $settings->json);
     }
 
@@ -75,6 +79,18 @@ class SettingsParseArgumentsTest extends Tester\TestCase
 
         $expectedSettings = new Settings();
         $expectedSettings->colors = Settings::FORCED;
+
+        Assert::equal($expectedSettings->colors, $settings->colors);
+    }
+
+    public function testNoProgress()
+    {
+        $commandLine = "./parallel-lint --exclude vendor --no-progress .";
+        $argv = explode(" ", $commandLine);
+        $settings = Settings::parseArguments($argv);
+
+        $expectedSettings = new Settings();
+        $expectedSettings->showProgress = false;
 
         Assert::equal($expectedSettings->colors, $settings->colors);
     }

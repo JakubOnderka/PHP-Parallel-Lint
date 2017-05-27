@@ -77,7 +77,7 @@ class Settings
     public $paths = array();
 
     /**
-     * Dont't check files or directories
+     * Don't check files or directories
      * @var array
      */
     public $excluded = array();
@@ -87,6 +87,12 @@ class Settings
      * @var string
      */
     public $colors = self::AUTODETECT;
+
+    /**
+     * Show progress in text output
+     * @var bool
+     */
+    public $showProgress = true;
 
     /**
      * Output results as JSON string
@@ -172,6 +178,10 @@ class Settings
 
                     case '--no-colors':
                         $settings->colors = self::DISABLED;
+                        break;
+
+                    case '--no-progress':
+                        $settings->showProgress = false;
                         break;
 
                     case '--json':

@@ -119,10 +119,14 @@ class TextOutput implements Output
     const TYPE_DEFAULT = 'default',
         TYPE_SKIP = 'skip',
         TYPE_ERROR = 'error',
+        TYPE_FAIL = 'fail',
         TYPE_OK = 'ok';
 
     /** @var int */
     public $filesPerLine = 60;
+
+    /** @var bool */
+    public $showProgress = true;
 
     /** @var int */
     protected $checkedFiles;
@@ -143,26 +147,22 @@ class TextOutput implements Output
 
     public function ok()
     {
-        $this->writer->write('.');
-        $this->progress();
+        $this->writeMark(self::TYPE_OK);
     }
 
     public function skip()
     {
-        $this->write('S', self::TYPE_SKIP);
-        $this->progress();
+        $this->writeMark(self::TYPE_SKIP);
     }
 
     public function error()
     {
-        $this->write('X', self::TYPE_ERROR);
-        $this->progress();
+        $this->writeMark(self::TYPE_ERROR);
     }
 
     public function fail()
     {
-        $this->writer->write('-');
-        $this->progress();
+        $this->writeMark(self::TYPE_FAIL);
     }
 
     /**
@@ -227,13 +227,15 @@ class TextOutput implements Output
      */
     public function writeResult(Result $result, ErrorFormatter $errorFormatter, $ignoreFails)
     {
-        if ($this->checkedFiles % $this->filesPerLine !== 0) {
-            $rest = $this->filesPerLine - ($this->checkedFiles % $this->filesPerLine);
-            $this->write(str_repeat(' ', $rest));
-            $this->writeProgress();
-        }
+        if ($this->showProgress) {
+            if ($this->checkedFiles % $this->filesPerLine !== 0) {
+                $rest = $this->filesPerLine - ($this->checkedFiles % $this->filesPerLine);
+                $this->write(str_repeat(' ', $rest));
+                $this->writePercent();
+            }
 
-        $this->writeNewLine(2);
+            $this->writeNewLine(2);
+        }
 
         $testTime = round($result->getTestTime(), 1);
         $message = "Checked {$result->getCheckedFilesCount()} files in $testTime ";
@@ -274,16 +276,31 @@ class TextOutput implements Output
         }
     }
 
-    protected function progress()
+    protected function writeMark($type)
     {
         ++$this->checkedFiles;
 
-        if ($this->checkedFiles % $this->filesPerLine === 0) {
-            $this->writeProgress();
+        if ($this->showProgress) {
+            if ($type === self::TYPE_OK) {
+                $this->writer->write('.');
+
+            } elseif ($type === self::TYPE_SKIP) {
+                $this->write('S', self::TYPE_SKIP);
+
+            } elseif ($type === self::TYPE_ERROR) {
+                $this->write('X', self::TYPE_ERROR);
+
+            } elseif ($type === self::TYPE_FAIL) {
+                $this->writer->write('-');
+            }
+
+            if ($this->checkedFiles % $this->filesPerLine === 0) {
+                $this->writePercent();
+            }
         }
     }
 
-    protected function writeProgress()
+    protected function writePercent()
     {
         $percent = floor($this->checkedFiles / $this->totalFileCount * 100);
         $current = $this->stringWidth($this->checkedFiles, strlen($this->totalFileCount));
