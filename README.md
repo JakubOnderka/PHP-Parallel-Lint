@@ -1,9 +1,11 @@
 # PHP Parallel Lint
-This tool check syntax of PHP files faster then serial check with fancier output.
 
-Running parallel jobs in PHP inspired by Nette framework tests.
+This tool checks syntax of PHP files faster than serial check with a fancier output.
+
+Running parallel jobs in PHP is inspired by Nette framework tests.
 
 ## Install
+
 Just run the following command to install it:
 
     composer require --dev jakub-onderka/php-parallel-lint
@@ -13,16 +15,19 @@ For colored output install the suggested package `jakub-onderka/php-console-high
     composer require --dev jakub-onderka/php-console-highlighter
 
 ## Example output
-![Alt text](/tests/examples/example-images/use-error.png?raw=true "Example use of tool with error")
+
+![Example use of tool with error](/tests/examples/example-images/use-error.png?raw=true "Example use of tool with error")
 
 
 ## Options for run
+
 - `-p <php>`        Specify PHP-CGI executable to run (default: 'php').
 - `-s, --short`     Set short_open_tag to On (default: Off).
-- `-a, -asp`        Set asp_tags to On (default: Off).
+- `-a, --asp`        Set asp_tags to On (default: Off).
 - `-e <ext>`        Check only files with selected extensions separated by comma. (default: php,php3,php4,php5,phtml)
 - `--exclude`       Exclude a file or directory. If you want exclude multiple items, use multiple exclude parameters.
 - `-j <num>`        Run <num> jobs in parallel (default: 10).
+- `--colors`        Force enable colors in console output.
 - `--no-colors`     Disable colors in console output.
 - `--json`          Output results as JSON string (require PHP 5.4).
 - `--blame`         Try to show git blame for row with error.
@@ -30,15 +35,16 @@ For colored output install the suggested package `jakub-onderka/php-console-high
 - `--stdin`         Load files and folder to test from standard input.
 - `--ignore-fails`  Ignore failed tests.
 - `-h, --help`      Print this help.
-- `-V, --version`   Display this application version
+- `-V, --version`   Display this application version.
 
 
 ## Recommended setting for usage with Symfony framework
+
 For run from command line:
 
-```
-./bin/parallel-lint --exclude app --exclude vendor .
-```
+
+    ./bin/parallel-lint --exclude app --exclude vendor .
+
 
 or setting for ANT:
 
@@ -59,17 +65,18 @@ or setting for ANT:
 ```
 
 ## Create Phar package
+
 PHP Parallel Lint supports [Box app](https://box-project.github.io/box2/) for creating Phar package. First, install box app:
 
-```
-curl -LSs https://box-project.github.io/box2/installer.php | php
-```
+
+    curl -LSs https://box-project.github.io/box2/installer.php | php
+
 
 and then run this command in parallel lint folder, which creates `parallel-lint.phar` file.
 
-```
-box build
-```
+
+    box build
+
 
 ------
 
