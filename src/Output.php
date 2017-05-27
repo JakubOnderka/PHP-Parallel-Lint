@@ -284,13 +284,13 @@ class TextOutput implements Output
             if ($type === self::TYPE_OK) {
                 $this->writer->write('.');
 
-            } elseif ($type === self::TYPE_SKIP) {
+            } else if ($type === self::TYPE_SKIP) {
                 $this->write('S', self::TYPE_SKIP);
 
-            } elseif ($type === self::TYPE_ERROR) {
+            } else if ($type === self::TYPE_ERROR) {
                 $this->write('X', self::TYPE_ERROR);
 
-            } elseif ($type === self::TYPE_FAIL) {
+            } else if ($type === self::TYPE_FAIL) {
                 $this->writer->write('-');
             }
 
