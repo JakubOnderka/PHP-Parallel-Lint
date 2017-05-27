@@ -69,7 +69,14 @@ class Error implements \JsonSerializable
      */
     public function getShortFilePath()
     {
-        return str_replace(getcwd(), '', $this->filePath);
+        $cwd = getcwd();
+
+        if ($cwd === '/') {
+            // For root directory in unix, do not modify path
+            return $this->filePath;
+        }
+
+        return preg_replace('/' . preg_quote($cwd, '/') . '/', '', $this->filePath, 1);
     }
 
     /**
