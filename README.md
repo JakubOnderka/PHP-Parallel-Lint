@@ -29,6 +29,7 @@ For colored output install the suggested package `jakub-onderka/php-console-high
 - `-j <num>`        Run <num> jobs in parallel (default: 10).
 - `--colors`        Force enable colors in console output.
 - `--no-colors`     Disable colors in console output.
+- `--no-progress`   Disable progress in console output.
 - `--json`          Output results as JSON string (require PHP 5.4).
 - `--blame`         Try to show git blame for row with error.
 - `--git <git>`     Path to Git executable to show blame message (default: 'git').
