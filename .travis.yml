@@ -9,6 +9,7 @@ php:
   - 7.1
   - hhvm
 
+dist: precise
 sudo: false
 
 cache:
