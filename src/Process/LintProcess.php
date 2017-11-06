@@ -89,7 +89,7 @@ class LintProcess extends PhpProcess
      */
     private function containsParserOrFatalError($string)
     {
-        return $this->containsParserError($string) || $this->containsFatalError();
+        return $this->containsParserError($string) || $this->containsFatalError($string);
     }
 
     /**
