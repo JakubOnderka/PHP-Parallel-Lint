@@ -47,8 +47,16 @@ class LintProcess extends PhpProcess
     public function getSyntaxError()
     {
         if ($this->hasSyntaxError()) {
+            //Look for fatal errors first
             foreach (explode("\n", $this->getOutput()) as $line) {
-                if ($this->containsParserOrFatalError($line)) {
+                if ($this->containsFatalError($line)) {
+                    return $line;
+                }
+            }
+
+            //Look for parser errors second
+            foreach (explode("\n", $this->getOutput()) as $line) {
+                if ($this->containsParserError($line)) {
                     return $line;
                 }
             }
@@ -81,7 +89,24 @@ class LintProcess extends PhpProcess
      */
     private function containsParserOrFatalError($string)
     {
-        return strpos($string, self::FATAL_ERROR) !== false ||
-            strpos($string, self::PARSE_ERROR) !== false;
+        return $this->containsParserError($string) || $this->containsFatalError();
+    }
+
+    /**
+     * @param $string
+     * @return bool
+     */
+    private function containsParserError($string)
+    {
+        return strpos($string, self::PARSE_ERROR) !== false;
+    }
+
+    /**
+     * @param $string
+     * @return bool
+     */
+    private function containsFatalError($string)
+    {
+        return strpos($string, self::FATAL_ERROR) !== false;
     }
 }
