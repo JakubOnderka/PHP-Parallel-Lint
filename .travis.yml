@@ -1,14 +1,20 @@
 language: php
 
-php:
-  - 5.3.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
-  - hhvm
+matrix:
+  include:
+    - php: 5.3.3
+    - php: 5.4
+    - php: 5.5
+    - php: 5.6
+    - php: 7.0
+    - php: 7.1
+    - php: 7.2
+    - php: hhvm
+    - php: nightly
+  allow_failures:
+    - php: hhvm
 
+dist: precise
 sudo: false
 
 cache:
