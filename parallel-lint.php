@@ -6,7 +6,7 @@ if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50303) {
     die(255);
 }
 
-const VERSION = '0.9.2',
+const VERSION = '1.0.0',
     SUCCESS = 0,
     WITH_ERRORS = 1,
     FAILED = 255;
