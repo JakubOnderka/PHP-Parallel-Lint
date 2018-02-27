@@ -91,22 +91,39 @@ class ParallelLint
                     $skippedFiles[] = $file;
                     $processCallback(self::STATUS_SKIP, $file);
                 } else {
-                    $running[$file] = new LintProcess(
+                    $process = new LintProcess(
                         $this->phpExecutable,
                         $file,
                         $this->aspTagsEnabled,
                         $this->shortTagEnabled
                     );
+                    $handle = $process->getResource();
+                    $running[(int) $handle] = $handle;
                 }
             }
 
             $skipLintProcess->getChunk();
-            usleep(100);
 
-            foreach ($running as $file => $process) {
+            // Error reporting suppressed since stream_select() emits an E_WARNING if it is interrupted by a signal.
+            $write = array();
+            $except = array();
+            if (!($result = @\stream_select($running, $write, $except, 0, 100))) {
+                if ($result !== 0) {
+                    $error = \error_get_last();
+                    if (\strpos($error["message"], "unable to select") === 0) {
+                        throw new \Exception($error["message"]);
+                    }
+                }
+            }
+
+            var_dump(count($running));
+
+            foreach ($running as $handle) {
+                unset($running[(int) $handle]);
+
+                // we know the process is finished, but we need to call this method
+                // to get the correct internal state
                 if ($process->isFinished()) {
-                    unset($running[$file]);
-
                     $skipStatus = $skipLintProcess->isSkipped($file);
                     if ($skipStatus === null) {
                         $waiting[$file] = $process;

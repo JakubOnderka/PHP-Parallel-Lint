@@ -147,4 +147,13 @@ class Process
     {
         return $this->getStatusCode() === 1;
     }
+
+    /**
+     * Returns the underlying php resource handle
+     *
+     * @return resource
+     */
+    public function getResource() {
+        return $this->process;
+    }
 }
