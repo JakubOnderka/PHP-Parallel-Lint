@@ -80,7 +80,7 @@ class ParallelLint
          * @var LintProcess[] $running
          * @var LintProcess[] $waiting
          */
-        $errors = $running = $waiting = array();
+        $errors = $running = $runningFiles = $waiting = array();
         $skippedFiles = $checkedFiles = array();
 
         while ($files || $running) {
@@ -99,6 +99,7 @@ class ParallelLint
                     );
                     $handle = $process->getResource();
                     $running[(int) $handle] = $handle;
+                    $runningFiles[(int) $handle] = $file;
                 }
             }
 
@@ -117,7 +118,8 @@ class ParallelLint
             }
 
             foreach ($running as $handle) {
-                unset($running[(int) $handle]);
+                $file = $runningFiles[(int) $handle];
+                unset($running[(int) $handle], $runningFiles[(int) $handle]);
 
                 // we know the process is finished, but we need to call this method
                 // to get the correct internal state
