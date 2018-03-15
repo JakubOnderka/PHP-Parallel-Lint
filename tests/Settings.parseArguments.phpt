@@ -22,7 +22,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->shortTag = false;
         $expectedSettings->aspTags = false;
         $expectedSettings->parallelJobs = 10;
-        $expectedSettings->extensions = array('php', 'phtml', 'php3', 'php4', 'php5');
+        $expectedSettings->extensions = array('php', 'phtml', 'php3', 'php4', 'php5', 'phpt');
         $expectedSettings->paths = array('.');
         $expectedSettings->excluded = array();
         $expectedSettings->colors = Settings::AUTODETECT;
@@ -52,7 +52,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->shortTag = false;
         $expectedSettings->aspTags = false;
         $expectedSettings->parallelJobs = 10;
-        $expectedSettings->extensions = array('php', 'phtml', 'php3', 'php4', 'php5');
+        $expectedSettings->extensions = array('php', 'phtml', 'php3', 'php4', 'php5', 'phpt');
         $expectedSettings->paths = array('.');
         $expectedSettings->excluded = array('vendor');
         $expectedSettings->colors = Settings::DISABLED;

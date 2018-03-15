@@ -24,7 +24,7 @@ Options:
     -s, --short     Set short_open_tag to On (default: Off).
     -a, -asp        Set asp_tags to On (default: Off).
     -e <ext>        Check only files with selected extensions separated by comma.
-                    (default: php,php3,php4,php5,phtml)
+                    (default: php,php3,php4,php5,phtml,phpt)
     --exclude       Exclude a file or directory. If you want exclude multiple items,
                     use multiple exclude parameters.
     -j <num>        Run <num> jobs in parallel (default: 10).
