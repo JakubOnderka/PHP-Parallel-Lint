@@ -30,6 +30,7 @@ For colored output install the suggested package `jakub-onderka/php-console-high
 - `--colors`        Force enable colors in console output.
 - `--no-colors`     Disable colors in console output.
 - `--no-progress`   Disable progress in console output.
+- `--checkstyle`    Output results as Checkstyle XML.
 - `--json`          Output results as JSON string (require PHP 5.4).
 - `--blame`         Try to show git blame for row with error.
 - `--git <git>`     Path to Git executable to show blame message (default: 'git').

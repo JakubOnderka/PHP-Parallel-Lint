@@ -104,19 +104,22 @@ class Manager
     protected function getDefaultOutput(Settings $settings)
     {
         $writer = new ConsoleWriter;
-        if ($settings->json) {
-            return new JsonOutput($writer);
-        } else {
-            if ($settings->colors === Settings::DISABLED) {
-                $output = new TextOutput($writer);
-            } else {
-                $output = new TextOutputColored($writer, $settings->colors);
-            }
-
-            $output->showProgress = $settings->showProgress;
-
-            return $output;
+        switch ($settings->format) {
+            case Settings::FORMAT_JSON:
+                return new JsonOutput($writer);
+            case Settings::FORMAT_CHECKSTYLE:
+                return new CheckstyleOutput($writer);
         }
+
+        if ($settings->colors === Settings::DISABLED) {
+            $output = new TextOutput($writer);
+        } else {
+            $output = new TextOutputColored($writer, $settings->colors);
+        }
+
+        $output->showProgress = $settings->showProgress;
+
+        return $output;
     }
 
     /**

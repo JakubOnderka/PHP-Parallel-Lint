@@ -59,7 +59,7 @@ class Result implements \JsonSerializable
     }
 
     /**
-     * @return array
+     * @return Error[]
      */
     public function getErrors()
     {

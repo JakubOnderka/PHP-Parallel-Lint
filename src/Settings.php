@@ -40,6 +40,10 @@ class Settings
     const DISABLED = 'DISABLED';
     const AUTODETECT = 'AUTODETECT';
 
+    const FORMAT_TEXT = 'text';
+    const FORMAT_JSON = 'json';
+    const FORMAT_CHECKSTYLE = 'checkstyle';
+
     /**
      * Path to PHP executable
      * @var string
@@ -95,10 +99,10 @@ class Settings
     public $showProgress = true;
 
     /**
-     * Output results as JSON string
-     * @var bool
+     * Output format (see FORMAT_* constants)
+     * @var string
      */
-    public $json = false;
+    public $format = self::FORMAT_TEXT;
 
     /**
      * Read files and folder to tests from standard input (blocking)
@@ -185,7 +189,11 @@ class Settings
                         break;
 
                     case '--json':
-                        $settings->json = true;
+                        $settings->format = self::FORMAT_JSON;
+                        break;
+
+                    case '--checkstyle':
+                        $settings->format = self::FORMAT_CHECKSTYLE;
                         break;
 
                     case '--git':

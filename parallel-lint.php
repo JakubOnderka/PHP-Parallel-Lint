@@ -32,6 +32,7 @@ Options:
     --no-colors     Disable colors in console output.
     --no-progress   Disable progress in console output.
     --json          Output results as JSON string.
+    --checkstyle    Output results as Checkstyle XML.
     --blame         Try to show git blame for row with error.
     --git <git>     Path to Git executable to show blame message (default: 'git').
     --stdin         Load files and folder to test from standard input.
@@ -115,7 +116,7 @@ try {
     die(FAILED);
 
 } catch (PhpParallelLint\Exception $e) {
-    if (isset($settings) && $settings->json) {
+    if (isset($settings) && $settings->format === PhpParallelLint\Settings::FORMAT_JSON) {
         echo json_encode($e);
     } else {
         echo $e->getMessage(), PHP_EOL;
