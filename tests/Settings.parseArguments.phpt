@@ -27,7 +27,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->excluded = array();
         $expectedSettings->colors = Settings::AUTODETECT;
         $expectedSettings->showProgress = true;
-        $expectedSettings->json = false;
+        $expectedSettings->format = Settings::FORMAT_TEXT;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
         Assert::equal($expectedSettings->shortTag, $settings->shortTag);
@@ -38,7 +38,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         Assert::equal($expectedSettings->excluded, $settings->excluded);
         Assert::equal($expectedSettings->colors, $settings->colors);
         Assert::equal($expectedSettings->showProgress, $settings->showProgress);
-        Assert::equal($expectedSettings->json, $settings->json);
+        Assert::equal($expectedSettings->format, $settings->format);
     }
 
     public function testMoreArguments()
@@ -57,7 +57,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->excluded = array('vendor');
         $expectedSettings->colors = Settings::DISABLED;
         $expectedSettings->showProgress = true;
-        $expectedSettings->json = false;
+        $expectedSettings->format = Settings::FORMAT_TEXT;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
         Assert::equal($expectedSettings->shortTag, $settings->shortTag);
@@ -68,7 +68,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         Assert::equal($expectedSettings->excluded, $settings->excluded);
         Assert::equal($expectedSettings->colors, $settings->colors);
         Assert::equal($expectedSettings->showProgress, $settings->showProgress);
-        Assert::equal($expectedSettings->json, $settings->json);
+        Assert::equal($expectedSettings->format, $settings->format);
     }
 
     public function testColorsForced()
@@ -93,6 +93,22 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->showProgress = false;
 
         Assert::equal($expectedSettings->colors, $settings->colors);
+    }
+
+    public function testJsonOutput()
+    {
+        $commandLine = './parallel-lint --json .';
+        $argv = explode(" ", $commandLine);
+        $settings = Settings::parseArguments($argv);
+        Assert::equal(Settings::FORMAT_JSON, $settings->format);
+    }
+
+    public function testCheckstyleOutput()
+    {
+        $commandLine = './parallel-lint --checkstyle .';
+        $argv = explode(" ", $commandLine);
+        $settings = Settings::parseArguments($argv);
+        Assert::equal(Settings::FORMAT_CHECKSTYLE, $settings->format);
     }
 }
 
