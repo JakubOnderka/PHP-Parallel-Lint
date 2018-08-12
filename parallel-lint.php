@@ -1,8 +1,8 @@
 <?php
 use JakubOnderka\PhpParallelLint;
 
-if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50303) {
-    echo "PHP Parallel Lint require PHP 5.3.3 or newer.", PHP_EOL;
+if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {
+    echo "PHP Parallel Lint require PHP 5.4.0 or newer.", PHP_EOL;
     die(255);
 }
 
@@ -31,7 +31,7 @@ Options:
     --colors        Enable colors in console output. (disables auto detection of color support)
     --no-colors     Disable colors in console output.
     --no-progress   Disable progress in console output.
-    --json          Output results as JSON string (require PHP 5.4).
+    --json          Output results as JSON string.
     --blame         Try to show git blame for row with error.
     --git <git>     Path to Git executable to show blame message (default: 'git').
     --stdin         Load files and folder to test from standard input.
@@ -91,10 +91,6 @@ if (!$autoloadFileFound) {
 
 try {
     $settings = PhpParallelLint\Settings::parseArguments($_SERVER['argv']);
-
-    if ($settings->json && PHP_VERSION_ID < 50400) {
-        throw new \Exception('JSON output require PHP version 5.4 and newer.');
-    }
 
     if ($settings->stdin) {
         $settings->addPaths(PhpParallelLint\Settings::getPathsFromStdIn());
