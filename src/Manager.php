@@ -65,6 +65,7 @@ class Manager
         $parallelLint = new ParallelLint($phpExecutable, $settings->parallelJobs);
         $parallelLint->setAspTagsEnabled($settings->aspTags);
         $parallelLint->setShortTagEnabled($settings->shortTag);
+        $parallelLint->setShowDeprecated($settings->showDeprecated);
 
         $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
             if ($status === ParallelLint::STATUS_OK) {

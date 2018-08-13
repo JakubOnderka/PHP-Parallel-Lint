@@ -58,6 +58,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->colors = Settings::DISABLED;
         $expectedSettings->showProgress = true;
         $expectedSettings->format = Settings::FORMAT_TEXT;
+        $expectedSettings->deprecated = false;
 
         Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
         Assert::equal($expectedSettings->shortTag, $settings->shortTag);
@@ -69,6 +70,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         Assert::equal($expectedSettings->colors, $settings->colors);
         Assert::equal($expectedSettings->showProgress, $settings->showProgress);
         Assert::equal($expectedSettings->format, $settings->format);
+        Assert::equal($expectedSettings->showDeprecated, $settings->showDeprecated);
     }
 
     public function testColorsForced()

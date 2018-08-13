@@ -92,6 +92,24 @@ class ParallelLintLintTest extends Tester\TestCase
         Assert::equal(1, count($result->getErrors()));
     }
 
+    public function testDeprecated()
+    {
+        $parallelLint = new ParallelLint($this->getPhpExecutable());
+        $result = $parallelLint->lint(array(__DIR__ . '/examples/example-05/Foo.php'));
+        Assert::equal(1, $result->getCheckedFilesCount());
+        Assert::equal(0, $result->getFilesWithSyntaxErrorCount());
+        Assert::false($result->hasSyntaxError());
+        Assert::equal(0, count($result->getErrors()));
+
+        $parallelLint = new ParallelLint($this->getPhpExecutable());
+        $parallelLint->setShowDeprecated(true);
+        $result = $parallelLint->lint(array(__DIR__ . '/examples/example-05/Foo.php'));
+        Assert::equal(1, $result->getCheckedFilesCount());
+        Assert::equal(1, $result->getFilesWithSyntaxErrorCount());
+        Assert::true($result->hasSyntaxError());
+        Assert::equal(1, count($result->getErrors()));
+    }
+
     public function testValidAndInvalidFiles()
     {
         $parallelLint = new ParallelLint($this->getPhpExecutable());
