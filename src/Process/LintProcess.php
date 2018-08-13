@@ -47,14 +47,14 @@ class LintProcess extends PhpProcess
     public function getSyntaxError()
     {
         if ($this->hasSyntaxError()) {
-            //Look for fatal errors first
+            // Look for fatal errors first
             foreach (explode("\n", $this->getOutput()) as $line) {
                 if ($this->containsFatalError($line)) {
                     return $line;
                 }
             }
 
-            //Look for parser errors second
+            // Look for parser errors second
             foreach (explode("\n", $this->getOutput()) as $line) {
                 if ($this->containsParserError($line)) {
                     return $line;
