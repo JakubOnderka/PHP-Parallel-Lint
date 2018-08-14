@@ -145,6 +145,11 @@ class Settings
         $arguments = new ArrayIterator(array_slice($arguments, 1));
         $settings = new self;
 
+        //use the currently invoked php as the default if possible
+        if (defined(PHP_BINARY)) {
+            $settings->phpExecutable = PHP_BINARY;
+        }
+
         foreach ($arguments as $argument) {
             if ($argument{0} !== '-') {
                 $settings->paths[] = $argument;
