@@ -5,9 +5,11 @@ namespace JakubOnderka\PhpParallelLint;
 class Application
 {
     const VERSION = '1.0.0';
-    const SUCCESS = 0;
-    const WITH_ERRORS = 1;
-    const FAILED = 255;
+
+    // Return codes
+    const SUCCESS = 0,
+        WITH_ERRORS = 1,
+        FAILED = 254; // Error code 255 is reserved for PHP itself
 
     /**
      * Run the application

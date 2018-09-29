@@ -32,7 +32,7 @@ either expressed or implied, of the FreeBSD Project.
 
 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {
     echo "PHP Parallel Lint require PHP 5.4.0 or newer.", PHP_EOL;
-    die(255);
+    die(254);
 }
 
 $autoloadLocations = [
@@ -56,7 +56,7 @@ if (!$loaded) {
         'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
         'php composer.phar install' . PHP_EOL
     );
-    exit(255);
+    exit(254);
 }
 
 $app = new JakubOnderka\PhpParallelLint\Application();
