@@ -45,7 +45,9 @@ class LintProcess extends PhpProcess
      */
     public function containsError()
     {
-        return $this->containsParserOrFatalError($this->getOutput());
+        return $this->containsParserError($this->getOutput()) ||
+            $this->containsFatalError($this->getOutput()) ||
+            $this->containsDeprecatedError($this->getOutput());
     }
 
     /**
@@ -55,6 +57,7 @@ class LintProcess extends PhpProcess
     public function getSyntaxError()
     {
         if ($this->containsError()) {
+            // Look for fatal errors first
             foreach (explode("\n", $this->getOutput()) as $line) {
                 if ($this->containsFatalError($line)) {
                     return $line;
@@ -64,6 +67,13 @@ class LintProcess extends PhpProcess
             // Look for parser errors second
             foreach (explode("\n", $this->getOutput()) as $line) {
                 if ($this->containsParserError($line)) {
+                    return $line;
+                }
+            }
+
+            // Look for deprecated errors third
+            foreach (explode("\n", $this->getOutput()) as $line) {
+                if ($this->containsDeprecatedError($line)) {
                     return $line;
                 }
             }
@@ -91,16 +101,7 @@ class LintProcess extends PhpProcess
     }
 
     /**
-     * @param $string
-     * @return bool
-     */
-    private function containsParserOrFatalError($string)
-    {
-        return $this->containsParserError($string) || $this->containsFatalError($string);
-    }
-
-    /**
-     * @param $string
+     * @param string $string
      * @return bool
      */
     private function containsParserError($string)
@@ -109,16 +110,18 @@ class LintProcess extends PhpProcess
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return bool
      */
     private function containsFatalError($string)
     {
-        return strpos($string, self::FATAL_ERROR) !== false ||
-            strpos($string, self::PARSE_ERROR) !== false ||
-            $this->containsDeprecatedError($string);
+        return strpos($string, self::FATAL_ERROR) !== false;
     }
 
+    /**
+     * @param string $string
+     * @return bool
+     */
     private function containsDeprecatedError($string)
     {
         if ($this->showDeprecatedErrors === false) {
