@@ -4,7 +4,8 @@
     "homepage": "https://github.com/JakubOnderka/PHP-Parallel-Lint",
     "license": "BSD-2-Clause",
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "nette/tester": "~1.3",
