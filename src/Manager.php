@@ -1,6 +1,8 @@
 <?php
 namespace JakubOnderka\PhpParallelLint;
 
+use JakubOnderka\PhpParallelLint\Error\Blame;
+use JakubOnderka\PhpParallelLint\Error\SyntaxError;
 use JakubOnderka\PhpParallelLint\Process\GitBlameProcess;
 use JakubOnderka\PhpParallelLint\Process\PhpExecutable;
 
