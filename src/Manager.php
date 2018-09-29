@@ -3,12 +3,13 @@ namespace JakubOnderka\PhpParallelLint;
 
 use JakubOnderka\PhpParallelLint\Error\Blame;
 use JakubOnderka\PhpParallelLint\Error\SyntaxError;
+use JakubOnderka\PhpParallelLint\Output;
 use JakubOnderka\PhpParallelLint\Process\GitBlameProcess;
 use JakubOnderka\PhpParallelLint\Process\PhpExecutable;
 
 class Manager
 {
-    /** @var Output */
+    /** @var Output\Output */
     protected $output;
 
     /**
@@ -64,31 +65,31 @@ class Manager
     }
 
     /**
-     * @param Output $output
+     * @param Output\Output $output
      */
-    public function setOutput(Output $output)
+    public function setOutput(Output\Output $output)
     {
         $this->output = $output;
     }
 
     /**
      * @param Settings $settings
-     * @return Output
+     * @return Output\Output
      */
     protected function getDefaultOutput(Settings $settings)
     {
-        $writer = new ConsoleWriter;
+        $writer = new Output\ConsoleWriter;
         switch ($settings->format) {
             case Settings::FORMAT_JSON:
-                return new JsonOutput($writer);
+                return new Output\JsonOutput($writer);
             case Settings::FORMAT_CHECKSTYLE:
-                return new CheckstyleOutput($writer);
+                return new Output\CheckstyleOutput($writer);
         }
 
         if ($settings->colors === Settings::DISABLED) {
-            $output = new TextOutput($writer);
+            $output = new Output\TextOutput($writer);
         } else {
-            $output = new TextOutputColored($writer, $settings->colors);
+            $output = new Output\TextOutputColored($writer, $settings->colors);
         }
 
         $output->showProgress = $settings->showProgress;
