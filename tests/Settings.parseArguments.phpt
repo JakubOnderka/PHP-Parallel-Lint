@@ -18,7 +18,6 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $settings = Settings::parseArguments($argv);
 
         $expectedSettings = new Settings();
-        $expectedSettings->phpExecutable = 'php';
         $expectedSettings->shortTag = false;
         $expectedSettings->aspTags = false;
         $expectedSettings->parallelJobs = 10;
@@ -29,7 +28,6 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->showProgress = true;
         $expectedSettings->format = Settings::FORMAT_TEXT;
 
-        Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
         Assert::equal($expectedSettings->shortTag, $settings->shortTag);
         Assert::equal($expectedSettings->aspTags, $settings->aspTags);
         Assert::equal($expectedSettings->parallelJobs, $settings->parallelJobs);
@@ -48,7 +46,6 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $settings = Settings::parseArguments($argv);
 
         $expectedSettings = new Settings();
-        $expectedSettings->phpExecutable = 'php';
         $expectedSettings->shortTag = false;
         $expectedSettings->aspTags = false;
         $expectedSettings->parallelJobs = 10;
@@ -60,7 +57,6 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->format = Settings::FORMAT_TEXT;
         $expectedSettings->deprecated = false;
 
-        Assert::equal($expectedSettings->phpExecutable, $settings->phpExecutable);
         Assert::equal($expectedSettings->shortTag, $settings->shortTag);
         Assert::equal($expectedSettings->aspTags, $settings->aspTags);
         Assert::equal($expectedSettings->parallelJobs, $settings->parallelJobs);
