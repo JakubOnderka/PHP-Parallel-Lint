@@ -26,5 +26,5 @@ install:
 
 test_script:
   - vendor\bin\tester tests -p php
-  - php parallel-lint.php --exclude vendor --exclude tests\examples --no-colors .
-  - php parallel-lint.php --exclude vendor --exclude tests\examples .
+  - php parallel-lint --exclude vendor --exclude tests\examples --no-colors .
+  - php parallel-lint --exclude vendor --exclude tests\examples .
