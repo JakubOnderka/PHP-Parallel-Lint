@@ -7,14 +7,21 @@ class LintProcess extends PhpProcess
 {
     const FATAL_ERROR = 'Fatal error';
     const PARSE_ERROR = 'Parse error';
+    const DEPRECATED_ERROR = 'Deprecated:';
+
+    /**
+     * @var bool
+     */
+    private $showDeprecatedErrors;
 
     /**
      * @param PhpExecutable $phpExecutable
      * @param string $fileToCheck Path to file to check
      * @param bool $aspTags
      * @param bool $shortTag
+     * @param bool $deprecated
      */
-    public function __construct(PhpExecutable $phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false)
+    public function __construct(PhpExecutable $phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false, $deprecated = false)
     {
         if (empty($fileToCheck)) {
             throw new \InvalidArgumentException("File to check must be set.");
@@ -29,13 +36,14 @@ class LintProcess extends PhpProcess
             escapeshellarg($fileToCheck),
         );
 
+        $this->showDeprecatedErrors = $deprecated;
         parent::__construct($phpExecutable, $parameters);
     }
 
     /**
      * @return bool
      */
-    public function hasSyntaxError()
+    public function containsError()
     {
         return $this->containsParserOrFatalError($this->getOutput());
     }
@@ -46,8 +54,7 @@ class LintProcess extends PhpProcess
      */
     public function getSyntaxError()
     {
-        if ($this->hasSyntaxError()) {
-            // Look for fatal errors first
+        if ($this->containsError()) {
             foreach (explode("\n", $this->getOutput()) as $line) {
                 if ($this->containsFatalError($line)) {
                     return $line;
@@ -107,6 +114,17 @@ class LintProcess extends PhpProcess
      */
     private function containsFatalError($string)
     {
-        return strpos($string, self::FATAL_ERROR) !== false;
+        return strpos($string, self::FATAL_ERROR) !== false ||
+            strpos($string, self::PARSE_ERROR) !== false ||
+            $this->containsDeprecatedError($string);
+    }
+
+    private function containsDeprecatedError($string)
+    {
+        if ($this->showDeprecatedErrors === false) {
+            return false;
+        }
+
+        return strpos($string, self::DEPRECATED_ERROR) !== false;
     }
 }

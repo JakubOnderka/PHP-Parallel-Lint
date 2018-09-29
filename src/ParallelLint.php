@@ -56,6 +56,9 @@ class ParallelLint
     /** @var callable */
     private $processCallback;
 
+    /** @var bool */
+    private $showDeprecated = false;
+
     public function __construct(PhpExecutable $phpExecutable, $parallelJobs = 10)
     {
         $this->phpExecutable = $phpExecutable;
@@ -95,7 +98,8 @@ class ParallelLint
                         $this->phpExecutable,
                         $file,
                         $this->aspTagsEnabled,
-                        $this->shortTagEnabled
+                        $this->shortTagEnabled,
+                        $this->showDeprecated
                     );
                 }
             }
@@ -115,14 +119,15 @@ class ParallelLint
                         $skippedFiles[] = $file;
                         $processCallback(self::STATUS_SKIP, $file);
 
+                    } else if ($process->containsError()) {
+                        $checkedFiles[] = $file;
+                        $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                        $processCallback(self::STATUS_ERROR, $file);
+
                     } else if ($process->isSuccess()) {
                         $checkedFiles[] = $file;
                         $processCallback(self::STATUS_OK, $file);
 
-                    } else if ($process->hasSyntaxError()) {
-                        $checkedFiles[] = $file;
-                        $errors[] = new SyntaxError($file, $process->getSyntaxError());
-                        $processCallback(self::STATUS_ERROR, $file);
 
                     } else {
                         $errors[] = new Error($file, $process->getOutput());
@@ -153,7 +158,7 @@ class ParallelLint
                     $checkedFiles[] = $file;
                     $processCallback(self::STATUS_OK, $file);
 
-                } else if ($process->hasSyntaxError()) {
+                } else if ($process->containsError()) {
                     $checkedFiles[] = $file;
                     $errors[] = new SyntaxError($file, $process->getSyntaxError());
                     $processCallback(self::STATUS_ERROR, $file);
@@ -261,6 +266,25 @@ class ParallelLint
     public function setShortTagEnabled($shortTagEnabled)
     {
         $this->shortTagEnabled = $shortTagEnabled;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isShowDeprecated()
+    {
+        return $this->showDeprecated;
+    }
+
+    /**
+     * @param $showDeprecated
+     * @return ParallelLint
+     */
+    public function setShowDeprecated($showDeprecated)
+    {
+        $this->showDeprecated = $showDeprecated;
 
         return $this;
     }
