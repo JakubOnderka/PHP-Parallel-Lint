@@ -7,8 +7,8 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use JakubOnderka\PhpParallelLint\Manager;
-use JakubOnderka\PhpParallelLint\NullWriter;
 use JakubOnderka\PhpParallelLint\Settings;
+use JakubOnderka\PhpParallelLint\Output\NullWriter;
 use JakubOnderka\PhpParallelLint\Output\TextOutput;
 use Tester\Assert;
 
