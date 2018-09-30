@@ -9,15 +9,17 @@ class GitBlameProcess extends Process
      * @param string $gitExecutable
      * @param string $file
      * @param int $line
+     * @throws RunTimeException
      */
     public function __construct($gitExecutable, $file, $line)
     {
-        $cmd = escapeshellcmd($gitExecutable) . " blame -p -L $line,+1 " . escapeshellarg($file);
-        parent::__construct($cmd);
+        $arguments = array('blame', '-p', '-L', "$line,+1", $file);
+        parent::__construct($gitExecutable, $arguments);
     }
 
     /**
      * @return bool
+     * @throws RunTimeException
      */
     public function isSuccess()
     {
@@ -106,10 +108,11 @@ class GitBlameProcess extends Process
     /**
      * @param string $gitExecutable
      * @return bool
+     * @throws RunTimeException
      */
     public static function gitExists($gitExecutable)
     {
-        $process = new Process(escapeshellcmd($gitExecutable) . ' --version');
+        $process = new Process($gitExecutable, array('--version'));
         $process->waitForFinish();
         return $process->getStatusCode() === 0;
     }
@@ -120,6 +123,7 @@ class GitBlameProcess extends Process
      * @param int $time
      * @param string $zone
      * @return \DateTime
+     * @throws \Exception
      */
     protected function getDateTime($time, $zone)
     {

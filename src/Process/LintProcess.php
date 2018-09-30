@@ -20,6 +20,7 @@ class LintProcess extends PhpProcess
      * @param bool $aspTags
      * @param bool $shortTag
      * @param bool $deprecated
+     * @throws RunTimeException
      */
     public function __construct(PhpExecutable $phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false, $deprecated = false)
     {
@@ -33,7 +34,7 @@ class LintProcess extends PhpProcess
             '-d error_reporting=E_ALL',
             '-n',
             '-l',
-            escapeshellarg($fileToCheck),
+            $fileToCheck,
         );
 
         $this->showDeprecatedErrors = $deprecated;
@@ -42,6 +43,7 @@ class LintProcess extends PhpProcess
 
     /**
      * @return bool
+     * @throws
      */
     public function containsError()
     {
@@ -86,6 +88,7 @@ class LintProcess extends PhpProcess
 
     /**
      * @return bool
+     * @throws RunTimeException
      */
     public function isFail()
     {
@@ -94,6 +97,7 @@ class LintProcess extends PhpProcess
 
     /**
      * @return bool
+     * @throws RunTimeException
      */
     public function isSuccess()
     {

@@ -30,11 +30,13 @@ class SkipLintProcess extends PhpProcess
 
         $script = str_replace('<?php', '', $script);
 
-        $parameters = array('-d display_errors=stderr', '-r ' . escapeshellarg($script));
-
+        $parameters = array('-d', 'display_errors=stderr', '-r', $script);
         parent::__construct($phpExecutable, $parameters, implode(PHP_EOL, $filesToCheck));
     }
 
+    /**
+     * @throws RunTimeException
+     */
     public function getChunk()
     {
         if (!$this->isFinished()) {
