@@ -32,11 +32,12 @@ class Process
     private $statusCode;
 
     /**
-     * @param string $cmdLine
+     * @param string $executable
+     * @param string[] $arguments
      * @param string $stdInInput
      * @throws RunTimeException
      */
-    public function __construct($cmdLine, $stdInInput = null)
+    public function __construct($executable, array $arguments = array(), $stdInInput = null)
     {
         $descriptors = array(
             self::STDIN  => array('pipe', self::READ),
@@ -44,6 +45,7 @@ class Process
             self::STDERR => array('pipe', self::WRITE),
         );
 
+        $cmdLine = $executable . ' ' . implode(' ', array_map('escapeshellarg', $arguments));
         $this->process = proc_open($cmdLine, $descriptors, $pipes, null, null, array('bypass_shell' => true));
 
         if ($this->process === false || $this->process === null) {
@@ -142,6 +144,7 @@ class Process
 
     /**
      * @return bool
+     * @throws RunTimeException
      */
     public function isFail()
     {

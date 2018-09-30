@@ -78,7 +78,7 @@ class PhpExecutable
 echo 'PHP;', PHP_VERSION_ID, ';', defined('HPHP_VERSION') ? HPHP_VERSION : null;
 PHP;
 
-        $process = new Process(escapeshellarg($phpExecutable) . ' -n -r ' . escapeshellarg($codeToExecute));
+        $process = new Process($phpExecutable, array('-n', '-r', $codeToExecute));
         $process->waitForFinish();
 
         try {
@@ -90,7 +90,7 @@ PHP;
 
         } catch (RunTimeException $e) {
             // Try HHVM type
-            $process = new Process(escapeshellarg($phpExecutable) . ' --php -r ' . escapeshellarg($codeToExecute));
+            $process = new Process($phpExecutable, array('--php', '-r', $codeToExecute));
             $process->waitForFinish();
 
             if ($process->getStatusCode() !== 0 && $process->getStatusCode() !== 255) {
