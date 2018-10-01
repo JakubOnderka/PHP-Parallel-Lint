@@ -4,13 +4,13 @@ This tool checks syntax of PHP files faster than serial check with a fancier out
 
 Running parallel jobs in PHP is inspired by Nette framework tests.
 
-## Install
+## Installation
 
 Just run the following command to install it:
 
     composer require --dev jakub-onderka/php-parallel-lint
 
-For colored output install the suggested package `jakub-onderka/php-console-highlighter`:
+For colored output also install the suggested package `jakub-onderka/php-console-highlighter`:
 
     composer require --dev jakub-onderka/php-console-highlighter
 
@@ -44,27 +44,7 @@ For colored output install the suggested package `jakub-onderka/php-console-high
 
 For run from command line:
 
-
-    ./bin/parallel-lint --exclude app --exclude vendor .
-
-
-or setting for ANT:
-
-```xml
-<condition property="parallel-lint" value="${basedir}/bin/parallel-lint.bat" else="${basedir}/bin/parallel-lint">
-    <os family="windows"/>
-</condition>
-
-<target name="parallel-lint" description="Run PHP parallel lint">
-    <exec executable="${parallel-lint}" failonerror="true">
-        <arg line="--exclude" />
-        <arg path="${basedir}/app/" />
-        <arg line="--exclude" />
-        <arg path="${basedir}/vendor/" />
-        <arg path="${basedir}" />
-    </exec>
-</target>
-```
+    vendor/bin/parallel-lint --exclude app --exclude vendor .
 
 ## Create Phar package
 
