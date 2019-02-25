@@ -12,6 +12,7 @@ class Manager
     /**
      * @param null|Settings $settings
      * @return Result
+     * @throws Exception
      * @throws \Exception
      */
     public function run(Settings $settings = null)

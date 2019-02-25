@@ -31,8 +31,8 @@ either expressed or implied, of the FreeBSD Project.
  */
 
 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {
-    echo "PHP Parallel Lint require PHP 5.4.0 or newer.", PHP_EOL;
-    die(254);
+    fwrite(STDERR, "PHP Parallel Lint require PHP 5.4.0 or newer." . PHP_EOL);
+    exit(254);
 }
 
 $autoloadLocations = [
@@ -60,4 +60,4 @@ if (!$loaded) {
 }
 
 $app = new JakubOnderka\PhpParallelLint\Application();
-$app->run();
+exit($app->run());
