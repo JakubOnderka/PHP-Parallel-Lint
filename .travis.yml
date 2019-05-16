@@ -17,7 +17,7 @@ cache:
     - $HOME/.composer/cache
 
 install:
-  - composer install --no-interaction --prefer-source
+  - composer install --no-interaction
 
 script:
   - ./vendor/bin/tester -p php tests
