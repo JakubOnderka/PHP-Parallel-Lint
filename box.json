@@ -4,8 +4,7 @@
     "compactors": [
         "Herrera\\Box\\Compactor\\Php"
     ],
-    "extract": false,
-    "main": "parallel-lint.php",
+    "main": "parallel-lint",
     "files": [
         "LICENSE"
     ],
@@ -23,6 +22,5 @@
             "in": "bin"
         }
     ],
-    "stub": true,
-    "web": false
+    "stub": true
 }
