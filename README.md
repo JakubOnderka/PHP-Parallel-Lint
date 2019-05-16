@@ -48,16 +48,16 @@ For run from command line:
 
 ## Create Phar package
 
-PHP Parallel Lint supports [Box app](https://box-project.github.io/box2/) for creating Phar package. First, install box app:
+PHP Parallel Lint supports [Box app](https://github.com/humbug/box) for creating Phar package. First, install box app:
 
 
-    curl -LSs https://box-project.github.io/box2/installer.php | php
+    curl -LSs https://github.com/humbug/box/releases/download/3.7.0/box.phar -o box && chmod +x box
 
 
 and then run this command in parallel lint folder, which creates `parallel-lint.phar` file.
 
 
-    box build
+    ./box compile
 
 
 ------
