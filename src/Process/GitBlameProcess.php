@@ -1,4 +1,5 @@
 <?php
+
 namespace JakubOnderka\PhpParallelLint\Process;
 
 use JakubOnderka\PhpParallelLint\RunTimeException;
@@ -9,11 +10,12 @@ class GitBlameProcess extends Process
      * @param string $gitExecutable
      * @param string $file
      * @param int $line
+     *
      * @throws RunTimeException
      */
     public function __construct($gitExecutable, $file, $line)
     {
-        $arguments = array('blame', '-p', '-L', "$line,+1", $file);
+        $arguments = ['blame', '-p', '-L', "$line,+1", $file];
         parent::__construct($gitExecutable, $arguments);
     }
 
@@ -38,6 +40,7 @@ class GitBlameProcess extends Process
 
         $output = $this->getOutput();
         preg_match('~^author (.*)~m', $output, $matches);
+
         return $matches[1];
     }
 
@@ -53,6 +56,7 @@ class GitBlameProcess extends Process
 
         $output = $this->getOutput();
         preg_match('~^author-mail <(.*)>~m', $output, $matches);
+
         return $matches[1];
     }
 
@@ -102,18 +106,21 @@ class GitBlameProcess extends Process
 
         $output = $this->getOutput();
         preg_match('~^summary (.*)~m', $output, $matches);
+
         return $matches[1];
     }
 
     /**
      * @param string $gitExecutable
+     *
      * @return bool
      * @throws RunTimeException
      */
     public static function gitExists($gitExecutable)
     {
-        $process = new Process($gitExecutable, array('--version'));
+        $process = new Process($gitExecutable, ['--version']);
         $process->waitForFinish();
+
         return $process->getStatusCode() === 0;
     }
 
@@ -122,6 +129,7 @@ class GitBlameProcess extends Process
      *
      * @param int $time
      * @param string $zone
+     *
      * @return \DateTime
      * @throws \Exception
      */
@@ -142,6 +150,6 @@ class GitBlameProcess extends Process
             $datetime->sub($interval);
         }
 
-        return new \DateTime($datetime->format('Y-m-d\TH:i:s') . $zone, $utcTimeZone);
+        return new \DateTime($datetime->format('Y-m-d\TH:i:s').$zone, $utcTimeZone);
     }
 }

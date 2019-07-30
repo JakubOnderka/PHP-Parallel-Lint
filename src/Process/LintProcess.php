@@ -1,4 +1,5 @@
 <?php
+
 namespace JakubOnderka\PhpParallelLint\Process;
 
 use JakubOnderka\PhpParallelLint\RunTimeException;
@@ -20,6 +21,7 @@ class LintProcess extends PhpProcess
      * @param bool $aspTags
      * @param bool $shortTag
      * @param bool $deprecated
+     *
      * @throws RunTimeException
      */
     public function __construct(PhpExecutable $phpExecutable, $fileToCheck, $aspTags = false, $shortTag = false, $deprecated = false)
@@ -28,14 +30,14 @@ class LintProcess extends PhpProcess
             throw new \InvalidArgumentException("File to check must be set.");
         }
 
-        $parameters = array(
-            '-d asp_tags=' . ($aspTags ? 'On' : 'Off'),
-            '-d short_open_tag=' . ($shortTag ? 'On' : 'Off'),
+        $parameters = [
+            '-d asp_tags='.($aspTags ? 'On' : 'Off'),
+            '-d short_open_tag='.($shortTag ? 'On' : 'Off'),
             '-d error_reporting=E_ALL',
             '-n',
             '-l',
             $fileToCheck,
-        );
+        ];
 
         $this->showDeprecatedErrors = $deprecated;
         parent::__construct($phpExecutable, $parameters);
@@ -106,6 +108,7 @@ class LintProcess extends PhpProcess
 
     /**
      * @param string $string
+     *
      * @return bool
      */
     private function containsParserError($string)
@@ -115,6 +118,7 @@ class LintProcess extends PhpProcess
 
     /**
      * @param string $string
+     *
      * @return bool
      */
     private function containsFatalError($string)
@@ -124,6 +128,7 @@ class LintProcess extends PhpProcess
 
     /**
      * @param string $string
+     *
      * @return bool
      */
     private function containsDeprecatedError($string)

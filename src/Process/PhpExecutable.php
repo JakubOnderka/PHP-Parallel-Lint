@@ -11,6 +11,7 @@ class PhpExecutable
 
     /**
      * Version as PHP_VERSION_ID constant
+     *
      * @var int
      */
     private $versionId;
@@ -69,6 +70,7 @@ class PhpExecutable
 
     /**
      * @param string $phpExecutable
+     *
      * @return PhpExecutable
      * @throws \Exception
      */
@@ -78,7 +80,7 @@ class PhpExecutable
 echo 'PHP;', PHP_VERSION_ID, ';', defined('HPHP_VERSION') ? HPHP_VERSION : null;
 PHP;
 
-        $process = new Process($phpExecutable, array('-n', '-r', $codeToExecute));
+        $process = new Process($phpExecutable, ['-n', '-r', $codeToExecute]);
         $process->waitForFinish();
 
         try {
@@ -90,7 +92,7 @@ PHP;
 
         } catch (RunTimeException $e) {
             // Try HHVM type
-            $process = new Process($phpExecutable, array('--php', '-r', $codeToExecute));
+            $process = new Process($phpExecutable, ['--php', '-r', $codeToExecute]);
             $process->waitForFinish();
 
             if ($process->getStatusCode() !== 0 && $process->getStatusCode() !== 255) {
@@ -105,6 +107,7 @@ PHP;
      * @param string $phpExecutable
      * @param string $output
      * @param bool $isHhvmType
+     *
      * @return PhpExecutable
      * @throws RunTimeException
      */

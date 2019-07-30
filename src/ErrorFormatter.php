@@ -1,4 +1,5 @@
 <?php
+
 namespace JakubOnderka\PhpParallelLint;
 
 use JakubOnderka\PhpConsoleColor\ConsoleColor;
@@ -24,24 +25,24 @@ class ErrorFormatter
 
     /**
      * @param Error $error
+     *
      * @return string
      */
     public function format(Error $error)
     {
         if ($error instanceof SyntaxError) {
             return $this->formatSyntaxErrorMessage($error);
-        } else {
-            if ($error->getMessage()) {
+        } else if ($error->getMessage()) {
                 return $error->getMessage();
-            } else {
-                return "Unknown error for file '{$error->getFilePath()}'.";
-            }
+        } else {
+            return "Unknown error for file '{$error->getFilePath()}'.";
         }
     }
 
     /**
      * @param SyntaxError $error
      * @param bool $withCodeSnipped
+     *
      * @return string
      */
     public function formatSyntaxErrorMessage(SyntaxError $error, $withCodeSnipped = true)
@@ -50,7 +51,7 @@ class ErrorFormatter
 
         if ($error->getLine()) {
             $onLine = $error->getLine();
-            $string .= ":$onLine" . PHP_EOL;
+            $string .= ":$onLine".PHP_EOL;
 
             if ($withCodeSnipped) {
                 if ($this->useColors !== Settings::DISABLED) {
@@ -67,7 +68,7 @@ class ErrorFormatter
             $blame = $error->getBlame();
             $shortCommitHash = substr($blame->commitHash, 0, 8);
             $dateTime = $blame->datetime->format('c');
-            $string .= PHP_EOL . "Blame {$blame->name} <{$blame->email}>, commit '$shortCommitHash' from $dateTime";
+            $string .= PHP_EOL."Blame {$blame->name} <{$blame->email}>, commit '$shortCommitHash' from $dateTime";
         }
 
         return $string;
@@ -78,6 +79,7 @@ class ErrorFormatter
      * @param int $lineNumber
      * @param int $linesBefore
      * @param int $linesAfter
+     *
      * @return string
      */
     protected function getCodeSnippet($filePath, $lineNumber, $linesBefore = 2, $linesAfter = 2)
@@ -95,7 +97,7 @@ class ErrorFormatter
         $snippet = '';
         foreach ($lines as $i => $line) {
             $snippet .= ($lineNumber === $i + 1 ? '  > ' : '    ');
-            $snippet .= str_pad($i + 1, $lineStrlen, ' ', STR_PAD_LEFT) . '| ' . rtrim($line) . PHP_EOL;
+            $snippet .= str_pad($i + 1, $lineStrlen, ' ', STR_PAD_LEFT).'| '.rtrim($line).PHP_EOL;
         }
 
         return $snippet;
@@ -106,6 +108,7 @@ class ErrorFormatter
      * @param int $lineNumber
      * @param int $linesBefore
      * @param int $linesAfter
+     *
      * @return string
      */
     protected function getColoredCodeSnippet($filePath, $lineNumber, $linesBefore = 2, $linesAfter = 2)
@@ -122,6 +125,7 @@ class ErrorFormatter
         $highlighter = new Highlighter($colors);
 
         $fileContent = file_get_contents($filePath);
+
         return $highlighter->getCodeSnippet($fileContent, $lineNumber, $linesBefore, $linesAfter);
     }
 }

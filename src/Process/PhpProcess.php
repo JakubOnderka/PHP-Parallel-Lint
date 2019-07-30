@@ -8,9 +8,10 @@ class PhpProcess extends Process
      * @param PhpExecutable $phpExecutable
      * @param array $parameters
      * @param string|null $stdIn
+     *
      * @throws \JakubOnderka\PhpParallelLint\RunTimeException
      */
-    public function __construct(PhpExecutable $phpExecutable, array $parameters = array(), $stdIn = null)
+    public function __construct(PhpExecutable $phpExecutable, array $parameters = [], $stdIn = null)
     {
         $constructedParameters = $this->constructParameters($parameters, $phpExecutable->isIsHhvmType());
         parent::__construct($phpExecutable->getPath(), $constructedParameters, $stdIn);
@@ -19,12 +20,13 @@ class PhpProcess extends Process
     /**
      * @param array $parameters
      * @param bool $isHhvm
+     *
      * @return array
      */
     private function constructParameters(array $parameters, $isHhvm)
     {
         if ($isHhvm) {
-            $parameters = array_merge(array('-php'), $parameters);
+            $parameters = array_merge(['-php'], $parameters);
         }
 
         return $parameters;

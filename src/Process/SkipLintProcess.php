@@ -1,4 +1,5 @@
 <?php
+
 namespace JakubOnderka\PhpParallelLint\Process;
 
 use JakubOnderka\PhpParallelLint\RunTimeException;
@@ -6,7 +7,7 @@ use JakubOnderka\PhpParallelLint\RunTimeException;
 class SkipLintProcess extends PhpProcess
 {
     /** @var array */
-    private $skipped = array();
+    private $skipped = [];
 
     /** @var bool */
     private $done = false;
@@ -17,11 +18,12 @@ class SkipLintProcess extends PhpProcess
     /**
      * @param PhpExecutable $phpExecutable
      * @param array $filesToCheck
+     *
      * @throws RunTimeException
      */
     public function __construct(PhpExecutable $phpExecutable, array $filesToCheck)
     {
-        $scriptPath = __DIR__ . '/../../bin/skip-linting.php';
+        $scriptPath = __DIR__.'/../../bin/skip-linting.php';
         $script = file_get_contents($scriptPath);
 
         if (!$script) {
@@ -30,7 +32,7 @@ class SkipLintProcess extends PhpProcess
 
         $script = str_replace('<?php', '', $script);
 
-        $parameters = array('-d', 'display_errors=stderr', '-r', $script);
+        $parameters = ['-d', 'display_errors=stderr', '-r', $script];
         parent::__construct($phpExecutable, $parameters, implode(PHP_EOL, $filesToCheck));
     }
 
@@ -62,6 +64,7 @@ class SkipLintProcess extends PhpProcess
 
     /**
      * @param string $file
+     *
      * @return bool|null
      */
     public function isSkipped($file)
@@ -79,7 +82,7 @@ class SkipLintProcess extends PhpProcess
     private function processLines($content)
     {
         if (!empty($content)) {
-            $lines = explode(PHP_EOL, $this->endLastChunk . $content);
+            $lines = explode(PHP_EOL, $this->endLastChunk.$content);
             $this->endLastChunk = array_pop($lines);
             foreach ($lines as $line) {
                 $parts = explode(';', $line);

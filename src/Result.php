@@ -1,4 +1,5 @@
 <?php
+
 namespace JakubOnderka\PhpParallelLint;
 
 class Result implements \JsonSerializable
@@ -50,7 +51,7 @@ class Result implements \JsonSerializable
      */
     public function getFilesWithFail()
     {
-        $filesWithFail = array();
+        $filesWithFail = [];
         foreach ($this->errors as $error) {
             if (!$error instanceof SyntaxError) {
                 $filesWithFail[] = $error->getFilePath();
@@ -113,7 +114,7 @@ class Result implements \JsonSerializable
      */
     public function getFilesWithSyntaxError()
     {
-        $filesWithSyntaxError = array();
+        $filesWithSyntaxError = [];
         foreach ($this->errors as $error) {
             if ($error instanceof SyntaxError) {
                 $filesWithSyntaxError[] = $error->getFilePath();
@@ -150,19 +151,18 @@ class Result implements \JsonSerializable
     /**
      * (PHP 5 &gt;= 5.4.0)<br/>
      * Specify data which should be serialized to JSON
+     *
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
      */
     function jsonSerialize()
     {
-        return array(
+        return [
             'checkedFiles' => $this->getCheckedFiles(),
             'filesWithSyntaxError' => $this->getFilesWithSyntaxError(),
             'skippedFiles' => $this->getSkippedFiles(),
             'errors' => $this->getErrors(),
-        );
+        ];
     }
-
-
 }

@@ -13,22 +13,26 @@ class Application
 
     /**
      * Run the application
+     *
      * @return int Return code
      */
     public function run()
     {
         if (in_array('proc_open', explode(',', ini_get('disable_functions')))) {
             echo "Function 'proc_open' is required, but it is disabled by disable_functions setting.", PHP_EOL;
+
             return self::FAILED;
         }
 
         if (in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) {
             $this->showUsage();
+
             return self::SUCCESS;
         }
 
         if (in_array('-V', $_SERVER['argv']) || in_array('--version', $_SERVER['argv'])) {
             $this->showVersion();
+
             return self::SUCCESS;
         }
 
@@ -39,6 +43,7 @@ class Application
             }
             if (empty($settings->paths)) {
                 $this->showUsage();
+
                 return self::FAILED;
             }
             $manager = new Manager;
@@ -52,6 +57,7 @@ class Application
         } catch (InvalidArgumentException $e) {
             echo "Invalid option {$e->getArgument()}", PHP_EOL, PHP_EOL;
             $this->showOptions();
+
             return self::FAILED;
 
         } catch (Exception $e) {
@@ -60,10 +66,12 @@ class Application
             } else {
                 echo $e->getMessage(), PHP_EOL;
             }
+
             return self::FAILED;
 
         } catch (\Exception $e) {
             echo $e->getMessage(), PHP_EOL;
+
             return self::FAILED;
         }
     }
@@ -103,7 +111,7 @@ HELP;
      */
     private function showVersion()
     {
-        echo 'PHP Parallel Lint version ' . self::VERSION.PHP_EOL;
+        echo 'PHP Parallel Lint version '.self::VERSION.PHP_EOL;
     }
 
     /**

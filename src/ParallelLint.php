@@ -1,4 +1,5 @@
 <?php
+
 namespace JakubOnderka\PhpParallelLint;
 
 use JakubOnderka\PhpParallelLint\Process\LintProcess;
@@ -38,6 +39,7 @@ class ParallelLint
 
     /**
      * @param array $files
+     *
      * @return Result
      * @throws \Exception
      */
@@ -54,8 +56,8 @@ class ParallelLint
          * @var LintProcess[] $running
          * @var LintProcess[] $waiting
          */
-        $errors = $running = $waiting = array();
-        $skippedFiles = $checkedFiles = array();
+        $errors = $running = $waiting = [];
+        $skippedFiles = $checkedFiles = [];
 
         while ($files || $running) {
             for ($i = count($running); $files && $i < $this->parallelJobs; $i++) {
@@ -98,7 +100,6 @@ class ParallelLint
                     } else if ($process->isSuccess()) {
                         $checkedFiles[] = $file;
                         $processCallback(self::STATUS_OK, $file);
-
 
                     } else {
                         $errors[] = new Error($file, $process->getOutput());
@@ -156,6 +157,7 @@ class ParallelLint
 
     /**
      * @param int $parallelJobs
+     *
      * @return ParallelLint
      */
     public function setParallelJobs($parallelJobs)
@@ -175,6 +177,7 @@ class ParallelLint
 
     /**
      * @param string $phpExecutable
+     *
      * @return ParallelLint
      */
     public function setPhpExecutable($phpExecutable)
@@ -194,6 +197,7 @@ class ParallelLint
 
     /**
      * @param callable $processCallback
+     *
      * @return ParallelLint
      */
     public function setProcessCallback($processCallback)
@@ -213,6 +217,7 @@ class ParallelLint
 
     /**
      * @param boolean $aspTagsEnabled
+     *
      * @return ParallelLint
      */
     public function setAspTagsEnabled($aspTagsEnabled)
@@ -232,6 +237,7 @@ class ParallelLint
 
     /**
      * @param boolean $shortTagEnabled
+     *
      * @return ParallelLint
      */
     public function setShortTagEnabled($shortTagEnabled)
@@ -251,6 +257,7 @@ class ParallelLint
 
     /**
      * @param $showDeprecated
+     *
      * @return ParallelLint
      */
     public function setShowDeprecated($showDeprecated)
