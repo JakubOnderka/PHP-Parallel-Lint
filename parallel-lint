@@ -38,6 +38,7 @@ if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {
 $autoloadLocations = [
     getcwd() . '/vendor/autoload.php',
     getcwd() . '/../../autoload.php',
+    __DIR__ . '/vendor/autoload.php',
     __DIR__ . '/../vendor/autoload.php',
     __DIR__ . '/../../../autoload.php',
 ];
