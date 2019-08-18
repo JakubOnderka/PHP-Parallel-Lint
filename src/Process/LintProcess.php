@@ -80,7 +80,7 @@ class LintProcess extends PhpProcess
                 }
             }
 
-            throw new RunTimeException("The output '{$this->getOutput()}' does not contains Parse or Syntax error");
+            throw new RunTimeException("The output '{$this->getOutput()}' does not contain Parse or Syntax errors");
         }
 
         return false;

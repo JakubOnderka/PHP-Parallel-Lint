@@ -33,7 +33,7 @@ class GitBlameProcess extends Process
     public function getAuthor()
     {
         if (!$this->isSuccess()) {
-            throw new RunTimeException("Author can be taken only for success process output.");
+            throw new RunTimeException("Author can only be retrieved for successful process output.");
         }
 
         $output = $this->getOutput();
@@ -48,7 +48,7 @@ class GitBlameProcess extends Process
     public function getAuthorEmail()
     {
         if (!$this->isSuccess()) {
-            throw new RunTimeException("Author e-mail can be taken only for success process output.");
+            throw new RunTimeException("Author e-mail can only be retrieved for successful process output.");
         }
 
         $output = $this->getOutput();
@@ -63,7 +63,7 @@ class GitBlameProcess extends Process
     public function getAuthorTime()
     {
         if (!$this->isSuccess()) {
-            throw new RunTimeException("Author time can be taken only for success process output.");
+            throw new RunTimeException("Author time can only be retrieved for successful process output.");
         }
 
         $output = $this->getOutput();
@@ -84,7 +84,7 @@ class GitBlameProcess extends Process
     public function getCommitHash()
     {
         if (!$this->isSuccess()) {
-            throw new RunTimeException("Commit hash can be taken only for success process output.");
+            throw new RunTimeException("Commit hash can only be retrieved for successful process output.");
         }
 
         return substr($this->getOutput(), 0, strpos($this->getOutput(), ' '));
@@ -97,7 +97,7 @@ class GitBlameProcess extends Process
     public function getSummary()
     {
         if (!$this->isSuccess()) {
-            throw new RunTimeException("Commit summary can be taken only for success process output.");
+            throw new RunTimeException("Commit summary can only be retrieved for successful process output.");
         }
 
         $output = $this->getOutput();

@@ -119,7 +119,7 @@ class ParallelLint
             foreach ($waiting as $file => $process) {
                 $skipStatus = $skipLintProcess->isSkipped($file);
                 if ($skipStatus === null) {
-                    throw new \Exception("File $file has empty skip status. Please contact PHP Parallel Lint author.");
+                    throw new \Exception("File $file has empty skip status. Please contact the author of PHP Parallel Lint.");
 
                 } else if ($skipStatus === true) {
                     $skippedFiles[] = $file;

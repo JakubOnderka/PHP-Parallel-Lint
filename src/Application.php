@@ -18,7 +18,7 @@ class Application
     public function run()
     {
         if (in_array('proc_open', explode(',', ini_get('disable_functions')))) {
-            echo "Function 'proc_open' is required, but it is disabled by disable_functions setting.", PHP_EOL;
+            echo "Function 'proc_open' is required, but it is disabled by the 'disable_functions' ini setting.", PHP_EOL;
             return self::FAILED;
         }
 
