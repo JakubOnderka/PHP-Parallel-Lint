@@ -108,6 +108,18 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $settings = Settings::parseArguments($argv);
         Assert::equal(Settings::FORMAT_CHECKSTYLE, $settings->format);
     }
+
+    public function testExtensions()
+    {
+        $commandLine = './parallel-lint -e php,php.dist,phpt .';
+        $argv = explode(" ", $commandLine);
+        $settings = Settings::parseArguments($argv);
+
+        $expectedSettings = new Settings();
+        $expectedSettings->extensions    = array('php', 'php.dist', 'phpt');
+
+        Assert::equal($expectedSettings->extensions, $settings->extensions);
+    }
 }
 
 $testCase = new SettingsParseArgumentsTest;
