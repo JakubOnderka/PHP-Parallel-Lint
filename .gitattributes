@@ -12,7 +12,6 @@
 /box.json export-ignore
 /doc export-ignore
 /phpcs.xml.dist export-ignore
-/phpcs-ruleset.xml export-ignore
 /tests export-ignore
 
 #
