@@ -13,8 +13,6 @@ matrix:
     - php: 7.3
     - php: 7.4
 
-sudo: false
-
 install:
   - composer install --no-interaction --prefer-source
 
