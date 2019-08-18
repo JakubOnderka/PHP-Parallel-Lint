@@ -1,6 +1,37 @@
 <?xml version="1.0"?>
-<ruleset name="PHP-Parallel-Lint">
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP-Parallel-Lint" xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">
     <description>PHP Parallel Lint coding standard.</description>
+
+    <!--
+    #############################################################################
+    COMMAND LINE ARGUMENTS
+    https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml
+    #############################################################################
+    -->
+
+    <file>.</file>
+
+    <!-- Exclude the Examples directory and the Composer vendor directory. -->
+    <exclude-pattern>*/tests/examples/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <!-- Only check PHP files. -->
+    <arg name="extensions" value="php,phpt/php"/>
+
+    <!-- Show progress, show the error codes for each message (source). -->
+    <arg value="ps"/>
+
+    <!-- Strip the filepaths down to the relevant bit. -->
+    <arg name="basepath" value="./"/>
+
+    <!-- Check up to 8 files simultaneously. -->
+    <arg name="parallel" value="8"/>
+
+    <!--
+    #############################################################################
+    RULES
+    #############################################################################
+    -->
 
     <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
     <rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/>
@@ -20,7 +51,9 @@
 
     <rule ref="Generic.PHP.DisallowShortOpenTag"/>
     <rule ref="Generic.PHP.LowerCaseConstant"/>
-    <rule ref="Generic.PHP.NoSilencedErrors"/>
+    <rule ref="Generic.PHP.NoSilencedErrors">
+        <exclude-pattern>/bin/skip-linting\.php$</exclude-pattern>
+    </rule>
     <rule ref="Squiz.PHP.GlobalKeyword"/>
     <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
     <rule ref="Squiz.PHP.NonExecutableCode"/>

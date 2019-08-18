@@ -23,7 +23,7 @@ script:
   - ./vendor/bin/tester -p php tests
   - ./parallel-lint --exclude vendor --exclude tests/examples --no-colors .
   - ./parallel-lint --exclude vendor --exclude tests/examples .
-  - if [[ $TRAVIS_PHP_VERSION == "7.3" ]]; then ./vendor/bin/phpcs --standard=phpcs-ruleset.xml -s src;fi
+  - if [[ $TRAVIS_PHP_VERSION == "7.3" ]]; then ./vendor/bin/phpcs;fi
 
 before_deploy:
   - curl -LSs https://box-project.github.io/box2/installer.php | php
