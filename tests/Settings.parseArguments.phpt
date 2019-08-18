@@ -90,7 +90,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings = new Settings();
         $expectedSettings->showProgress = false;
 
-        Assert::equal($expectedSettings->colors, $settings->colors);
+        Assert::equal($expectedSettings->showProgress, $settings->showProgress);
     }
 
     public function testJsonOutput()
