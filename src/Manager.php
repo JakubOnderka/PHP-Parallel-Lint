@@ -134,7 +134,8 @@ class Manager
      */
     protected function getFilesFromPaths(array $paths, array $extensions, array $excluded = array())
     {
-        $extensions = array_flip($extensions);
+        $extensions = array_map('preg_quote', $extensions, array_fill(0, count($extensions), '`'));
+        $regex = '`\.(?:' . implode('|', $extensions) . ')$`iD';
         $files = array();
 
         foreach ($paths as $path) {
@@ -151,11 +152,11 @@ class Manager
                     \RecursiveIteratorIterator::CATCH_GET_CHILD
                 );
 
+                $iterator = new \RegexIterator($iterator, $regex);
+
                 /** @var \SplFileInfo[] $iterator */
                 foreach ($iterator as $directoryFile) {
-                    if (isset($extensions[pathinfo($directoryFile->getFilename(), PATHINFO_EXTENSION)])) {
-                        $files[] = (string) $directoryFile;
-                    }
+                    $files[] = (string) $directoryFile;
                 }
             } else {
                 throw new NotExistsPathException($path);
