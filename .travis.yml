@@ -12,6 +12,13 @@ matrix:
     - php: 7.2
     - php: 7.3
     - php: 7.4
+    - php: "nightly"
+
+  fast_finish: true
+
+  allow_failures:
+    # Allow failures for unstable builds.
+    - php: "nightly"
 
 install:
   - composer install --no-interaction --prefer-source
