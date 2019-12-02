@@ -127,7 +127,7 @@ class Settings
         }
 
         foreach ($arguments as $argument) {
-            if ($argument{0} !== '-') {
+            if ($argument[0] !== '-') {
                 $settings->paths[] = $argument;
             } else {
                 switch ($argument) {
