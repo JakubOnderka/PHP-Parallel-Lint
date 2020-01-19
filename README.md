@@ -63,6 +63,6 @@ and then run this command in parallel lint folder, which creates `parallel-lint.
 ------
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/jakub-onderka/php-parallel-lint.svg)](https://packagist.org/packages/jakub-onderka/php-parallel-lint)
-[![Build Status](https://travis-ci.org/JakubOnderka/PHP-Parallel-Lint.svg?branch=master)](https://travis-ci.org/JakubOnderka/PHP-Parallel-Lint)
+[![Build Status](https://travis-ci.org/grogy/PHP-Parallel-Lint.svg?branch=master)](https://travis-ci.org/grogy/PHP-Parallel-Lint)
 [![Build status](https://ci.appveyor.com/api/projects/status/5n3qqa3r66aoghjo/branch/master?svg=true)](https://ci.appveyor.com/project/JakubOnderka/php-parallel-lint/branch/master)
 [![License](https://poser.pugx.org/jakub-onderka/php-parallel-lint/license.svg)](https://packagist.org/packages/jakub-onderka/php-parallel-lint)
