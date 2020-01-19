@@ -14,11 +14,6 @@ matrix:
 
 sudo: false
 
-cache:
-  directories:
-    - vendor
-    - $HOME/.composer/cache
-
 install:
   - composer install --no-interaction --prefer-source
 
