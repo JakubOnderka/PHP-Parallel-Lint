@@ -23,6 +23,13 @@ For colored output also install the suggested package `jakub-onderka/php-console
 ![Example use of tool with error](/tests/examples/example-images/use-error.png?raw=true "Example use of tool with error")
 
 
+## Fork
+This is a fork of [original project](https://github.com/JakubOnderka/PHP-Parallel-Lint). Why I forked it and why I am the right man?
+
+- Project is used in many and projects.
+- I am [second most active](https://github.com/JakubOnderka/PHP-Parallel-Lint/graphs/contributors) contributor in original project.
+- Author does [not responds to issues and PRs](https://github.com/JakubOnderka/PHP-Parallel-Lint/pulls) and my mail messages.
+
 ## Options for run
 
 - `-p <php>`        Specify PHP-CGI executable to run (default: 'php').
