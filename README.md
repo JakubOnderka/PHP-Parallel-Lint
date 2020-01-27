@@ -17,6 +17,7 @@ This works from PHP 5.4 to 7.4
 4. [Options for run](#options-for-run)
 5. [Options for Symfony](#recommended-setting-for-usage-with-symfony-framework)
 6. [Create Phar package](#create-phar-package)
+7. [How upgrade](#how-upgrade)
 
 ## Installation
 
@@ -79,3 +80,10 @@ and then run this command in parallel lint folder, which creates `parallel-lint.
 
 
     box build
+
+## How upgrade
+
+Are you using original package? You can easy use this fork. Steps for upgrade are:
+
+    composer remove --dev jakub-onderka/php-parallel-lint
+    composer require --dev grogy/php-parallel-lint
