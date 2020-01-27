@@ -9,6 +9,15 @@ Running parallel jobs in PHP is inspired by Nette framework tests.
 
 This works from PHP 5.4 to 7.4
 
+## Table of contents
+
+1. [Installation](#installation)
+2. [Example output](#example-output)
+3. [Fork](#fork)
+4. [Options for run](#options-for-run)
+5. [Options for Symfony](#recommended-setting-for-usage-with-symfony-framework)
+6. [Create Phar package](#create-phar-package)
+
 ## Installation
 
 Just run the following command to install it:
