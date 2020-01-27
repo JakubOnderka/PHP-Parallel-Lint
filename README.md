@@ -5,8 +5,9 @@
 [![License](https://poser.pugx.org/grogy/php-parallel-lint/license.svg)](https://packagist.org/packages/grogy/php-parallel-lint)
 
 This tool checks syntax of PHP files faster than serial check with a fancier output.
-
 Running parallel jobs in PHP is inspired by Nette framework tests.
+
+This works from PHP 5.4 to 7.4
 
 ## Installation
 
