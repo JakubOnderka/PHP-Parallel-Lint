@@ -1,7 +1,7 @@
 # PHP Parallel Lint
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/grogy/php-parallel-lint.svg)](https://packagist.org/packages/grogy/php-parallel-lint)
-[![Build Status](https://travis-ci.org/grogy/PHP-Parallel-Lint.svg?branch=master)](https://travis-ci.org/grogy/PHP-Parallel-Lint)
+[![Build Status](https://travis-ci.org/php-parallel-lint/PHP-Parallel-Lint.svg?branch=master)](https://travis-ci.org/php-parallel-lint/PHP-Parallel-Lint)
 [![License](https://poser.pugx.org/grogy/php-parallel-lint/license.svg)](https://packagist.org/packages/grogy/php-parallel-lint)
 
 This tool checks syntax of PHP files faster than serial check with a fancier output.
