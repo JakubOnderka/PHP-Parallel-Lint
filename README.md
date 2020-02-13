@@ -23,11 +23,11 @@ This works from PHP 5.4 to 7.4
 
 Just run the following command to install it:
 
-    composer require --dev grogy/php-parallel-lint
+    composer require --dev php-parallel-lint/php-parallel-lint
 
-For colored output also install the suggested package `jakub-onderka/php-console-highlighter`:
+For colored output also install the suggested package `php-parallel-lint/php-console-highlighter`:
 
-    composer require --dev jakub-onderka/php-console-highlighter
+    composer require --dev php-parallel-lint/php-console-highlighter
 
 ## Example output
 
@@ -86,4 +86,4 @@ and then run this command in parallel lint folder, which creates `parallel-lint.
 Are you using original package? You can easy use this fork. Steps for upgrade are:
 
     composer remove --dev jakub-onderka/php-parallel-lint
-    composer require --dev grogy/php-parallel-lint
+    composer require --dev php-parallel-lint/php-parallel-lint
