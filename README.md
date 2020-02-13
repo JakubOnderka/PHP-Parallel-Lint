@@ -2,7 +2,7 @@
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/grogy/php-parallel-lint.svg)](https://packagist.org/packages/grogy/php-parallel-lint)
 [![Build Status](https://travis-ci.org/php-parallel-lint/PHP-Parallel-Lint.svg?branch=master)](https://travis-ci.org/php-parallel-lint/PHP-Parallel-Lint)
-[![License](https://poser.pugx.org/grogy/php-parallel-lint/license.svg)](https://packagist.org/packages/grogy/php-parallel-lint)
+[![License](https://poser.pugx.org/php-parallel-lint/php-parallel-lint/license.svg)](https://packagist.org/packages/php-parallel-lint/php-parallel-lint)
 
 This tool checks syntax of PHP files faster than serial check with a fancier output.
 Running parallel jobs in PHP is inspired by Nette framework tests.
