@@ -26,5 +26,6 @@
             "./"
         ]
     },
-    "bin": ["parallel-lint"]
+    "bin": ["parallel-lint"],
+    "abandoned": "php-parallel-lint/php-parallel-lint"
 }
