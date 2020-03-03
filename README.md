@@ -1,5 +1,11 @@
 # PHP Parallel Lint
 
+**This repository is abandoned.**
+
+Suggested alternative: https://github.com/php-parallel-lint/PHP-Parallel-Lint
+
+-----
+
 This tool checks syntax of PHP files faster than serial check with a fancier output.
 
 Running parallel jobs in PHP is inspired by Nette framework tests.
