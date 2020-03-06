@@ -3,9 +3,19 @@
     "description": "This tool check syntax of PHP files about 20x faster than serial check.",
     "homepage": "https://github.com/php-parallel-lint/PHP-Parallel-Lint",
     "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Jakub Onderka",
+            "email": "ahoj@jakubonderka.cz"
+        }
+    ],
     "require": {
         "php": ">=5.4.0",
         "ext-json": "*"
+    },
+    "replace": {
+        "grogy/php-parallel-lint": "*",
+        "jakub-onderka/php-parallel-lint": "*"
     },
     "require-dev": {
         "nette/tester": "^1.3 || ^2.0",
@@ -15,20 +25,15 @@
     "suggest": {
         "php-parallel-lint/php-console-highlighter": "Highlight syntax in code snippet"
     },
-    "authors": [
-        {
-            "name": "Jakub Onderka",
-            "email": "ahoj@jakubonderka.cz"
-        }
-    ],
+    "config": {
+        "sort-packages": true
+    },
     "autoload": {
         "classmap": [
             "./"
         ]
     },
-    "bin": ["parallel-lint"],
-    "replace": {
-        "jakub-onderka/php-parallel-lint": "*",
-        "grogy/php-parallel-lint": "*"
-    }
+    "bin": [
+        "parallel-lint"
+    ]
 }
