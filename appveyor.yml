@@ -1,28 +1,31 @@
 build: off
 cache:
-  - '%LOCALAPPDATA%\Composer\files -> appveyor.yml'
+  - '%PHPCI_CACHE% -> appveyor.yml'
 
 clone_folder: c:\projects\php-parallel-lint
 
+environment:
+  PHPCI_CHOCO_VERSION: 7.3.1
+  PHPCI_CACHE: C:\tools\phpci
+  PHPCI_PHP: C:\tools\phpci\php
+  PHPCI_COMPOSER: C:\tools\phpci\composer
+
 init:
-  - SET PATH=c:\php;%PATH%
+  - SET PATH=%PHPCI_PHP%;%PHPCI_COMPOSER%;%PATH%
   - SET ANSICON=121x90 (121x90)
+  - SET COMPOSER_HOME=%PHPCI_COMPOSER%\home
+  - SET COMPOSER_CACHE_DIR=%PHPCI_COMPOSER%\cache
+  - SET COMPOSER_NO_INTERACTION=1
+  - SET PHP=0
 
 install:
-  - cinst -y OpenSSL.Light
-  - SET PATH=C:\Program Files\OpenSSL;%PATH%
-  - sc config wuauserv start= auto
-  - net start wuauserv
-  - cinst -y php --version 7.2.8
-  - cd c:\tools\php72
-  - copy php.ini-production php.ini
-  - echo date.timezone="UTC" >> php.ini
-  - echo extension_dir=ext >> php.ini
-  - echo extension=php_openssl.dll >> php.ini
-  - cd c:\projects\php-parallel-lint
-  - SET PATH=C:\tools\php72;%PATH%
-  - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
-  - php composer.phar install --prefer-source --no-interaction
+  - IF EXIST %PHPCI_CACHE% (SET PHP=1)
+  - IF %PHP%==0 cinst php -i -y --version %PHPCI_CHOCO_VERSION%  --params "/InstallDir:%PHPCI_PHP%"
+  - IF %PHP%==0 cinst composer -i -y --ia "/DEV=%PHPCI_COMPOSER%"
+  - php -v
+  - IF %PHP%==0 (composer --version) ELSE (composer self-update)
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - composer install --prefer-dist --no-progress
 
 test_script:
   - vendor\bin\tester tests -p php

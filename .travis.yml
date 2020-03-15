@@ -17,7 +17,7 @@ cache:
     - $HOME/.composer/cache
 
 install:
-  - composer install --no-interaction --prefer-source
+  - composer install --no-interaction
 
 script:
   - ./vendor/bin/tester -p php tests
@@ -26,10 +26,10 @@ script:
   - ./vendor/bin/phpcs --standard=phpcs-ruleset.xml -s src
 
 before_deploy:
-  - curl -LSs https://box-project.github.io/box2/installer.php | php
+  - curl -LSs https://github.com/humbug/box/releases/download/3.7.0/box.phar -o box && chmod +x box
   - composer install --no-interaction --prefer-source --no-dev
   - composer require jakub-onderka/php-console-highlighter 0.3 --update-no-dev
-  - ./box.phar build
+  - ./box compile
 
 deploy:
   provider: releases
