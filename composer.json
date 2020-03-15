@@ -28,6 +28,7 @@
     },
     "bin": ["parallel-lint"],
     "replace": {
-        "jakub-onderka/php-parallel-lint": "*"
+        "jakub-onderka/php-parallel-lint": "*",
+        "grogy/php-parallel-lint": "*"
     }
 }
