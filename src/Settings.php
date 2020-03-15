@@ -154,7 +154,12 @@ class Settings
                         break;
 
                     case '-j':
-                        $settings->parallelJobs = max((int) $arguments->getNext(), 1);
+                        $parallelJobs = $arguments->getNext();
+                        if ($parallelJobs === 'auto' && $cpuNumber = static::getNumberOfCPUCores()) {
+                            $settings->parallelJobs = $cpuNumber;
+                            break;
+                        }
+                        $settings->parallelJobs = max((int) $parallelJobs, 1);
                         break;
 
                     case '--colors':
@@ -219,6 +224,38 @@ class Settings
 
         $lines = explode("\n", rtrim($content));
         return array_map('rtrim', $lines);
+    }
+
+
+    /**
+     * Return number of (logical) CPU cores, or null (if couldn't extract such info).
+     *
+     * Copied from https://github.com/paratestphp/paratest/blob/1dc09c5457df8fc4bae4fbbdcba3cef22f2d834c/src/Runners/PHPUnit/Options.php#L382-L411
+     *
+     * @return int|null
+     */
+    private static function getNumberOfCPUCores()
+    {
+        $cores = 2;
+        if (is_file('/proc/cpuinfo')) {
+            // Linux (and potentially Windows with linux sub systems)
+            $cpuinfo = file_get_contents('/proc/cpuinfo');
+            preg_match_all('/^processor/m', $cpuinfo, $matches);
+            $cores = \count($matches[0]);
+        } elseif (\DIRECTORY_SEPARATOR === '\\') {
+            // Windows
+            if (($process = @popen('wmic cpu get NumberOfCores', 'rb')) !== false) {
+                fgets($process);
+                $cores = (int) fgets($process);
+                pclose($process);
+            }
+        } elseif (($process = @popen('sysctl -n hw.ncpu', 'rb')) !== false) {
+            // *nix (Linux, BSD and Mac)
+            $cores = (int) fgets($process);
+            pclose($process);
+        }
+
+        return $cores;
     }
 }
 
