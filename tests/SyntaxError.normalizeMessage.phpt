@@ -6,7 +6,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use JakubOnderka\PhpParallelLint\SyntaxError;
+use JakubOnderka\PhpParallelLint\Error\SyntaxError;
 use Tester\Assert;
 
 class SyntaxErrorNormalizeMessageTest extends Tester\TestCase

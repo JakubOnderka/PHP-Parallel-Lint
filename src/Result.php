@@ -1,6 +1,9 @@
 <?php
 namespace JakubOnderka\PhpParallelLint;
 
+use JakubOnderka\PhpParallelLint\Error\Error;
+use JakubOnderka\PhpParallelLint\Error\SyntaxError;
+
 class Result implements \JsonSerializable
 {
     /** @var Error[] */

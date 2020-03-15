@@ -3,6 +3,8 @@ namespace JakubOnderka\PhpParallelLint;
 
 use JakubOnderka\PhpConsoleColor\ConsoleColor;
 use JakubOnderka\PhpConsoleHighlighter\Highlighter;
+use JakubOnderka\PhpParallelLint\Error\Error;
+use JakubOnderka\PhpParallelLint\Error\SyntaxError;
 
 class ErrorFormatter
 {

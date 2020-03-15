@@ -1,6 +1,8 @@
 <?php
 namespace JakubOnderka\PhpParallelLint;
 
+use JakubOnderka\PhpParallelLint\Error\Error;
+use JakubOnderka\PhpParallelLint\Error\SyntaxError;
 use JakubOnderka\PhpParallelLint\Process\LintProcess;
 use JakubOnderka\PhpParallelLint\Process\PhpExecutable;
 use JakubOnderka\PhpParallelLint\Process\SkipLintProcess;
