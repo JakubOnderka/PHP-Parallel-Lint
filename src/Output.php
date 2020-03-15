@@ -273,7 +273,7 @@ class TextOutput implements Output
 
     protected function writePercent()
     {
-        $percent = floor($this->checkedFiles / $this->totalFileCount * 100);
+        $percent = $this->stringWidth(floor($this->checkedFiles / $this->totalFileCount * 100), 3);
         $current = $this->stringWidth($this->checkedFiles, strlen($this->totalFileCount));
         $this->writeLine(" $current/$this->totalFileCount ($percent %)");
     }
