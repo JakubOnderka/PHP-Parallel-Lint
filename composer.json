@@ -1,7 +1,7 @@
 {
     "name": "php-parallel-lint/php-parallel-lint",
     "description": "This tool check syntax of PHP files about 20x faster than serial check.",
-    "homepage": "https://github.com/grogy/PHP-Parallel-Lint",
+    "homepage": "https://github.com/php-parallel-lint/PHP-Parallel-Lint",
     "license": "BSD-2-Clause",
     "require": {
         "php": ">=5.4.0",
