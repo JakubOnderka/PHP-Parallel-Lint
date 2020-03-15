@@ -27,7 +27,7 @@ For colored output also install the suggested package `jakub-onderka/php-console
 
 ## Options for run
 
-- `-p <php>`        Specify PHP-CGI executable to run (default: 'php').
+- `-p <php>`        Specify PHP-CLI executable to run (default: 'php').
 - `-s, --short`     Set short_open_tag to On (default: Off).
 - `-a, --asp`        Set asp_tags to On (default: Off).
 - `-e <ext>`        Check only files with selected extensions separated by comma. (default: php,php3,php4,php5,phtml,phpt)
