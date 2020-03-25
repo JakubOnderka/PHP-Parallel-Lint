@@ -25,6 +25,11 @@ Just run the following command to install it:
 
     composer require --dev php-parallel-lint/php-parallel-lint
 
+When you cannot use tool as dependency then you can install as project. Command for it:
+
+    composer create-project php-parallel-lint/php-parallel-lint /path/to/folder/php-parallel-lint
+    /path/to/folder/php-parallel-lint/parallel-lint # running tool
+
 For colored output also install the suggested package `php-parallel-lint/php-console-highlighter`:
 
     composer require --dev php-parallel-lint/php-console-highlighter
