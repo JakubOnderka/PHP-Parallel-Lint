@@ -4,7 +4,7 @@ namespace JakubOnderka\PhpParallelLint;
 
 class Application
 {
-    const VERSION = '1.0.0';
+    const VERSION = '1.2.0';
 
     // Return codes
     const SUCCESS = 0,
