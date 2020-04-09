@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Internal
 
-- Normalized composer.json from [@OndraM](https://github.com/OndraM)
+- Normalized composer.json from [@OndraM](https://github.com/OndraM).
+- Updated PHPCS dependency from [@jrfnl](https://github.com/jrfnl).
+- Cleaned coding style from [@jrfnl](https://github.com/jrfnl).
 
 ## [1.2.0] - 2020-04-04
 
