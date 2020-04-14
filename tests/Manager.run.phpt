@@ -89,6 +89,23 @@ class ManagerRunTest extends Tester\TestCase
     }
 
     /**
+     * Note: the `example.php-dist` file contains a parse error.
+     * With multi-part extensions being escaped before being used in the RegexIterator,
+     * this file will not be included in the scan and the test will pass.
+     */
+    public function testMultiPartExtensions()
+    {
+        $settings = $this->prepareSettings();
+        $settings->paths = array('examples/example-06/');
+
+        $settings->extensions = array('php', 'php.dist');
+
+        $manager = $this->getManager($settings);
+        $result = $manager->run($settings);
+        Assert::false($result->hasError());
+    }
+
+    /**
      * @param Settings $settings
      * @return Manager
      */
