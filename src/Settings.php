@@ -104,6 +104,12 @@ class Settings
     public $showDeprecated = false;
 
     /**
+     * Path to a file with syntax error callback
+     * @var string|null
+     */
+    public $syntaxErrorCallbackFile = null;
+
+    /**
      * @param array $paths
      */
     public function addPaths(array $paths)
@@ -195,6 +201,10 @@ class Settings
 
                     case '--show-deprecated':
                         $settings->showDeprecated = true;
+                        break;
+
+                    case '--syntax-error-callback':
+                        $settings->syntaxErrorCallbackFile = $arguments->getNext();
                         break;
 
                     default:

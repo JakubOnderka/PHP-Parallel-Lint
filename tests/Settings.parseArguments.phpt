@@ -27,6 +27,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->colors = Settings::AUTODETECT;
         $expectedSettings->showProgress = true;
         $expectedSettings->format = Settings::FORMAT_TEXT;
+        $expectedSettings->syntaxErrorCallbackFile = null;
 
         Assert::equal($expectedSettings->shortTag, $settings->shortTag);
         Assert::equal($expectedSettings->aspTags, $settings->aspTags);
@@ -37,6 +38,7 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         Assert::equal($expectedSettings->colors, $settings->colors);
         Assert::equal($expectedSettings->showProgress, $settings->showProgress);
         Assert::equal($expectedSettings->format, $settings->format);
+        Assert::equal($expectedSettings->syntaxErrorCallbackFile, $settings->syntaxErrorCallbackFile);
     }
 
     public function testMoreArguments()
@@ -119,6 +121,18 @@ class SettingsParseArgumentsTest extends Tester\TestCase
         $expectedSettings->extensions    = array('php', 'php.dist', 'phpt');
 
         Assert::equal($expectedSettings->extensions, $settings->extensions);
+    }
+
+    public function testFailCallaback()
+    {
+        $commandLine = "./parallel-lint --syntax-error-callback ./path/to/my_custom_callback_file.php .";
+        $argv = explode(" ", $commandLine);
+        $settings = Settings::parseArguments($argv);
+
+        $expectedSettings = new Settings();
+        $expectedSettings->syntaxErrorCallbackFile = "./path/to/my_custom_callback_file.php";
+
+        Assert::equal($expectedSettings->syntaxErrorCallbackFile, $settings->syntaxErrorCallbackFile);
     }
 }
 

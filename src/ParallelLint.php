@@ -1,6 +1,7 @@
 <?php
 namespace JakubOnderka\PhpParallelLint;
 
+use JakubOnderka\PhpParallelLint\Contracts\SyntaxErrorCallback;
 use JakubOnderka\PhpParallelLint\Process\LintProcess;
 use JakubOnderka\PhpParallelLint\Process\PhpExecutable;
 use JakubOnderka\PhpParallelLint\Process\SkipLintProcess;
@@ -29,6 +30,9 @@ class ParallelLint
 
     /** @var bool */
     private $showDeprecated = false;
+
+    /** @var SyntaxErrorCallback|null */
+    private $syntaxErrorCallback = null;
 
     public function __construct(PhpExecutable $phpExecutable, $parallelJobs = 10)
     {
@@ -92,7 +96,7 @@ class ParallelLint
 
                     } else if ($process->containsError()) {
                         $checkedFiles[] = $file;
-                        $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                        $errors[] = $this->triggerSyntaxErrorCallback(new SyntaxError($file, $process->getSyntaxError()));
                         $processCallback(self::STATUS_ERROR, $file);
 
                     } else if ($process->isSuccess()) {
@@ -131,7 +135,7 @@ class ParallelLint
 
                 } else if ($process->containsError()) {
                     $checkedFiles[] = $file;
-                    $errors[] = new SyntaxError($file, $process->getSyntaxError());
+                    $errors[] = $this->triggerSyntaxErrorCallback(new SyntaxError($file, $process->getSyntaxError()));
                     $processCallback(self::STATUS_ERROR, $file);
 
                 } else {
@@ -256,6 +260,26 @@ class ParallelLint
     public function setShowDeprecated($showDeprecated)
     {
         $this->showDeprecated = $showDeprecated;
+
+        return $this;
+    }
+
+    public function triggerSyntaxErrorCallback($syntaxError)
+    {
+        if ($this->syntaxErrorCallback === null) {
+            return $syntaxError;
+        }
+
+        return $this->syntaxErrorCallback->errorFound($syntaxError);
+    }
+
+    /**
+     * @param SyntaxErrorCallback|null $syntaxErrorCallback
+     * @return ParallelLint
+     */
+    public function setSyntaxErrorCallback($syntaxErrorCallback)
+    {
+        $this->syntaxErrorCallback = $syntaxErrorCallback;
 
         return $this;
     }

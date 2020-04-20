@@ -1,6 +1,7 @@
 <?php
 namespace JakubOnderka\PhpParallelLint;
 
+use JakubOnderka\PhpParallelLint\Contracts\SyntaxErrorCallback;
 use JakubOnderka\PhpParallelLint\Process\GitBlameProcess;
 use JakubOnderka\PhpParallelLint\Process\PhpExecutable;
 
@@ -38,6 +39,7 @@ class Manager
         $parallelLint->setAspTagsEnabled($settings->aspTags);
         $parallelLint->setShortTagEnabled($settings->shortTag);
         $parallelLint->setShowDeprecated($settings->showDeprecated);
+        $parallelLint->setSyntaxErrorCallback($this->createSyntaxErrorCallback($settings));
 
         $parallelLint->setProcessCallback(function ($status, $file) use ($output) {
             if ($status === ParallelLint::STATUS_OK) {
@@ -166,6 +168,33 @@ class Manager
         $files = array_unique($files);
 
         return $files;
+    }
+
+    protected function createSyntaxErrorCallback(Settings $settings)
+    {
+        if ($settings->syntaxErrorCallbackFile === null) {
+            return null;
+        }
+
+        $fullFilePath = realpath($settings->syntaxErrorCallbackFile);
+        if ($fullFilePath === false) {
+            throw new NotExistsPathException($settings->syntaxErrorCallbackFile);
+        }
+
+        require_once $fullFilePath;
+
+        $expectedClassName = basename($fullFilePath, '.php');
+        if (!class_exists($expectedClassName)) {
+            throw new NotExistsClassException($expectedClassName, $settings->syntaxErrorCallbackFile);
+        }
+
+        $callbackInstance = new $expectedClassName;
+
+        if (!($callbackInstance instanceof SyntaxErrorCallback)) {
+            throw new NotImplementCallbackException($expectedClassName);
+        }
+
+        return $callbackInstance;
     }
 }
 
