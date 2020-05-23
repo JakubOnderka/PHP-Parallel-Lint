@@ -23,8 +23,11 @@ class PhpProcess extends Process
      */
     private function constructParameters(array $parameters, $isHhvm)
     {
+        // Always ignore PHP startup errors ("Unable to load library...") in sub-processes.
+        array_unshift($parameters, '-d display_startup_errors=0');
+
         if ($isHhvm) {
-            $parameters = array_merge(array('-php'), $parameters);
+            array_unshift($parameters, '-php');
         }
 
         return $parameters;
