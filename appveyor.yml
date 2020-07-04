@@ -25,6 +25,6 @@ install:
   - php composer.phar install --prefer-source --no-interaction
 
 test_script:
-  - vendor\bin\tester tests -p php
+  - php composer.phar test
   - php parallel-lint --exclude vendor --exclude tests\examples --no-colors .
   - php parallel-lint --exclude vendor --exclude tests\examples .

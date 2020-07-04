@@ -25,7 +25,7 @@ install:
   - composer install --no-interaction --prefer-source
 
 script:
-  - ./vendor/bin/tester -p php tests
+  - composer test
   - ./parallel-lint --exclude vendor --exclude tests/examples --no-colors .
   - ./parallel-lint --exclude vendor --exclude tests/examples .
   - if [[ "$SNIFF" == "1" ]]; then ./vendor/bin/phpcs;fi

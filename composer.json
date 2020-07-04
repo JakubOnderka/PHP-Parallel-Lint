@@ -35,5 +35,11 @@
     },
     "bin": [
         "parallel-lint"
-    ]
+    ],
+    "scripts": {
+        "test": "@php vendor/bin/tester -p php tests"
+    },
+    "scripts-descriptions": {
+        "test": "Run all tests!"
+    }
 }
