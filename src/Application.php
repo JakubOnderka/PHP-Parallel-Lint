@@ -92,7 +92,7 @@ Options:
     --git <git>             Path to Git executable to show blame message (default: 'git').
     --stdin                 Load files and folder to test from standard input.
     --ignore-fails          Ignore failed tests.
-    --syntax-error-callback File with syntax error callback for modifying error
+    --syntax-error-callback File with syntax error callback for ability to modify error
     -h, --help              Print this help.
     -V, --version           Display this application version
 
