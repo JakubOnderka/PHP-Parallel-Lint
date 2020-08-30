@@ -4,9 +4,9 @@
 1. Create a class implementing `JakubOnderka\PhpParallelLint\Contracts\SyntaxErrorCallback` interface. File with the class must have the same name as the class inside.
 1. Modify error before it is printed to the output.
 
-## Configuration
+## Example configuration
 
-File `MyCustomErrorHandler.php` will be passed as an argument like `./parallel-lint --syntax-error-callback ./path/to/MyCustomErrorHandler.php .`.
+File `MyCustomErrorHandler.php` will be passed as an argument like `./parallel-lint --syntax-error-callback ./path/to/MyCustomErrorHandler.php .`.<br>
 The content should look like:
 
 ```php
@@ -21,7 +21,7 @@ class MyCustomErrorHandler implements SyntaxErrorCallback {
      */
     public function errorFound(SyntaxError $error){
     	// Return new SyntaxError with custom modification to FilePath or Message
-    	// Or return completely new SyntaxError extending the original one...
+    	// Or return custom implementation of SyntaxError extending the original one...
     	return new SyntaxError(
     		$error->getFilePath(),
     		$error->getMessage()
