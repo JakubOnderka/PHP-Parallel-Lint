@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--  Allow for multi-part file extensions to be passed using -e (like `-e php,php.dist`) from [@jrfnl](https://github.com/jrfnl).
+- Allow for multi-part file extensions to be passed using -e (like `-e php,php.dist`) from [@jrfnl](https://github.com/jrfnl).
+- Added syntax error callback [#30](https://github.com/php-parallel-lint/PHP-Parallel-Lint/pull/30) from [@arxeiss](https://github.com/arxeiss).
 
 ### Internal
 
