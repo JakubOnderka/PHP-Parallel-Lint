@@ -115,7 +115,7 @@ class ParallelLint
         if (!empty($waiting)) {
             $skipLintProcess->waitForFinish();
 
-            if ($skipLintProcess->getErrorOutput()) {
+            if ($skipLintProcess->isFail()) {
                 $message = "Error in skip-linting.php process\nError output: {$skipLintProcess->getErrorOutput()}";
                 throw new \Exception($message);
             }
