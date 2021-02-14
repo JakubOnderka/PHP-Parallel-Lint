@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added syntax error callback [#30](https://github.com/php-parallel-lint/PHP-Parallel-Lint/pull/30) from [@arxeiss](https://github.com/arxeiss).
 - Ignore PHP startup errors [#34](https://github.com/php-parallel-lint/PHP-Parallel-Lint/pull/34) from [@jrfnl](https://github.com/jrfnl).
 
+### Fixed
+
+- Determine skip lint process failure by status code instead of stderr content [#48](https://github.com/php-parallel-lint/PHP-Parallel-Lint/pull/48) from [@jankonas](https://github.com/jankonas).
+
 ### Internal
 
 - Normalized composer.json from [@OndraM](https://github.com/OndraM).
