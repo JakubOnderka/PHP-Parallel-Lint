@@ -29,6 +29,7 @@
         "sort-packages": true
     },
     "autoload": {
+        "files": [ "src/bootstrap.php" ],
         "classmap": [
             "./"
         ]
